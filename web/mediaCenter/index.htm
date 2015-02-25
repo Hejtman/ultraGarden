@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Malina</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+	<link rel="shortcut icon" href="../rasp.png">
+	<meta name="Description" content="Raspbery Pi media center">
+	<meta name="Keywords" content="Raspbery Pi,Media Center,Home server">
+	<meta name="author" content="Michal Hejtm&aacute;nek, http://malina.moxo.cz">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+</head>
+<body>
+
+	<div>
+   	<ul id="menu" class="center">
+      	<li><a href="../index.htm"> Playground </a></li>
+      	<li id="selected"><a href="../mediaCenter/index.htm"> MediaCenter </a></li>
+      	<li><a href="../webCam/index.htm"> WebCam </a></li>      
+      	<li><a href="../carCam/index.htm"> CarCam </a></li>
+	<li><a href="../ultraGarden/index.htm"> ultraGarden<img src="../icon_flower.gif" alt=""></a></li>
+      	<li><a href="../others/index.htm"> Others </a></li>      
+   	</ul>
+	</div>
+
+	<div class="center">
+		<a href="mediaCenter.jpg"><img src="mediaCenter.jpg" alt="Tv media center photo" style="width:49%"></a>
+		<a href="malina.jpg"><img src="malina.jpg" alt="Malina photo" style="width:49%"></a>
+	</div>
+
+	<H2>Function</H2>
+	<p>
+		Via HDMI cable it can play 1080p video (avi, mkv, mp4, ...), play music or show pictures to make look smart any TV.
+	</p>
+
+	<p>
+		<a href="http://raspi.tv/2014/how-much-less-power-does-the-raspberry-pi-b-use-than-the-old-model-b">Low power consumption</a> makes it ideal computer for home server.
+		Idle consumption is about 1 Watt. 6W when hard disk and WiFi in use. 
+		It can be downloading movies from the Internet whole night and no one will care about electricity nor annoying noise like from regular PC.
+		35$ for the Raspberry Pi board and the rest of it you probably already have under the roof.
+	</p>
+
+	<H2>HW & SW</H2>
+	<div>
+		<a href="http://www.merkurtoys.cz/vyrobky/kovove-stavebnice-merkur">Merkur</a> boxed 
+		<a href="http://www.raspberrypi.org/products/model-b-plus/">Raspberry Pi</a>, 
+		<a href="http://www.kingston.com/us/flash/microsd_cards">Micro SD Card</a>, 
+		<a href="http://www.edimax.com/edimax/merchandise/merchandise_detail/data/edimax/global/wireless_adapters_n150/ew-7711uan/"> WiFi USB </a> and 
+		<a href="http://www.wdc.com/en/products/products.aspx?id=1000">external 2.5" HDD usb</a>, powered by 
+		<a href="http://www.samsung.com/us/mobile/cell-phones-accessories/ETA-U90JWEBXAR">2A micro USB charger</a>.
+		<br>
+		<a href="http://www.raspbmc.com"><img src="rasp.jpg" alt="R">aspBMC</a>
+		<br>OPTIONAL: External usb DVD reader.
+		<br>OPTIONAL: <a href="http://www.a4tech.com/product.asp?cid=2&amp;scid=105&amp;id=306">USB Keypad</a>
+	</div>
+
+	<H1>Remote control</H1>
+	<div class="center">
+		<a href="remote_html.jpg"><img src="remote_html.jpg" alt="XBMC Remote http" style="width:33%"></a>
+		<a href="remote_terminal.jpg"><img src="remote_terminal.jpg" alt="XBMC Remote ssh" style="width:33%"></a>
+		<a href="remote_landscape.png"><img src="remote_landscape.png" alt="XBMC Remote" style="width:33%"></a>
+	</div>
+	<div>
+		You can connect to its own http server, ssh server or use remote application which was ported to most platforms.
+		Basically it can be remotely controlled via any device with WiFi.
+	</div>
+
+	<H2>Hints</H2>
+	Higher USB current for external HDD supply:
+	<pre class="prettyprint" id="misc">config.txt:
+	safe_mode_gpio=4
+	max_usb_current=1</pre>
+
+	Backup SD image:
+	<pre class="prettyprint" id="bash">TODO: dd if=/dev/sd&lt;X&gt; | tar cjf raspbmc_bkp.tar.gz</pre>
+
+	Restore backuped SD image:
+	<pre class="prettyprint" id="bash">TODO: tar Oxf raspbmc_bkp.tar.gz | dd of=/dev/sd&lt;X&gt;</pre>
+
+	Download file from web with anti bot verification and continue in downloading even if you close the terminal:
+	<pre class="prettyprint" id="bash">Start downloading from PC, pass the verification, copy Download link, stop downloading
+connect to Raspberry via ssh terminal and pass that Download link to wget:
+	TODO: nohup wget -O file.name '&lt;Download link&gt;' &amp;</pre>
+	<div class="center">
+		<a href="http://www.hitwebcounter.com" target="_blank">
+			<img src="http://hitwebcounter.com/counter/counter.php?page=5981436&amp;style=0009&amp;nbdigits=5&amp;type=ip&amp;initCount=0" title="number of visits track" Alt="number of visits track">
+		</a>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Malina</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+	<link rel="shortcut icon" href="../rasp.png">
+	<meta name="Description" content="Raspbery Pi media center">
+	<meta name="Keywords" content="Raspbery Pi media center">
+	<meta name="author" content="Michal Hejtm&aacute;nek, http://malina.moxo.cz">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+</head>
+<body>
+
+	<div>
+   	<ul id="menu" class="center">
+      	<li><a href="../index.htm"> Playground </a></li>
+      	<li><a href="../mediaCenter/index.htm"> MediaCenter </a></li>
+      	<li id="selected"><a href="../webCam/index.htm"> WebCam </a></li>      
+      	<li><a href="../carCam/index.htm"> CarCam </a></li>
+	<li><a href="../ultraGarden/index.htm"> ultraGarden<img src="../icon_flower.gif" alt=""></a></li>
+      	<li><a href="../others/index.htm"> Others </a></li>      
+   	</ul>
+	</div>
+
+	<div>
+		<a href="latest.jpg"><img src="latest.jpg" alt="Web cam photo" style="width:49%"></a>
+		<a href="../mediaCenter/malina.jpg"><img src="../mediaCenter/malina.jpg" alt="Malina photo" style="width:49%"></a>
+	</div>
+
+	<H2>Function</H2>
+	Periodically taken pictures are stored to hard drive and smaller version send to web.
+	You can watch them via smartphone from anywhere. It might be handy for babysitting and paranoid people.
+
+	<H2>HW & SW</H2>
+	<a href="http://www.raspberrypi.org/products/camera-module/">Camera module</a> objective is hidden in one of many merkur hole, close to raspberry's &#9415;.
+
+	<pre class="prettyprint" id="python"># photo_shooting.py - the main script
+import os
+import time
+import subprocess
+from glob import glob
+
+
+shooting_pid_file = '/home/pi/camera/photo_shooting.pid'
+raspistill = '/opt/vc/bin/raspistill'
+
+photo_width  = 2592
+photo_height = 1944
+photo_web_width  = 1280
+photo_web_height = 720
+photo_rotate = 0
+photo_quality = 5
+photo_exposure = 'sports'
+
+photo_interval = 20     # Interval between photos (seconds)
+photo_counter  = 0      # Photo counter
+time_limit = 5*60*60    # 5h in seconds
+total_photos = time_limit / photo_interval
+photo_prefix = 'photo'
+photo_path = '/media/mHDD/pi/camera'
+smallFileName = photo_path + '/' + 'latest.jpg'
+web_location = 'ftp://ftp.malina.moxo.cz/webCam/'
+web_credentials = 'USER:PASSWORD'
+
+
+# Write process id to be stopped by other process
+f = open(shooting_pid_file, 'w')
+f.write( str(os.getpid()) )
+f.close()
+
+
+# Delete all previous image files
+for filename in glob(photo_path + '/' + photo_prefix + '*.jpg*'):
+    if filename.find(photo_prefix + time.strftime("%Y-%m-%d_")) == -1:
+        os.remove(filename)
+
+
+# Lets start taking photos!
+try:
+    for i in range(int(total_photos)):
+        photo_counter = photo_counter + 1
+        photoFileName = photo_path + '/' + photo_prefix + time.strftime("%Y-%m-%d_%H:%M:%S") + '.jpg'
+        pid = subprocess.call(
+            raspistill +
+                ' -o ' + photoFileName +
+                ' -w ' + str(photo_width) +
+                ' -h ' + str(photo_height) +
+                ' -q ' + str(photo_quality) +
+                ' -ex ' + photo_exposure +
+                ' -rot ' + str(photo_rotate) +
+                ' -t 30 -awb auto --nopreview' ,
+            shell=True)
+
+        pid = subprocess.call(
+            raspistill +
+                ' -o ' + smallFileName +
+                ' -w ' + str(photo_web_width) +
+                ' -h ' + str(photo_web_height) +
+                ' -q ' + str(photo_quality) +
+                ' -ex ' + photo_exposure +
+                ' -rot ' + str(photo_rotate) +
+                ' -t 30 -awb auto --nopreview' ,
+            shell=True)
+
+        pid = subprocess.call(
+            'curl '
+                + web_location +
+                ' -T ' + smallFileName +
+                ' --user ' + web_credentials ,
+            shell=True)
+
+        try:
+            print('shoting: ' + str(photo_counter) + '/' + str(total_photos) + ' ' + photoFileName + ': ' +
+                str( (os.path.getsize(photoFileName)+512) / 1024 ) + 'KB ('  +
+                str( (os.path.getsize(smallFileName)+512) / 1024 ) + 'KB)'
+            )
+        except OSError as err:
+            print("error: {0}\n".format(err))
+
+        time.sleep(photo_interval)
+    os.remove( shooting_pid_file )
+
+
+except KeyboardInterrupt:
+    os.remove( shooting_pid_file )
+    print('Aborted')	
+	</pre>
+
+	<div>
+		<a href="https://play.google.com/store/apps/details?id=at.stoppel.myraspissh&hl=en"><img src="raspi-ssh.jpg" alt="Raspi SSH"></a>
+	</div>
+
+	<pre><code>
+TODO: Android tablet photo shooting start/stop buttons
+TODO: log example
+	</code></pre>
+
+	<div class="center">
+		<a href="http://www.hitwebcounter.com" target="_blank">
+			<img src="http://hitwebcounter.com/counter/counter.php?page=5981436&amp;style=0009&amp;nbdigits=5&amp;type=ip&amp;initCount=0" title="number of visits track" Alt="number of visits track">
+		</a>
+	</div>
+
+</body>
+</html>
