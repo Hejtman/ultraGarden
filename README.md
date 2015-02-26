@@ -24,9 +24,9 @@ $ make install
   
 ### Contribution:
 This software is written by [Hejtman][3] for fun.
-Contributing is warmly welcomed. There is no point in doing it from scratch nor all alone.
+Contributing is warmly welcomed. There is no point in doing everything from scratch nor all alone.
 
-You can do it by [forking](https://help.github.com/articles/fork-a-repo), committing modifications and then [pulling requests](https://help.github.com/articles/using-pull-requests) or by posting ideas or success stories to [forum][http://malina.moxo.cz/].
+You can do it by [forking](https://help.github.com/articles/fork-a-repo), committing modifications and then [pulling requests](https://help.github.com/articles/using-pull-requests) or by posting ideas, success stories to [forum](http://malina.moxo.cz/).
 Thanks for your contribution and happy growing.
   
 [1]: http://malina.moxo.cz/ultraGarden
