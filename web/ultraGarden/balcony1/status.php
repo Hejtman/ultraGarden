@@ -18,9 +18,11 @@
 	$pump_tidegate = new image("pump_tidegate_", "opened", ".gif");
 	$barel_tidegate = new image("barel_tidegate_", "opened", ".gif");
 
-	$pump_dht  = new text("left: 168px; top:594px;", "<b>X1%<br>XX°C</b>");
-	$barel_dht = new text("left: 690px; top:180px;", "<b>X2%<br>XX°C</b>");
-	$outer_dht = new text("left: 1103px; top:562px;", "<b>X3%<br>XX°C</b>");
+	$pump_dht  = new text("left: 178px; top:594px;", "<b>X1%<br>XX°C</b>");
+	$barel_dht = new text("left: 700px; top:180px;", "<b>X2%<br>XX°C</b>");
+	$outer_dht = new text("left: 1113px; top:562px;", "<b>X3%<br>XX°C</b>");
+
+	$barel_wlevel = new text("left: 655px; top:230px;", "<b>XX.Xcm (5 d)<br>today: -AA.Acm<br>yrday: -BB.Bcm</b>");
 
 	$outer_light = new text("left: 950px; top:571px;", "<b>XXXX Lux</b>");
 ?>
