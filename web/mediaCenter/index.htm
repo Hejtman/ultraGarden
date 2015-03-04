@@ -72,10 +72,10 @@
 	max_usb_current=1</pre>
 
 	Backup SD image:
-	<pre class="prettyprint" id="bash">TODO: dd if=/dev/sd&lt;X&gt; | tar cjf raspbmc_bkp.tar.gz</pre>
+	<pre class="prettyprint" id="bash">sudo dd if=/dev/sd&lt;X&gt; bs=1M | gzip --fast &#62; osmc_bkp.gz</pre>
 
 	Restore backuped SD image:
-	<pre class="prettyprint" id="bash">TODO: tar Oxf raspbmc_bkp.tar.gz | dd of=/dev/sd&lt;X&gt;</pre>
+	<pre class="prettyprint" id="bash">gzip -cd osmc_bkp.gz | sudo dd of=/dev/sd&lt;X&gt;</pre>
 
 	Download file from web with anti bot verification and continue in downloading even if you close the terminal:
 	<pre class="prettyprint" id="bash">Start downloading from PC, pass the verification, copy Download link, stop downloading
