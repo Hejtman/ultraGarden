@@ -18,9 +18,9 @@
 	$pump_tidegate = new image("pump_tidegate_", "opened", ".gif");
 	$barrel_tidegate = new image("barrel_tidegate_", "opened", ".gif");
 
-	$pump_dht  = new text("left: 178px; top:594px;", "<b>X1%<br>XX°C</b>");
-	$barrel_dht = new text("left: 700px; top:180px;", "<b>X2%<br>XX°C</b>");
-	$outer_dht = new text("left: 1113px; top:562px;", "<b>X3%<br>XX°C</b>");
+	$pump_dht  = new text("left: 178px; top:584px;", "<b>X1%<br>XX°C<br>X</b>");
+	$barrel_dht = new text("left: 700px; top:170px;", "<b>X2%<br>XX°C<br>X</b>");
+	$outer_dht = new text("left: 1113px; top:552px;", "<b>X3%<br>XX°C<br>X</b>");
 
 	$barrel_wlevel = new text("left: 655px; top:230px;", "<b>XX.Xcm (5 d)<br>today: -AA.Acm<br>yrday: -BB.Bcm</b>");
 
