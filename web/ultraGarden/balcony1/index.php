@@ -18,13 +18,13 @@ require 'status.php';
 echo '<div class="sensorText" style="' . $pi_status->getStyle()  . '">' . $pi_status->getText()  . '</div>';
 
 echo '<img src="' . $pump_tidegate->getImgPath()  . '" style="position: absolute; left:0px; top:0px;">';
-echo '<img src="' . $barel_tidegate->getImgPath() . '" style="position: absolute; left:0px; top:0px;">';
+echo '<img src="' . $barrel_tidegate->getImgPath() . '" style="position: absolute; left:0px; top:0px;">';
 
 echo '<div class="sensorText" style="' . $pump_dht->getStyle()  . '">' . $pump_dht->getText()  . '</div>';
-echo '<div class="sensorText" style="' . $barel_dht->getStyle() . '">' . $barel_dht->getText() . '</div>';
+echo '<div class="sensorText" style="' . $barrel_dht->getStyle() . '">' . $barrel_dht->getText() . '</div>';
 echo '<div class="sensorText" style="' . $outer_dht->getStyle() . '">' . $outer_dht->getText() . '</div>';
 
-echo '<div class="sensorText" style="' . $barel_wlevel->getStyle() . '">' . $barel_wlevel->getText() . '</div>';
+echo '<div class="sensorText" style="' . $barrel_wlevel->getStyle() . '">' . $barrel_wlevel->getText() . '</div>';
 
 echo '<div class="sensorText" style="' . $outer_light->getStyle() . '">' . $outer_light->getText() . '</div>';
 

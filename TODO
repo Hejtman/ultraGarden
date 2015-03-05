@@ -1,8 +1,9 @@
+-pullup resistor background
+
 web:
 	fan.gif
 	fogging.gif
 	pumping.gif
-	watter_level
 
 server:
 	hw/sg90.h, hw/sg90.cpp
@@ -15,8 +16,5 @@ hw:
 	watter level sensor: hc-sr04 (2cm-450cm/3mm, Trigger>10us, Echo 58us for 1cm  )
 	es08ma2
 	webcam
-
-ideas:
-	watter level - daily water consumption, warnings, pump cycles more often
 
 make install
