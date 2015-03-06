@@ -1,12 +1,11 @@
 web:
+	pumpTidegate > GPIO_23
 	fan.gif
 	fogging.gif
 	pumping.gif
 
 server:
-	hw/sg90.h, hw/sg90.cpp
-	hw/tideGate.h, hw/tideGate.cpp?
-	pwmManager?
+	hw/tideGate.h, hw/tideGate.cpp
 	MainLoop
 	hw/hc-sr04.h, hw/hc-sr04.cpp
 
