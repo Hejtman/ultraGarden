@@ -1,5 +1,4 @@
 web:
-	pumpTidegate > GPIO_23
 	fan.gif
 	fogging.gif
 	pumping.gif
