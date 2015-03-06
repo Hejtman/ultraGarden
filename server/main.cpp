@@ -2,7 +2,7 @@
 #include "hw/bh1750.h"
 #include "hw/dht22.h"
 #include "hw/relay.h"
-#include "hw/sg90.h"
+#include "hw/tidegate.h"
 #include <wiringPi.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,9 +21,9 @@ int main(int, char **)
 //    dht11  tankHumidSensor(GPIO_2, MAXERRORS);
 //    dht11   pumpHumidSensor(GPIO_5, IGNORE_FAILED_READINGS);
 //    dht11   outerHumidSensor(GPIO_5, IGNORE_FAILED_READINGS);
-	dht22	outerHumidSensor(GPIO_5);
-	sg90	barrelTideGate(GPIO_1);
-	sg90	pumpTideGate(GPIO_23);
+	dht22		outerHumidSensor(GPIO_5);
+	TideGate	barrelTideGate(GPIO_1, 100, 0);
+	TideGate	pumpTideGate(GPIO_23, 100, 0);
 
 //    bh1750 lightSensor1(BH1750FVI_I2C_ADDRESS);
     //-------------------------------------------
@@ -35,16 +35,10 @@ int main(int, char **)
     ////////// switch (state){  write_sensore values to web;  }
 
 	
-barrelTideGate.SetValue(0);
-sleep(1);
-pumpTideGate.SetValue(90);
-sleep(1);
-barrelTideGate.SetValue(180);
-sleep(1);
-pumpTideGate.SetValue(180);
-sleep(1);
-pumpTideGate.SetValue(0);
-barrelTideGate.SetValue(0);
+barrelTideGate.Open();	sleep(1);
+pumpTideGate.Open();	sleep(1);
+barrelTideGate.Close();	sleep(1);
+pumpTideGate.Close();	sleep(1);
 
 /*
         while(1)

@@ -5,7 +5,6 @@ web:
 	pumping.gif
 
 server:
-	hw/tideGate.h, hw/tideGate.cpp
 	MainLoop
 	hw/hc-sr04.h, hw/hc-sr04.cpp
 

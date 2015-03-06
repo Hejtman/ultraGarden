@@ -1,15 +1,14 @@
 #include <wiringPi.h>
-#include <stdint.h>
-#include "sg90.h"
+#include "servo.h"
 
 
-sg90::sg90(GPIO_PIN p)
+servo::servo(GPIO_PIN p)
 : pwmManager(p), 
   PIN(p)
 {
 }
 
-int sg90::SetValue(uint8_t value)
+int servo::SetValue(uint8_t value)
 {
 	// initialize all pwm outputs when first use of any
 	if(!Initialized())
