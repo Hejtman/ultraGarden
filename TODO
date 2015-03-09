@@ -4,12 +4,9 @@ web:
 	pumping.gif
 
 server:
-	MainLoop
-	hw/hc-sr04.h, hw/hc-sr04.cpp
-
+	dutyCycles
+	hw/hc-sr04.h, hw/hc-sr04.cpp (2cm-450cm/3mm, Trigger>10us, Echo 58us for 1cm)
 hw:
-	watter level sensor: hc-sr04 (2cm-450cm/3mm, Trigger>10us, Echo 58us for 1cm  )
-	es08ma2
 	webcam
 
 make install

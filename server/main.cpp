@@ -8,7 +8,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include "scheduler.h"
 
+enum taskId{CHECK_COMMAND_FILE, CHECK_SENSORS, SEND_STATUS_FILE, SWITCH_DUTTY_CYCLE, REFLECT_LIGHT, PUMPING_CYCLE};
+void f()
+{
+	printf("%u f\n", micros());///////
+}
 
 const uint8_t BH1750FVI_I2C_ADDRESS = 0x23;  // sudo i2cdetect -y 1
 const uint8_t IGNORE_FAILED_READINGS = 10;
@@ -22,8 +28,16 @@ int main(int, char **)
 //    dht11   pumpHumidSensor(GPIO_5, IGNORE_FAILED_READINGS);
 //    dht11   outerHumidSensor(GPIO_5, IGNORE_FAILED_READINGS);
 	dht22		outerHumidSensor(GPIO_5);
-	TideGate	barrelTideGate(GPIO_1, 100, 0);
-	TideGate	pumpTideGate(GPIO_23, 100, 0);
+	TideGate	barrelTideGate(GPIO_1, 90, 40); // final settings
+	TideGate	pumpTideGate(GPIO_23, 90, 40);////
+
+	Scheduler scheduler;
+	scheduler.RegisterTask(CHECK_COMMAND_FILE,	0,				1*1000,			&f);
+	scheduler.RegisterTask(CHECK_SENSORS, 		0, 				10*1000,		&f);
+	scheduler.RegisterTask(SEND_STATUS_FILE, 	1*60*1000,		1*60*1000,		&f);
+	scheduler.RegisterTask(SWITCH_DUTTY_CYCLE,	5*60*1000,		5*60*1000,		&f);
+	scheduler.RegisterTask(REFLECT_LIGHT, 		15*60*1000,		15*60*1000,		&f);
+	scheduler.RegisterTask(PUMPING_CYCLE, 		2*60*60*1000,	2*60*60*1000,	&f);
 
 //    bh1750 lightSensor1(BH1750FVI_I2C_ADDRESS);
     //-------------------------------------------
@@ -31,15 +45,19 @@ int main(int, char **)
 	if ( wiringPiSetup() == -1 )
     	return 1;
 
-    ////////// state, while(1){   sleep;    change(state);}
-    ////////// switch (state){  write_sensore values to web;  }
+	piHiPri(99); // might have better performance for reading from dht22?
 
-	
+	scheduler.StartLoop();
+
+/*
+sleep(5);
 barrelTideGate.Open();	sleep(1);
 pumpTideGate.Open();	sleep(1);
+
 barrelTideGate.Close();	sleep(1);
 pumpTideGate.Close();	sleep(1);
 
+*/
 /*
         while(1)
         {
@@ -50,6 +68,7 @@ pumpTideGate.Close();	sleep(1);
         }
 
 */
+
 /*    for(int i=0 ; i<100 ; ++i) {
 //        uint16_t value = 0;
 //        lightSensor1.ReadValue(value);
