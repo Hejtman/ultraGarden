@@ -15,13 +15,13 @@ void f()
 {
 	printf("%u f\n", micros());///////
 }
+extern void SendStatusFile();
 
 const uint8_t BH1750FVI_I2C_ADDRESS = 0x23;  // sudo i2cdetect -y 1
 const uint8_t IGNORE_FAILED_READINGS = 10;
 
 int main(int, char **)
 {
-    // GPIO wiering -----------------------------
 //    relay  fogRelay(GPIO_0);
 //    relay  pumpRelay(GPIO_1);
 //    dht11  tankHumidSensor(GPIO_2, MAXERRORS);
@@ -34,7 +34,7 @@ int main(int, char **)
 	Scheduler scheduler;
 	scheduler.RegisterTask(CHECK_COMMAND_FILE,	0,				1*1000,			&f);
 	scheduler.RegisterTask(CHECK_SENSORS, 		0, 				10*1000,		&f);
-	scheduler.RegisterTask(SEND_STATUS_FILE, 	1*60*1000,		1*60*1000,		&f);
+	scheduler.RegisterTask(SEND_STATUS_FILE, 	1*60*1000,		1*60*1000,		&SendStatusFile);
 	scheduler.RegisterTask(SWITCH_DUTTY_CYCLE,	5*60*1000,		5*60*1000,		&f);
 	scheduler.RegisterTask(REFLECT_LIGHT, 		15*60*1000,		15*60*1000,		&f);
 	scheduler.RegisterTask(PUMPING_CYCLE, 		2*60*60*1000,	2*60*60*1000,	&f);
