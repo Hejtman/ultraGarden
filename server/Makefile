@@ -6,7 +6,7 @@ LIBS    =
 WARNCFLAGS  = -Wall -Wextra -Wshadow -Weffc++ -Wstrict-aliasing -ansi -pedantic -Werror
 WARNLFLAGS  = 
 
-SOURCES     = $(wildcard *.cpp) $(wildcard hw/*.cpp)
+SOURCES     = $(wildcard *.cpp) $(wildcard */*.cpp)
 OBJECTS     = $(SOURCES:.cpp=.o)
 DEPFILES    = $(SOURCES:.cpp=.d)
 

@@ -29,7 +29,7 @@ int main(int, char **)
 //    dht11   outerHumidSensor(GPIO_5, IGNORE_FAILED_READINGS);
 	dht22		outerHumidSensor(GPIO_5);
 	TideGate	barrelTideGate(GPIO_1, 90, 40); // final settings
-	TideGate	pumpTideGate(GPIO_23, 90, 40);////
+	TideGate	pumpTideGate(GPIO_23,  85, 40);	// final settings
 
 	Scheduler scheduler;
 	scheduler.RegisterTask(CHECK_COMMAND_FILE,	0,				1*1000,			&f);
@@ -46,18 +46,17 @@ int main(int, char **)
     	return 1;
 
 	piHiPri(99); // might have better performance for reading from dht22?
+//	scheduler.StartLoop();
 
-	scheduler.StartLoop();
 
-/*
-sleep(5);
-barrelTideGate.Open();	sleep(1);
-pumpTideGate.Open();	sleep(1);
+//sleep(10);
+//barrelTideGate.Open();	sleep(1);
+pumpTideGate.Open();	sleep(10);
 
-barrelTideGate.Close();	sleep(1);
+//barrelTideGate.Close();	sleep(1);
 pumpTideGate.Close();	sleep(1);
 
-*/
+
 /*
         while(1)
         {
