@@ -7,13 +7,18 @@
 
 class Gardener : public Status
 {
-//	enum Mode{  MANUAL, AUTO, SAFE  } mode;
+public:
+	enum Mode{  MANUAL, AUTO, SAFE, EMERGENCY  };
+	enum TaskId{  CHECK_COMMAND_FILE, CHECK_SENSORS, SEND_STATUS_FILE, SWITCH_DUTTY_CYCLE, REFLECT_LIGHT, PUMPING_CYCLE  };
 
-	Scheduler scheduler;
+private:
+	Scheduler	scheduler;
+	Mode		mode;
 
 public:
+
 	Gardener();
-	int8_t StartLoop();
+	int8_t StartLoop(Mode m);
 };
 
 
