@@ -1,5 +1,5 @@
 #include "log.h"
-#include "ai/ai.h"
+#include "gardener/gardener.h"
 #include <wiringPi.h>
 
 
@@ -10,9 +10,9 @@ int main(int, char **)
 
 	piHiPri(99); // might have better performance for reading from dht22?
 
-	AI ai();
+	Gardener gardener();
 
-//	ai.StartLoop(/*mode*/); // if fail re-start with failure mode?
+//	gardener.StartLoop(/*mode*/); // if fail re-start with failure mode?
 
 	return 0;
 }

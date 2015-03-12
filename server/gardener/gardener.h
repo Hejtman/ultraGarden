@@ -1,21 +1,21 @@
-#ifndef AI_H
-#define AI_H
+#ifndef GARDENER_H
+#define GARDENER_H
 
 
 #include "status.h"
 #include "scheduler.h"
 
-class AI : public Status
+class Gardener : public Status
 {
 //	enum Mode{  MANUAL, AUTO, SAFE  } mode;
 
 	Scheduler scheduler;
 
 public:
-	AI();
+	Gardener();
 	int8_t StartLoop();
 };
 
 
-#endif // AI_H
+#endif // GARDENER_H
 

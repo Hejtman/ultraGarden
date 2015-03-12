@@ -1,4 +1,4 @@
-#include "ai.h"
+#include "gardener.h"
 #include <wiringPi.h>
 #include <stdlib.h>//
 #include <stdio.h>//
@@ -14,14 +14,14 @@ void f()
 extern void SendStatusFile();
 
 
-AI::AI() 
+Gardener::Gardener() 
 : Status(),
   scheduler()
 {
 
 }
 
-int8_t AI::StartLoop(/*mode*/)
+int8_t Gardener::StartLoop(/*mode*/)
 {
 	// if / switch mode
 	scheduler.RegisterTask(CHECK_COMMAND_FILE,	0,				1*1000,			&f);
