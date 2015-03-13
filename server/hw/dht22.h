@@ -20,9 +20,9 @@ public:
     int ReadValues(float& humidity, float& temprature, uint8_t& lastSuccess);
 
 	void GetValues(float& humidity, float& temprature, uint8_t& lastSuccess) const;
-	float getHumidity()const{  return  lastSuccHumidity;  }
-	float getTemperature()const{  return lastSuccTemprature;  }
-	uint8_t getLastSuccess()const{  return lastSuccReading;  }
+	float GetHumidity()const{  return  lastSuccHumidity;  }
+	float GetTemperature()const{  return lastSuccTemprature;  }
+	uint8_t GetLastSuccess()const{  return lastSuccReading;  }
 };
 
 

@@ -14,8 +14,9 @@
 
 
 bh1750::bh1750(const uint8_t address)
- : i2c(),
-   ADDRESS(address)
+: i2c(),
+  ADDRESS(address),
+  value(0)
 {}
 
 int bh1750::ReadValue()
