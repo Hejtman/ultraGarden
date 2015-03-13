@@ -18,7 +18,7 @@ bh1750::bh1750(const uint8_t address)
    ADDRESS(address)
 {}
 
-int bh1750::ReadValue(uint16_t& value)
+int bh1750::ReadValue()
 {
     FAIL_LOG_RET( i2c.SetAddress(ADDRESS) );
     FAIL_LOG_RET( i2c.Write(BH1750_POWER_ON) );
@@ -29,5 +29,12 @@ int bh1750::ReadValue(uint16_t& value)
     value = 256*buf[0] + buf[1];
 
     return 0;
+}
+
+int bh1750::ReadValue(uint16_t& v)
+{
+	int rv = ReadValue();
+	v = GetValue();
+	return rv;
 }
 

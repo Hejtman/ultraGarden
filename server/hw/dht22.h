@@ -13,9 +13,16 @@ class dht22
 	float lastSuccTemprature;
 
     void InitializeCommunication();
+
 public:
     dht22(GPIO_PIN p);
-    int ReadValue(float& humidity, float& temprature, uint8_t& lastSuccess);
+	int ReadValues();
+    int ReadValues(float& humidity, float& temprature, uint8_t& lastSuccess);
+
+	void GetValues(float& humidity, float& temprature, uint8_t& lastSuccess) const;
+	float getHumidity()const{  return  lastSuccHumidity;  }
+	float getTemperature()const{  return lastSuccTemprature;  }
+	uint8_t getLastSuccess()const{  return lastSuccReading;  }
 };
 
 

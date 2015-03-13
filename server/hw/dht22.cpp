@@ -10,9 +10,9 @@ const uint8_t MAXZEROLENGTH = 16;
 
 dht22::dht22(GPIO_PIN p)
 : PIN(p),
-  lastSuccReading(0),
-  lastSuccHumidity(0),
-  lastSuccTemprature(0)
+  lastSuccReading(0xFF),
+  lastSuccHumidity(-99),
+  lastSuccTemprature(-99)
 {
 }
 
@@ -27,7 +27,7 @@ void dht22::InitializeCommunication()
 	pullUpDnControl( PIN, PUD_UP );
 }
 
-int dht22::ReadValue(float& humidity, float& temprature, uint8_t& lastSuccess)
+int dht22::ReadValues()
 {
 	InitializeCommunication();
 
@@ -55,19 +55,29 @@ int dht22::ReadValue(float& humidity, float& temprature, uint8_t& lastSuccess)
 
 	// calculate values, checksum
 	if ( (bit >= 39) && (data[4] == ((data[0] + data[1] + data[2] + data[3]) & 0xFF)) ) {
-		lastSuccHumidity = humidity = float(256 * data[0] + data[1]) / 10;
-		lastSuccTemprature = temprature = float(256 * (data[2] & 0x7F) + data[3]) / 10;
+		lastSuccHumidity = float(256 * data[0] + data[1]) / 10;
+		lastSuccTemprature = float(256 * (data[2] & 0x7F) + data[3]) / 10;
 		if (data[2] & 0x80)
-			lastSuccTemprature = temprature *= -1;
+			lastSuccTemprature *= -1;
 
-		lastSuccess = lastSuccReading = 0;
-		return 0;
+		return lastSuccReading = 0;
 	} else {
 		// reading failed, return latest good values
-		humidity = lastSuccHumidity;
-		temprature = lastSuccTemprature;
-		lastSuccess = ++lastSuccReading;
-		return 1;
+		return ++lastSuccReading;
 	}
+}
+
+int dht22::ReadValues(float& humidity, float& temprature, uint8_t& lastSuccess)
+{
+	int rv = ReadValues();
+	GetValues(humidity, temprature, lastSuccess);
+	return rv;
+}
+
+void dht22::GetValues(float& humidity, float& temprature, uint8_t& lastSuccess) const
+{
+	humidity = lastSuccHumidity;
+	temprature = lastSuccTemprature;
+	lastSuccess = lastSuccReading;
 }
 
