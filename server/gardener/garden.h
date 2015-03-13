@@ -7,31 +7,36 @@
 #include "../hw/relay.h"
 #include "../hw/tidegate.h"
 #include "scheduler.h"
+#include "watchdog.h"
 
 class Garden : public SchedulerWakeUp
 {
+	WatchDog		watchDog;
 // state:       // Fogging, Airing, Idling
+	relay			barrelFogRelay;
+	relay			barrelFunRelay;
+	TideGate		barrelTideGate;
+	dht22			barrelHumidSensor;
+	WatchDog::Color	barrelHumidSensorStatus;
 
-	relay		barrelFogRelay;
-	relay		barrelFunRelay;
-	TideGate	barrelTideGate;
-	dht22		barrelHumidSensor;
+	relay			pumpRelay;
+	TideGate		pumpTideGate;
+	dht22   		pumpHumidSensor;
+	WatchDog::Color	pumpHumidSensorStatus;
 
-	relay		pumpRelay;
-	TideGate	pumpTideGate;
-	dht22   	pumpHumidSensor;
+	dht22			outerHumidSensor;
+	WatchDog::Color	outerHumidSensorStatus;
+	bh1750			outerLightSensor;
 
-	dht22		outerHumidSensor;
-	bh1750		outerLightSensor;
+	void CheckSensors();
+	void SendStatusFile();
+	void SwitchDutyCycle();
 
 public:
 	Garden();
 
-	enum {  CHECK_SENSORS, SWITCH_DUTTY_CYCLE  };
+	enum {  CHECK_SENSORS, SEND_STATUS_FILE, SWITCH_DUTTY_CYCLE  };
 	void SchedulerWakeUpCall(const uint8_t id);
-
-	void CheckSensors();
-	void SwitchDutyCycle();
 };
 
 

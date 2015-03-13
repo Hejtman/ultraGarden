@@ -4,6 +4,7 @@ web:
 	pumping.gif
 
 server:
+	errorHandling
 	dutyCycles
 	hw/hc-sr04.h, hw/hc-sr04.cpp (2cm-450cm/3mm, Trigger>10us, Echo 58us for 1cm)
 hw:

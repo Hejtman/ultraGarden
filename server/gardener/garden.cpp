@@ -1,21 +1,30 @@
 #include "garden.h"
-#include <stdio.h>//
+#include "../config.h" // OS_USER, FTP_USER, FTP_PASSWORD
+#include <stdio.h>
 #include <wiringPi.h>//
 
+
+extern void UploadFile2FTP(const char* filePath, const char* url);
+
 const uint8_t BH1750FVI_I2C_ADDRESS = 0x23;  // sudo i2cdetect -y 1
-const uint8_t IGNORE_FAILED_READINGS = 10;
+const char STATUS_FILE[] = "ftp/status.php";
 
 Garden::Garden()
 
-: barrelFogRelay(GPIO_0),
+: watchDog(),
+  barrelFogRelay(GPIO_0),
   barrelFunRelay(GPIO_0),
   barrelTideGate(GPIO_1, 90, 40),
   barrelHumidSensor(GPIO_2),
+  barrelHumidSensorStatus(WatchDog::ALERT),
   pumpRelay(GPIO_0),
   pumpTideGate(GPIO_23,  85, 40),
   pumpHumidSensor(GPIO_5),
+  pumpHumidSensorStatus(WatchDog::ALERT),
   outerHumidSensor(GPIO_5),
+  outerHumidSensorStatus(WatchDog::ALERT),
   outerLightSensor(BH1750FVI_I2C_ADDRESS)
+
 {
 
 }
@@ -27,6 +36,10 @@ void Garden::SchedulerWakeUpCall(const uint8_t id)
 			CheckSensors();
 			break;
 
+		case SEND_STATUS_FILE:
+			SendStatusFile();
+			break;
+
 		case SWITCH_DUTTY_CYCLE:
 			SwitchDutyCycle();
 			break;
@@ -36,34 +49,84 @@ void Garden::SchedulerWakeUpCall(const uint8_t id)
 void Garden::CheckSensors()
 {
 	printf("%d\tCheckSensors\n", millis()); // debug log
-//	barrelHumidSensor.ReadValue();
-//	pumpHumidSensor.ReadValue();
-//	outerHumidSensor.ReadValue();
-//	outerLightSensor.ReadValue();
 
-	/* security checks
+	barrelHumidSensor.ReadValues();
+	pumpHumidSensor.ReadValues();
+	outerHumidSensor.ReadValues();
+	outerLightSensor.ReadValue();
+
+	barrelHumidSensorStatus = watchDog.GetHumidStatus( barrelHumidSensor.GetLastSuccess() );
+	pumpHumidSensorStatus = watchDog.GetHumidStatus( pumpHumidSensor.GetLastSuccess() );
+	outerHumidSensorStatus = watchDog.GetHumidStatus( outerHumidSensor.GetLastSuccess() );
+
+	/* TODO: WATCHDOG for sensors
 	switch (DutyCycle) {
 		case FOGGING: is barel & pump humidity going up?
+	} */
+}
+
+void Garden::SendStatusFile()
+{
+	printf("%d\tSendStatusFile\n", millis()); // debug log
+
+	FILE* pFile = fopen(STATUS_FILE,"w");
+
+	if (pFile) {
+		fprintf(pFile,
+			"<?php\n"
+			"	const REFRESHINTERVAL = 61;\n"
+			"\n"
+			"	$pi_status = new text(\"left: 25px; top:25px;\", \n"
+			"		'<table>\n"
+			"			<tr           ><th colspan=\"2\">	UltraGarden server 				</th></tr>\n"
+			"			<tr           ><td>	State:	</td><td>	Fogging (XXs)			</td></tr>\n" //TODO
+			"			<tr           ><td>	&nbsp;	</td><td>							</td></tr>\n"
+			"			<tr           ><td>	CPU:	</td><td>	XXX MHz  XX%%  XX�		</td></tr>\n" //TODO
+			"			<tr           ><td>	Memory:	</td><td>	XXXMB / XXXMB			</td></tr>\n" //TODO
+			"			<tr           ><td>	Video:	</td><td>	XXXXxXXXX (XX.XX fps)	</td></tr>\n" //TODO
+			"			<tr id=\"alert\"><td> Network:</td><td>	192.168.0.104			</td></tr>\n" //TODO
+			"			<tr           ><td>	Storage:</td><td>	XXXXGB / XXXXGB (XX%%)	</td></tr>\n" //TODO
+			"			<tr           ><td>	Kernel:	</td><td>	X.XX.X					</td></tr>\n" //TODO
+			"			<tr           ><td>	Uptime:	</td><td>	XX Days					</td></tr>\n" //TODO
+			"		</table>');\n"
+			"\n"
+			);
+
+		fprintf(pFile,
+			"	$pump_tidegate = new image(\"pump_tidegate_\", \"%s\", \".gif\");\n"
+			"	$barrel_tidegate = new image(\"barrel_tidegate_\", \"%s\", \".gif\");\n"
+			"\n",
+			(pumpTideGate.IsOpen() ? "opened" : "closed"), 
+			(barrelTideGate.IsOpen() ? "opened" : "closed")
+			);
+
+		fprintf(pFile,
+			"	$pump_dht  = new text(\"left: 178px; top:584px;\", \"<b>%.1f%%<br>%.1f°C<br%u</b>\");\n"//TODO: ALERT!
+			"	$barrel_dht = new text(\"left: 700px; top:170px;\", \"<b>%.1f%%<br>%.1f°C<br>%u</b>\");\n"
+			"	$outer_dht = new text(\"left: 1113px; top:552px;\", \"<b>%.1f%%<br>%.1f°C<br>%u</b>\");\n"
+			"\n",
+			pumpHumidSensor.GetHumidity(), pumpHumidSensor.GetTemperature(), pumpHumidSensor.GetLastSuccess(),
+			barrelHumidSensor.GetHumidity(), barrelHumidSensor.GetTemperature(), barrelHumidSensor.GetLastSuccess(),
+			outerHumidSensor.GetHumidity(), outerHumidSensor.GetTemperature(), outerHumidSensor.GetLastSuccess()
+			);
+
+		fprintf(pFile,
+			"	$barrel_wlevel = new text(\"left: 655px; top:230px;\", \"<b>XX.Xcm (5 d)<br>today: -AA.Acm<br>yrday: -BB.Bcm</b>\");\n" //TODO
+			"\n"
+			"	$outer_light = new text(\"left: 950px; top:571px;\", \"<b>%d Lux</b>\");\n"
+			"?>\n",
+			outerLightSensor.GetValue()
+			);
+
+		fclose(pFile);
+
+		UploadFile2FTP(STATUS_FILE, "ftp://" FTP_USER ":" FTP_PASSWORD "@ftp.malina.moxo.cz/ultraGarden/balcony1/status.php");
 	}
-	*/
+	// TODO ErrorHandling
 }
 
 void Garden::SwitchDutyCycle()
 {
 	printf("%d\tSwitchDutyCycle\n", millis()); // debug log
-
 }
-/*    for(int i=0 ; i<100 ; ++i) {
-//        uint16_t value = 0;
-//        lightSensor1.ReadValue(value);
-//        printf("lux: %u\n", value);
-
-        float humidity=0, temprature=0;
-		uint8_t lastSuccess=0;
-        outerHumidSensor.ReadValue(humidity, temprature, lastSuccess);
-        printf("Humidity: %.1f%%\nTemprature: %.1f*C\nFails: %u\n", humidity, temprature, lastSuccess);
-
-		sleep(2);
-    }
-*/
 
