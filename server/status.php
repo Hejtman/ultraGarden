@@ -1,5 +1,5 @@
 <?php
-	const REFRESHINTERVAL = 61;
+	const REFRESHINTERVAL = 60;
 
 	$pi_status = new text("left: 25px; top:25px;", 
 		'<table>
@@ -18,9 +18,9 @@
 	$pump_tidegate = new image("pump_tidegate_", "closed", ".gif");
 	$barrel_tidegate = new image("barrel_tidegate_", "closed", ".gif");
 
-	$pump_dht  = new text("left: 178px; top:584px;", "<b>-99.0%<br>-99.0°C<br0</b>");
-	$barrel_dht = new text("left: 700px; top:170px;", "<b>-99.0%<br>-99.0°C<br>0</b>");
-	$outer_dht = new text("left: 1113px; top:552px;", "<b>-99.0%<br>-99.0°C<br>0</b>");
+	$pump_dht  = new text("left: 168px; top:584px; ", "<b>-99.0%<br>-99.0°C<br>6</b>");
+	$barrel_dht = new text("left: 690px; top:170px; ", "<b>-99.0%<br>-99.0°C<br>6</b>");
+	$outer_dht = new text("left: 1103px; top:552px; ", "<b>-99.0%<br>-99.0°C<br>6</b>");
 
 	$barrel_wlevel = new text("left: 655px; top:230px;", "<b>XX.Xcm (5 d)<br>today: -AA.Acm<br>yrday: -BB.Bcm</b>");
 

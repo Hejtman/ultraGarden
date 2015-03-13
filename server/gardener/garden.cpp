@@ -7,7 +7,7 @@
 extern void UploadFile2FTP(const char* filePath, const char* url);
 
 const uint8_t BH1750FVI_I2C_ADDRESS = 0x23;  // sudo i2cdetect -y 1
-const char STATUS_FILE[] = "ftp/status.php";
+const char STATUS_FILE[] = "status.php";
 
 Garden::Garden()
 
@@ -23,7 +23,10 @@ Garden::Garden()
   pumpHumidSensorStatus(WatchDog::ALERT),
   outerHumidSensor(GPIO_5),
   outerHumidSensorStatus(WatchDog::ALERT),
-  outerLightSensor(BH1750FVI_I2C_ADDRESS)
+  outerLightSensor(BH1750FVI_I2C_ADDRESS),
+  checkSensorOccurrence(10*1000),
+  sendStatusFileOccurrence(1*60*1000),
+  switchDutyCycleOccurrence(5*60*1000)
 
 {
 
@@ -74,7 +77,7 @@ void Garden::SendStatusFile()
 	if (pFile) {
 		fprintf(pFile,
 			"<?php\n"
-			"	const REFRESHINTERVAL = 61;\n"
+			"	const REFRESHINTERVAL = %u;\n"
 			"\n"
 			"	$pi_status = new text(\"left: 25px; top:25px;\", \n"
 			"		'<table>\n"
@@ -89,7 +92,8 @@ void Garden::SendStatusFile()
 			"			<tr           ><td>	Kernel:	</td><td>	X.XX.X					</td></tr>\n" //TODO
 			"			<tr           ><td>	Uptime:	</td><td>	XX Days					</td></tr>\n" //TODO
 			"		</table>');\n"
-			"\n"
+			"\n",
+			sendStatusFileOccurrence/1000
 			);
 
 		fprintf(pFile,
@@ -101,13 +105,13 @@ void Garden::SendStatusFile()
 			);
 
 		fprintf(pFile,
-			"	$pump_dht  = new text(\"left: 178px; top:584px;\", \"<b>%.1f%%<br>%.1f°C<br%u</b>\");\n"//TODO: ALERT!
-			"	$barrel_dht = new text(\"left: 700px; top:170px;\", \"<b>%.1f%%<br>%.1f°C<br>%u</b>\");\n"
-			"	$outer_dht = new text(\"left: 1113px; top:552px;\", \"<b>%.1f%%<br>%.1f°C<br>%u</b>\");\n"
+			"	$pump_dht  = new text(\"left: 168px; top:584px; %s\", \"<b>%.1f%%<br>%.1f°C<br>%u</b>\");\n"
+			"	$barrel_dht = new text(\"left: 690px; top:170px; %s\", \"<b>%.1f%%<br>%.1f°C<br>%u</b>\");\n"
+			"	$outer_dht = new text(\"left: 1103px; top:552px; %s\", \"<b>%.1f%%<br>%.1f°C<br>%u</b>\");\n"
 			"\n",
-			pumpHumidSensor.GetHumidity(), pumpHumidSensor.GetTemperature(), pumpHumidSensor.GetLastSuccess(),
-			barrelHumidSensor.GetHumidity(), barrelHumidSensor.GetTemperature(), barrelHumidSensor.GetLastSuccess(),
-			outerHumidSensor.GetHumidity(), outerHumidSensor.GetTemperature(), outerHumidSensor.GetLastSuccess()
+			(pumpHumidSensorStatus == WatchDog::ALERT) ? "background-color:red; opacity:1;" : "", pumpHumidSensor.GetHumidity(), pumpHumidSensor.GetTemperature(), pumpHumidSensor.GetLastSuccess(),
+			(barrelHumidSensorStatus == WatchDog::ALERT) ? "background-color:red; opacity:1;" : "", barrelHumidSensor.GetHumidity(), barrelHumidSensor.GetTemperature(), barrelHumidSensor.GetLastSuccess(),
+			(outerHumidSensorStatus == WatchDog::ALERT) ? "background-color:red; opacity:1;" : "", outerHumidSensor.GetHumidity(), outerHumidSensor.GetTemperature(), outerHumidSensor.GetLastSuccess()
 			);
 
 		fprintf(pFile,

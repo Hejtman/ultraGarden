@@ -33,6 +33,10 @@ class Garden : public SchedulerWakeUp
 	void SwitchDutyCycle();
 
 public:
+	const unsigned int checkSensorOccurrence;
+	const unsigned int sendStatusFileOccurrence;
+	const unsigned int switchDutyCycleOccurrence;
+
 	Garden();
 
 	enum {  CHECK_SENSORS, SEND_STATUS_FILE, SWITCH_DUTTY_CYCLE  };
