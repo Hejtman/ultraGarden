@@ -1,5 +1,6 @@
 #include "garden.h"
-#include <stdio.h>
+#include <stdio.h>//
+#include <wiringPi.h>//
 
 const uint8_t BH1750FVI_I2C_ADDRESS = 0x23;  // sudo i2cdetect -y 1
 const uint8_t IGNORE_FAILED_READINGS = 10;
@@ -19,15 +20,22 @@ Garden::Garden()
 
 }
 
-void Garden::f()
+void Garden::SchedulerWakeUpCall(const uint8_t id)
 {
-	printf("ok\n");
+	switch (id) {
+		case CHECK_SENSORS:
+			CheckSensors();
+			break;
 
-	CheckSensors();
+		case SWITCH_DUTTY_CYCLE:
+			SwitchDutyCycle();
+			break;
+	}
 }
 
 void Garden::CheckSensors()
 {
+	printf("%d\tCheckSensors\n", millis()); // debug log
 //	barrelHumidSensor.ReadValue();
 //	pumpHumidSensor.ReadValue();
 //	outerHumidSensor.ReadValue();
@@ -40,6 +48,11 @@ void Garden::CheckSensors()
 	*/
 }
 
+void Garden::SwitchDutyCycle()
+{
+	printf("%d\tSwitchDutyCycle\n", millis()); // debug log
+
+}
 /*    for(int i=0 ; i<100 ; ++i) {
 //        uint16_t value = 0;
 //        lightSensor1.ReadValue(value);

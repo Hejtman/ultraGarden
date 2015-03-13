@@ -6,9 +6,9 @@
 #include "../hw/dht22.h"
 #include "../hw/relay.h"
 #include "../hw/tidegate.h"
-#include "callback.h"
+#include "scheduler.h"
 
-class Garden : public Callback
+class Garden : public SchedulerWakeUp
 {
 // state:       // Fogging, Airing, Idling
 
@@ -26,8 +26,12 @@ class Garden : public Callback
 
 public:
 	Garden();
+
+	enum {  CHECK_SENSORS, SWITCH_DUTTY_CYCLE  };
+	void SchedulerWakeUpCall(const uint8_t id);
+
 	void CheckSensors();
-	void f();
+	void SwitchDutyCycle();
 };
 
 

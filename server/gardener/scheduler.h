@@ -5,13 +5,20 @@
 #include <vector>
 #include <stdint.h>
 
+class SchedulerWakeUp
+{
+public:
+	virtual void SchedulerWakeUpCall(const uint8_t id) = 0;
+	virtual ~SchedulerWakeUp() = 0;
+};
+
 class Scheduler
 {
 	struct Task{
-		const unsigned int id;
 		unsigned int time;
 		const unsigned int reoccurrence;
-		void (*f)();
+		SchedulerWakeUp* wup;
+		const uint8_t id;
 		
 		void doTask();
 	};
@@ -27,7 +34,7 @@ public:
 
 	Task* NextTask();
 
-	void RegisterTask(const unsigned int id, const unsigned int time, const unsigned int reoccurrence, void (*f)());
+	void RegisterTask(const unsigned int time, const unsigned int reoccurrence, SchedulerWakeUp* wup, const uint8_t id = 0);
 };
 
 

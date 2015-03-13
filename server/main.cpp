@@ -13,13 +13,13 @@ int main(int, char **)
 	Gardener gardener;
 	if ( gardener.StartLoop(Gardener::AUTO) != 0 ) {
 
-		// log: gardner AUTO mode failed!  SAFE mode started!
+		// TODO log: gardner AUTO mode failed!  SAFE mode started!
 		if ( gardener.StartLoop(Gardener::SAFE) != 0 ) {
 
-			// log: gardener SAFE mode failed!  EMERGENCY SHUT-DOWN activated
+			// TODO log: gardener SAFE mode failed!  EMERGENCY SHUT-DOWN activated
 			if ( gardener.StartLoop(Gardener::EMERGENCY) != 0 ) {
 
-				// log: gardener EMERGENCY SHUT-DOWN mode failed!  You are doomed! DOOMED!
+				// TODO log: gardener EMERGENCY SHUT-DOWN mode failed!  You are doomed! DOOMED!
 				return 1;
 			}
 		}

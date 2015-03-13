@@ -1,5 +1,9 @@
 #include "scheduler.h"
 #include <wiringPi.h>
+#include <stdlib.h>
+
+
+SchedulerWakeUp::~SchedulerWakeUp(){}
 
 
 Scheduler::Scheduler()
@@ -16,11 +20,15 @@ void Scheduler::StartLoop()
 		const unsigned int t = millis();
 
 		Task* nt = NextTask();
-
-		if (nt->time > t)
-			delayMicroseconds(nt->time - t);
-		else
-			nt->doTask();
+		if (nt){
+			if (nt->time > t)
+				delay(nt->time - t);
+			else
+				nt->doTask();
+		} else {
+			// TODO: log empty scheduler
+			delay(100);
+		}
 	}
 }
 
@@ -33,6 +41,9 @@ void Scheduler::StopLoop()
 
 Scheduler::Task* Scheduler::NextTask()
 {
+	if (tasks.empty())
+		return NULL;
+
 	std::vector<Task>::iterator it = tasks.begin();
 	Task* next = &(*it);
 	
@@ -46,23 +57,27 @@ Scheduler::Task* Scheduler::NextTask()
 }
 
 
-void Scheduler::RegisterTask(const unsigned int id, const unsigned int time, const unsigned int reoccurrence, void (*f)())
+void Scheduler::RegisterTask(const unsigned int time, const unsigned int reoccurrence, SchedulerWakeUp* wup, const uint8_t id)
 {
-	tasks.push_back( Task{id, time, reoccurrence, f} );
+	tasks.push_back( Task{time, reoccurrence, wup, id} );
 }
-
 
 void Scheduler::Task::doTask()
 {
 	// fire task and prepare next re-occurrence
-	f();
+	wup->SchedulerWakeUpCall(id);
 
-	const unsigned int t = millis();
+	if (reoccurrence) {
+		const unsigned int t = millis();
 
-	// ignore missed occurrences
-	// uint wrapps after 49days
-	do
-		time += reoccurrence;
-	while(t > time && time > reoccurrence);
+		// ignore missed occurrences
+		// uint wrapps after 49days
+		do
+			time += reoccurrence;
+		while(t > time && time > reoccurrence);
+	} else {
+		// TODO: remove this task from vector
+		// TODO: vector > list
+	}
 }
 

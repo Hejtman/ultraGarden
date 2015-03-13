@@ -5,11 +5,12 @@
 #include "garden.h"
 #include "scheduler.h"
 
-class Gardener : public Garden
+class Gardener
 {
+	Garden garden;
+
 public:
 	enum Mode{  MANUAL, AUTO, SAFE, EMERGENCY  };
-	enum TaskId{  CHECK_COMMAND_FILE, CHECK_SENSORS, SEND_STATUS_FILE, SWITCH_DUTTY_CYCLE, REFLECT_LIGHT, PUMPING_CYCLE  };
 
 private:
 	Scheduler	scheduler;
