@@ -27,6 +27,7 @@ class Garden : public SchedulerWakeUp
 	dht22			outerHumidSensor;
 	WatchDog::Color	outerHumidSensorStatus;
 	bh1750			outerLightSensor;
+	WatchDog::Color	outerLightSensorStatus;
 
 	void CheckSensors();
 	void SendStatusFile();

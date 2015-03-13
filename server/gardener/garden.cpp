@@ -8,6 +8,7 @@ extern void UploadFile2FTP(const char* filePath, const char* url);
 
 const uint8_t BH1750FVI_I2C_ADDRESS = 0x23;  // sudo i2cdetect -y 1
 const char STATUS_FILE[] = "status.php";
+const char ALERT_STYLE[] = "background-color:red; opacity:1;";
 
 Garden::Garden()
 
@@ -24,6 +25,7 @@ Garden::Garden()
   outerHumidSensor(GPIO_5),
   outerHumidSensorStatus(WatchDog::ALERT),
   outerLightSensor(BH1750FVI_I2C_ADDRESS),
+  outerLightSensorStatus(WatchDog::ALERT),
   checkSensorOccurrence(10*1000),
   sendStatusFileOccurrence(1*60*1000),
   switchDutyCycleOccurrence(5*60*1000)
@@ -53,14 +55,10 @@ void Garden::CheckSensors()
 {
 	printf("%d\tCheckSensors\n", millis()); // debug log
 
-	barrelHumidSensor.ReadValues();
-	pumpHumidSensor.ReadValues();
-	outerHumidSensor.ReadValues();
-	outerLightSensor.ReadValue();
-
-	barrelHumidSensorStatus = watchDog.GetHumidStatus( barrelHumidSensor.GetLastSuccess() );
-	pumpHumidSensorStatus = watchDog.GetHumidStatus( pumpHumidSensor.GetLastSuccess() );
-	outerHumidSensorStatus = watchDog.GetHumidStatus( outerHumidSensor.GetLastSuccess() );
+	barrelHumidSensorStatus = barrelHumidSensor.ReadValues() ?  WatchDog::ALERT : watchDog.GetHumidStatus( barrelHumidSensor.GetLastSuccess() );
+	pumpHumidSensorStatus = pumpHumidSensor.ReadValues() ?  WatchDog::ALERT : watchDog.GetHumidStatus( pumpHumidSensor.GetLastSuccess() );
+	outerHumidSensorStatus = outerHumidSensor.ReadValues() ?  WatchDog::ALERT : watchDog.GetHumidStatus( outerHumidSensor.GetLastSuccess() );
+	outerLightSensorStatus = outerLightSensor.ReadValue() ?  WatchDog::ALERT : WatchDog::OK;
 
 	/* TODO: WATCHDOG for sensors
 	switch (DutyCycle) {
@@ -109,17 +107,17 @@ void Garden::SendStatusFile()
 			"	$barrel_dht = new text(\"left: 690px; top:170px; %s\", \"<b>%.1f%%<br>%.1f°C<br>%u</b>\");\n"
 			"	$outer_dht = new text(\"left: 1103px; top:552px; %s\", \"<b>%.1f%%<br>%.1f°C<br>%u</b>\");\n"
 			"\n",
-			(pumpHumidSensorStatus == WatchDog::ALERT) ? "background-color:red; opacity:1;" : "", pumpHumidSensor.GetHumidity(), pumpHumidSensor.GetTemperature(), pumpHumidSensor.GetLastSuccess(),
-			(barrelHumidSensorStatus == WatchDog::ALERT) ? "background-color:red; opacity:1;" : "", barrelHumidSensor.GetHumidity(), barrelHumidSensor.GetTemperature(), barrelHumidSensor.GetLastSuccess(),
-			(outerHumidSensorStatus == WatchDog::ALERT) ? "background-color:red; opacity:1;" : "", outerHumidSensor.GetHumidity(), outerHumidSensor.GetTemperature(), outerHumidSensor.GetLastSuccess()
+			pumpHumidSensorStatus == WatchDog::ALERT  ? ALERT_STYLE : "", pumpHumidSensor.GetHumidity(), pumpHumidSensor.GetTemperature(), pumpHumidSensor.GetLastSuccess(),
+			barrelHumidSensorStatus == WatchDog::ALERT  ? ALERT_STYLE : "", barrelHumidSensor.GetHumidity(), barrelHumidSensor.GetTemperature(), barrelHumidSensor.GetLastSuccess(),
+			outerHumidSensorStatus == WatchDog::ALERT  ? ALERT_STYLE : "", outerHumidSensor.GetHumidity(), outerHumidSensor.GetTemperature(), outerHumidSensor.GetLastSuccess()
 			);
 
 		fprintf(pFile,
 			"	$barrel_wlevel = new text(\"left: 655px; top:230px;\", \"<b>XX.Xcm (5 d)<br>today: -AA.Acm<br>yrday: -BB.Bcm</b>\");\n" //TODO
 			"\n"
-			"	$outer_light = new text(\"left: 950px; top:571px;\", \"<b>%d Lux</b>\");\n"
+			"	$outer_light = new text(\"left: 950px; top:571px; %s\", \"<b>%d Lux</b>\");\n"
 			"?>\n",
-			outerLightSensor.GetValue()
+			(outerLightSensorStatus == WatchDog::ALERT) ? "background-color:red; opacity:1;" : "",outerLightSensor.GetValue()
 			);
 
 		fclose(pFile);

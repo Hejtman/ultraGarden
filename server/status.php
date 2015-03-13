@@ -18,11 +18,11 @@
 	$pump_tidegate = new image("pump_tidegate_", "closed", ".gif");
 	$barrel_tidegate = new image("barrel_tidegate_", "closed", ".gif");
 
-	$pump_dht  = new text("left: 168px; top:584px; ", "<b>-99.0%<br>-99.0°C<br>6</b>");
-	$barrel_dht = new text("left: 690px; top:170px; ", "<b>-99.0%<br>-99.0°C<br>6</b>");
-	$outer_dht = new text("left: 1103px; top:552px; ", "<b>-99.0%<br>-99.0°C<br>6</b>");
+	$pump_dht  = new text("left: 168px; top:584px; background-color:red; opacity:1;", "<b>-99.0%<br>-99.0°C<br>255</b>");
+	$barrel_dht = new text("left: 690px; top:170px; background-color:red; opacity:1;", "<b>-99.0%<br>-99.0°C<br>255</b>");
+	$outer_dht = new text("left: 1103px; top:552px; background-color:red; opacity:1;", "<b>-99.0%<br>-99.0°C<br>255</b>");
 
 	$barrel_wlevel = new text("left: 655px; top:230px;", "<b>XX.Xcm (5 d)<br>today: -AA.Acm<br>yrday: -BB.Bcm</b>");
 
-	$outer_light = new text("left: 950px; top:571px;", "<b>0 Lux</b>");
+	$outer_light = new text("left: 950px; top:571px; background-color:red; opacity:1;", "<b>0 Lux</b>");
 ?>

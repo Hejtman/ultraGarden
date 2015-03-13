@@ -63,7 +63,9 @@ int dht22::ReadValues()
 		return lastSuccReading = 0;
 	} else {
 		// reading failed, return latest good values
-		return ++lastSuccReading;
+		if (lastSuccReading < 0xFF)
+			++lastSuccReading;
+		return lastSuccReading;
 	}
 }
 
