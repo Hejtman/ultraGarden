@@ -1,10 +1,10 @@
-#include "status.h"
-
+#include "garden.h"
+#include <stdio.h>
 
 const uint8_t BH1750FVI_I2C_ADDRESS = 0x23;  // sudo i2cdetect -y 1
 const uint8_t IGNORE_FAILED_READINGS = 10;
 
-Status::Status()
+Garden::Garden()
 
 : barrelFogRelay(GPIO_0),
   barrelFunRelay(GPIO_0),
@@ -17,6 +17,27 @@ Status::Status()
   outerLightSensor(BH1750FVI_I2C_ADDRESS)
 {
 
+}
+
+void Garden::f()
+{
+	printf("ok\n");
+
+	CheckSensors();
+}
+
+void Garden::CheckSensors()
+{
+//	barrelHumidSensor.ReadValue();
+//	pumpHumidSensor.ReadValue();
+//	outerHumidSensor.ReadValue();
+//	outerLightSensor.ReadValue();
+
+	/* security checks
+	switch (DutyCycle) {
+		case FOGGING: is barel & pump humidity going up?
+	}
+	*/
 }
 
 /*    for(int i=0 ; i<100 ; ++i) {

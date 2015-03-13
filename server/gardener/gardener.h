@@ -2,10 +2,10 @@
 #define GARDENER_H
 
 
-#include "status.h"
+#include "garden.h"
 #include "scheduler.h"
 
-class Gardener : public Status
+class Gardener : public Garden
 {
 public:
 	enum Mode{  MANUAL, AUTO, SAFE, EMERGENCY  };

@@ -6,8 +6,9 @@
 #include "../hw/dht22.h"
 #include "../hw/relay.h"
 #include "../hw/tidegate.h"
+#include "callback.h"
 
-class Status
+class Garden : public Callback
 {
 // state:       // Fogging, Airing, Idling
 
@@ -24,8 +25,9 @@ class Status
 	bh1750		outerLightSensor;
 
 public:
-//	sensors
-	Status();	
+	Garden();
+	void CheckSensors();
+	void f();
 };
 
 
