@@ -20,6 +20,8 @@ echo '<div class="sensorText" style="' . $pi_status->getStyle()  . '">' . $pi_st
 echo '<img src="' . $pump_tidegate->getImgPath()  . '" style="position: absolute; left:0px; top:0px;">';
 echo '<img src="' . $barrel_tidegate->getImgPath() . '" style="position: absolute; left:0px; top:0px;">';
 
+echo '<div class="sensorText" style="' . $pump->getStyle()  . '">' . $pump->getText()  . '</div>';
+
 echo '<div class="sensorText" style="' . $pump_dht->getStyle()  . '">' . $pump_dht->getText()  . '</div>';
 echo '<div class="sensorText" style="' . $barrel_dht->getStyle() . '">' . $barrel_dht->getText() . '</div>';
 echo '<div class="sensorText" style="' . $outer_dht->getStyle() . '">' . $outer_dht->getText() . '</div>';
