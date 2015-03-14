@@ -91,7 +91,7 @@ void Garden::SendStatusFile()
 			"			<tr           ><td>	Uptime:	</td><td>	XX Days					</td></tr>\n" //TODO
 			"		</table>');\n"
 			"\n",
-			sendStatusFileOccurrence/1000
+			sendStatusFileOccurrence / 1000 // millis > sec
 			);
 
 		fprintf(pFile,
@@ -107,9 +107,18 @@ void Garden::SendStatusFile()
 			"	$barrel_dht = new text(\"left: 690px; top:170px; %s\", \"<b>%.1f%%<br>%.1f°C<br>%u</b>\");\n"
 			"	$outer_dht = new text(\"left: 1103px; top:552px; %s\", \"<b>%.1f%%<br>%.1f°C<br>%u</b>\");\n"
 			"\n",
-			pumpHumidSensorStatus == WatchDog::ALERT  ? ALERT_STYLE : "", pumpHumidSensor.GetHumidity(), pumpHumidSensor.GetTemperature(), pumpHumidSensor.GetLastSuccess(),
-			barrelHumidSensorStatus == WatchDog::ALERT  ? ALERT_STYLE : "", barrelHumidSensor.GetHumidity(), barrelHumidSensor.GetTemperature(), barrelHumidSensor.GetLastSuccess(),
-			outerHumidSensorStatus == WatchDog::ALERT  ? ALERT_STYLE : "", outerHumidSensor.GetHumidity(), outerHumidSensor.GetTemperature(), outerHumidSensor.GetLastSuccess()
+			pumpHumidSensorStatus == WatchDog::ALERT ?  ALERT_STYLE : "", 
+			pumpHumidSensor.GetHumidity(), 
+			pumpHumidSensor.GetTemperature(), 
+			pumpHumidSensor.GetLastSuccess(),
+			barrelHumidSensorStatus == WatchDog::ALERT ?  ALERT_STYLE : "", 
+			barrelHumidSensor.GetHumidity(), 
+			barrelHumidSensor.GetTemperature(), 
+			barrelHumidSensor.GetLastSuccess(),
+			outerHumidSensorStatus == WatchDog::ALERT ?  ALERT_STYLE : "", 
+			outerHumidSensor.GetHumidity(), 
+			outerHumidSensor.GetTemperature(), 
+			outerHumidSensor.GetLastSuccess()
 			);
 
 		fprintf(pFile,
@@ -117,7 +126,8 @@ void Garden::SendStatusFile()
 			"\n"
 			"	$outer_light = new text(\"left: 950px; top:571px; %s\", \"<b>%d Lux</b>\");\n"
 			"?>\n",
-			(outerLightSensorStatus == WatchDog::ALERT) ? "background-color:red; opacity:1;" : "",outerLightSensor.GetValue()
+			outerLightSensorStatus == WatchDog::ALERT ?  ALERT_STYLE : "",
+			outerLightSensor.GetValue()
 			);
 
 		fclose(pFile);
