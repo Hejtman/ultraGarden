@@ -2,7 +2,7 @@
 #include "../lib/lib.h"
 #include "../config.h" // OS_USER, FTP_USER, FTP_PASSWORD
 #include <stdio.h>
-#include <wiringPi.h>//
+#include <wiringPi.h>
 
 
 
@@ -11,17 +11,10 @@ const char STATUS_FILE[] = "status.php";
 const char ALERT_STYLE[] = "background-color:red; opacity:1;";
 
 Garden::Garden()
-
 : watchDog(),
   dutyCycle(IDLING),
-  dutyCycleTiming
-  ({ 1*60*1000,
-	 1*60*1000,
-	 1*60*1000 }),
-  dutyCycleNames
-  ({ "FOGGING",
-     "IDLING",
-	 "AIRING" }),
+  dutyCycleTiming{	1*60*1000,	1*60*1000,	1*60*1000	},
+  dutyCycleNames{	"FOGGING",	"IDLING",	"AIRING"	},
   dutyStartTime(0),
   barrelFogRelay(GPIO_3),
   barrelFunRelay(GPIO_2),
@@ -38,8 +31,9 @@ Garden::Garden()
   outerLightSensorStatus(WatchDog::ALERT),
   checkSensorOccurrence(10*1000),
   sendStatusFileOccurrence(1*60*1000),
-  switchDutyCycleOccurrence(10*1000)
-
+  switchDutyCycleOccurrence(10*1000),
+  pumpingCycleOccurrence(3*60*60*1000),
+  pumpingCycleDuration(15*1000)
 {
 }
 
@@ -56,6 +50,14 @@ void Garden::SchedulerWakeUpCall(const uint8_t id)
 
 		case SWITCH_DUTTY_CYCLE:
 			SwitchDutyCycle();
+			break;
+
+		case PUMPING_CYCLE_START:
+			StartPumpingCycle();
+			break;
+
+		case PUMPING_CYCLE_STOP:
+			StopPumpingCycle();
 			break;
 	}
 }
@@ -115,6 +117,14 @@ void Garden::SendStatusFile()
 			"\n",
 			(pumpTideGate.IsOpen() ? "opened" : "closed"), 
 			(barrelTideGate.IsOpen() ? "opened" : "closed")
+			);
+
+		fprintf(pFile,//TODO
+//			"	$pump = new text(\"left: 1303px; top:552px; %s\", \"<b>WAITING<br>last: %us<br>next: %us</b>\");\""
+//			"	$pump = new text(\"left: 1303px; top:552px; %s\", \"<b>PUMPING<br>time: %us<br>eta: %us</b>\");\""
+			"	$pump = new text(\"left: 1303px; top:552px; %s\", \"<b>%s<br>last: %us<br>next: %us</b>\");"
+			"\n",
+			ALERT_STYLE, "WAITING" /*PUMPING*/, 0, 0
 			);
 
 		fprintf(pFile,
@@ -193,5 +203,16 @@ void Garden::StartAiring()
 	dutyCycle = AIRING;
 }
 
+void Garden::StartPumpingCycle()
+{
+	printf("%u starting pumping cycle\n", millis()); // debug log
+	//TODO relay
+}
+
+void Garden::StopPumpingCycle()
+{
+	printf("%u stopping pumping cycle\n", millis()); // debug log
+	//TODO relay
+}
 // TODO: server restart every 49 days? (WiringPi initialie) + Time2Restart
 

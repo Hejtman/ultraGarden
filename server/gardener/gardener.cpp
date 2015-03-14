@@ -11,11 +11,14 @@ Gardener::Gardener()
 
 int8_t Gardener::StartLoop(Mode m)
 {
+	scheduler.CleanUp();
+
 //	enum TaskId{  CHECK_COMMAND_FILE, CHECK_SENSORS, SEND_STATUS_FILE, SWITCH_DUTTY_CYCLE, REFLECT_LIGHT, PUMPING_CYCLE  };
 	switch (mode = m) {
 		case AUTO:
 //			scheduler.RegisterTask(15*60*1000,		15*60*1000,		&garden, Garden::REFLECT_LIGHT);//gardner?
-//			scheduler.RegisterTask(2*60*60*1000,	2*60*60*1000,	&garden, Garden::PUMPING_CYCLE);//gardner?
+			scheduler.RegisterTask(garden.pumpingCycleOccurrence,	garden.pumpingCycleOccurrence,	&garden, Garden::PUMPING_CYCLE_START, 
+					garden.pumpingCycleDuration, Garden::PUMPING_CYCLE_STOP);
 
 		case SAFE:
 			scheduler.RegisterTask(2,	garden.switchDutyCycleOccurrence,	&garden, Garden::SWITCH_DUTTY_CYCLE);

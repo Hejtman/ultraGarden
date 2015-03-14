@@ -39,15 +39,19 @@ class Garden : public SchedulerWakeUp
 	void StartFogging();
 	void StartIdling();
 	void StartAiring();
+	void StartPumpingCycle();
+	void StopPumpingCycle();
 
 public:
 	const unsigned int checkSensorOccurrence;
 	const unsigned int sendStatusFileOccurrence;
 	const unsigned int switchDutyCycleOccurrence;
+	const unsigned int pumpingCycleOccurrence;
+	const unsigned int pumpingCycleDuration;
 
 	Garden();
 
-	enum {  CHECK_SENSORS, SEND_STATUS_FILE, SWITCH_DUTTY_CYCLE  };
+	enum {  CHECK_SENSORS, SEND_STATUS_FILE, SWITCH_DUTTY_CYCLE, PUMPING_CYCLE_START, PUMPING_CYCLE_STOP  };
 	void SchedulerWakeUpCall(const uint8_t id);
 };
 

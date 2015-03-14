@@ -1,6 +1,6 @@
 TARGET  = ultraGarden
 CXX     = g++
-CFLAGS  = -O3 -DDEBUG -std=c++0x
+CFLAGS  = -O3 -DDEBUG -std=c++11
 LFLAGS  = -L/usr/local/lib -lwiringPi -lcurl
 LIBS    =
 WARNCFLAGS  = -Wall -Wextra -Wshadow -Weffc++ -Wstrict-aliasing -ansi -pedantic
