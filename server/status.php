@@ -4,8 +4,8 @@
 	$pi_status = new text("left: 25px; top:25px;", 
 		'<table>
 			<tr           ><th colspan="2">	UltraGarden server 				</th></tr>
-			<tr           ><td>	State:	</td><td>	Fogging (XXs)			</td></tr>
-			<tr           ><td>	&nbsp;	</td><td>							</td></tr>
+			<tr           ><td>	State:	</td><td>	FOGGING (57 / 60s)			</td></tr>
+			<tr           ><td>	Time:	</td><td>	1m						</td></tr>
 			<tr           ><td>	CPU:	</td><td>	XXX MHz  XX%  XXÂ		</td></tr>
 			<tr           ><td>	Memory:	</td><td>	XXXMB / XXXMB			</td></tr>
 			<tr           ><td>	Video:	</td><td>	XXXXxXXXX (XX.XX fps)	</td></tr>

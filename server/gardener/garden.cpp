@@ -1,10 +1,10 @@
 #include "garden.h"
+#include "../lib/lib.h"
 #include "../config.h" // OS_USER, FTP_USER, FTP_PASSWORD
 #include <stdio.h>
 #include <wiringPi.h>//
 
 
-extern void UploadFile2FTP(const char* filePath, const char* url);
 
 const uint8_t BH1750FVI_I2C_ADDRESS = 0x23;  // sudo i2cdetect -y 1
 const char STATUS_FILE[] = "status.php";
@@ -13,14 +13,24 @@ const char ALERT_STYLE[] = "background-color:red; opacity:1;";
 Garden::Garden()
 
 : watchDog(),
-  barrelFogRelay(GPIO_0),
-  barrelFunRelay(GPIO_0),
+  dutyCycle(IDLING),
+  dutyCycleTiming
+  ({ 1*60*1000,
+	 1*60*1000,
+	 1*60*1000 }),
+  dutyCycleNames
+  ({ "FOGGING",
+     "IDLING",
+	 "AIRING" }),
+  dutyStartTime(0),
+  barrelFogRelay(GPIO_3),
+  barrelFunRelay(GPIO_2),
   barrelTideGate(GPIO_1, 90, 40),
-  barrelHumidSensor(GPIO_2),
+  barrelHumidSensor(GPIO_6),
   barrelHumidSensorStatus(WatchDog::ALERT),
-  pumpRelay(GPIO_0),
+  pumpRelay(GPIO_4),
   pumpTideGate(GPIO_23,  85, 40),
-  pumpHumidSensor(GPIO_5),
+  pumpHumidSensor(GPIO_25),
   pumpHumidSensorStatus(WatchDog::ALERT),
   outerHumidSensor(GPIO_5),
   outerHumidSensorStatus(WatchDog::ALERT),
@@ -28,10 +38,9 @@ Garden::Garden()
   outerLightSensorStatus(WatchDog::ALERT),
   checkSensorOccurrence(10*1000),
   sendStatusFileOccurrence(1*60*1000),
-  switchDutyCycleOccurrence(5*60*1000)
+  switchDutyCycleOccurrence(10*1000)
 
 {
-
 }
 
 void Garden::SchedulerWakeUpCall(const uint8_t id)
@@ -73,6 +82,10 @@ void Garden::SendStatusFile()
 	FILE* pFile = fopen(STATUS_FILE,"w");
 
 	if (pFile) {
+		const unsigned int t = millis();
+		unsigned int uptime;
+		char uptimeSuffix;
+		secs2time(t/1000, uptime, uptimeSuffix);
 		fprintf(pFile,
 			"<?php\n"
 			"	const REFRESHINTERVAL = %u;\n"
@@ -80,9 +93,9 @@ void Garden::SendStatusFile()
 			"	$pi_status = new text(\"left: 25px; top:25px;\", \n"
 			"		'<table>\n"
 			"			<tr           ><th colspan=\"2\">	UltraGarden server 				</th></tr>\n"
-			"			<tr           ><td>	State:	</td><td>	Fogging (XXs)			</td></tr>\n" //TODO
-			"			<tr           ><td>	&nbsp;	</td><td>							</td></tr>\n"
-			"			<tr           ><td>	CPU:	</td><td>	XXX MHz  XX%%  XXÂ		</td></tr>\n" //TODO
+			"			<tr           ><td>	State:	</td><td>	%s (%us / %us)			</td></tr>\n"
+			"			<tr           ><td>	Time:	</td><td>	%u%c						</td></tr>\n"
+			"			<tr           ><td>	CPU:	</td><td>	XXX MHz  XX%%  XX		</td></tr>\n" //TODO
 			"			<tr           ><td>	Memory:	</td><td>	XXXMB / XXXMB			</td></tr>\n" //TODO
 			"			<tr           ><td>	Video:	</td><td>	XXXXxXXXX (XX.XX fps)	</td></tr>\n" //TODO
 			"			<tr id=\"alert\"><td> Network:</td><td>	192.168.0.104			</td></tr>\n" //TODO
@@ -91,7 +104,9 @@ void Garden::SendStatusFile()
 			"			<tr           ><td>	Uptime:	</td><td>	XX Days					</td></tr>\n" //TODO
 			"		</table>');\n"
 			"\n",
-			sendStatusFileOccurrence / 1000 // millis > sec
+			sendStatusFileOccurrence / 1000, // millis > sec
+			dutyCycleNames[dutyCycle], (t-dutyStartTime)/1000, dutyCycleTiming[dutyCycle]/1000,
+			uptime, uptimeSuffix
 			);
 
 		fprintf(pFile,
@@ -139,6 +154,44 @@ void Garden::SendStatusFile()
 
 void Garden::SwitchDutyCycle()
 {
-	printf("%d\tSwitchDutyCycle\n", millis()); // debug log
+	const unsigned int t = millis();
+	printf("%s\tSwitchDutyCycle\n", dutyCycleNames[dutyCycle]); // debug log
+
+	if (dutyStartTime == 0)
+		StartFogging();
+	else if (t - dutyStartTime >= dutyCycleTiming[dutyCycle]) {
+		switch(dutyCycle)
+		{
+			case FOGGING:	StartIdling();	break;
+			case IDLING:	StartAiring();	break;
+			case AIRING:	StartFogging();	break;
+		}
+	}
 }
+
+void Garden::StartFogging()
+{
+	printf("fogging\n"); // debug log
+	//set HW
+	dutyStartTime = millis();
+	dutyCycle = FOGGING;
+}
+
+void Garden::StartIdling()
+{
+	printf("iddling\n"); // debug log
+	//set HW
+	dutyStartTime = millis();
+	dutyCycle = IDLING;
+}
+
+void Garden::StartAiring()
+{
+	printf("airing\n"); // debug log
+	//set HW
+	dutyStartTime = millis();
+	dutyCycle = AIRING;
+}
+
+// TODO: server restart every 49 days? (WiringPi initialie) + Time2Restart
 

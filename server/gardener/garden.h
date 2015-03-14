@@ -12,7 +12,11 @@
 class Garden : public SchedulerWakeUp
 {
 	WatchDog		watchDog;
-// state:       // Fogging, Airing, Idling
+	enum DutyCycle { FOGGING, IDLING, AIRING  } dutyCycle;
+  	unsigned int	dutyCycleTiming[3];
+	const char		dutyCycleNames[3][10];
+	unsigned int	dutyStartTime;
+
 	relay			barrelFogRelay;
 	relay			barrelFunRelay;
 	TideGate		barrelTideGate;
@@ -32,6 +36,9 @@ class Garden : public SchedulerWakeUp
 	void CheckSensors();
 	void SendStatusFile();
 	void SwitchDutyCycle();
+	void StartFogging();
+	void StartIdling();
+	void StartAiring();
 
 public:
 	const unsigned int checkSensorOccurrence;
