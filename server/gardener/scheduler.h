@@ -2,7 +2,7 @@
 #define SCHEDULER_H
 
 
-#include <vector>
+#include <list>
 #include <stdint.h>
 
 class SchedulerWakeUp
@@ -18,13 +18,15 @@ class Scheduler
 		unsigned int time;
 		const unsigned int reoccurrence;
 		SchedulerWakeUp* wup;
-		const uint8_t id;
-		
-		void doTask();
+		const uint8_t id_start;
+		const unsigned duration;
+		const uint8_t id_stop;
 	};
 
 	bool run;
-	std::vector<Task> tasks;
+	std::list<Task> tasks;
+	
+	void Do(std::list<Scheduler::Task>::iterator task);
 
 public:
 	Scheduler();
@@ -32,9 +34,11 @@ public:
 	void StartLoop();
 	void StopLoop();
 
-	Task* NextTask();
+	std::list<Scheduler::Task>::iterator NextTask();
 
-	void RegisterTask(const unsigned int time, const unsigned int reoccurrence, SchedulerWakeUp* wup, const uint8_t id = 0);
+	void RegisterTask(const unsigned int time, const unsigned int reoccurrence, SchedulerWakeUp* wup, const uint8_t id_start = 0, 
+			const unsigned int duration = 0, const uint8_t id_stop = 0);
+	void CleanUp();
 };
 
 

@@ -19,12 +19,12 @@ void Scheduler::StartLoop()
 	while(run){
 		const unsigned int t = millis();
 
-		Task* nt = NextTask();
-		if (nt){
+		if ( !tasks.empty() ){
+			std::list<Scheduler::Task>::iterator nt = NextTask();
 			if (nt->time > t)
 				delay(nt->time - t);
 			else
-				nt->doTask();
+				Do(nt);
 		} else {
 			// TODO: log empty scheduler
 			delay(100);
@@ -39,45 +39,50 @@ void Scheduler::StopLoop()
 }
 
 
-Scheduler::Task* Scheduler::NextTask()
+std::list<Scheduler::Task>::iterator Scheduler::NextTask()
 {
-	if (tasks.empty())
-		return NULL;
-
-	std::vector<Task>::iterator it = tasks.begin();
-	Task* next = &(*it);
+	std::list<Task>::iterator it = tasks.begin();
+	std::list<Task>::iterator next = tasks.begin();
 	
 	for(++it; it != tasks.end(); ++it) {
 	   	//FIXME after 49days uint wraps and this will always return one task
-		if (next->time > it->time)
-			next = &(*it);
+		if (next->time  >  it->time)
+			next = it;
 	}
 
 	return next;
 }
 
 
-void Scheduler::RegisterTask(const unsigned int time, const unsigned int reoccurrence, SchedulerWakeUp* wup, const uint8_t id)
+void Scheduler::RegisterTask(const unsigned int time, const unsigned int reoccurrence, SchedulerWakeUp* wup, const uint8_t id_start, const unsigned int duration, const uint8_t id_stop)
 {
-	tasks.push_back( Task{time, reoccurrence, wup, id} );
+	tasks.push_back( Task{time, reoccurrence, wup, id_start, duration, id_stop} );
 }
 
-void Scheduler::Task::doTask()
+void Scheduler::CleanUp()
 {
-	// fire task and prepare next re-occurrence
-	wup->SchedulerWakeUpCall(id);
+	tasks.clear();
+}
 
-	if (reoccurrence) {
-		const unsigned int t = millis();
+void Scheduler::Do(std::list<Scheduler::Task>::iterator task)
+{
+	const unsigned int t = millis();
+
+	// fire start task and prepare stop task or next re-occurrence if necessary
+	task->wup->SchedulerWakeUpCall(task->id_start);
+
+	if (task->duration)
+		tasks.push_back( Task{t + task->duration, 0, task->wup, task->id_stop, 0, 0} );
+
+	if (task->reoccurrence) {
 
 		// ignore missed occurrences
 		// uint wrapps after 49days
 		do
-			time += reoccurrence;
-		while(t > time && time > reoccurrence);
+			task->time += task->reoccurrence;
+		while(t > task->time && task->time > task->reoccurrence);
 	} else {
-		// TODO: remove this task from vector
-		// TODO: vector > list
+		tasks.erase(task);
 	}
 }
 
