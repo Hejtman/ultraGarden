@@ -122,9 +122,9 @@ void Garden::SendStatusFile()
 		fprintf(pFile,//TODO
 //			"	$pump = new text(\"left: 1303px; top:552px; %s\", \"<b>WAITING<br>last: %us<br>next: %us</b>\");\""
 //			"	$pump = new text(\"left: 1303px; top:552px; %s\", \"<b>PUMPING<br>time: %us<br>eta: %us</b>\");\""
-			"	$pump = new text(\"left: 1303px; top:552px; %s\", \"<b>%s<br>last: %us<br>next: %us</b>\");"
+			"	$pump = new text(\"left: 400px; top:574px; %s\", \"<b>%s<br>last: %us<br>next: %us</b>\");\n"
 			"\n",
-			ALERT_STYLE, "WAITING" /*PUMPING*/, 0, 0
+			"", "WAITING" /*PUMPING*/, 0, 0
 			);
 
 		fprintf(pFile,

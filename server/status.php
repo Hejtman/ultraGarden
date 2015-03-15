@@ -18,7 +18,8 @@
 	$pump_tidegate = new image("pump_tidegate_", "closed", ".gif");
 	$barrel_tidegate = new image("barrel_tidegate_", "closed", ".gif");
 
-	$pump = new text("left: 1303px; top:552px; background-color:red; opacity:1;", "<b>WAITING<br>last: 0s<br>next: 0s</b>");
+	$pump = new text("left: 400px; top:574px; ", "<b>WAITING<br>last: 0s<br>next: 0s</b>");
+
 	$pump_dht  = new text("left: 168px; top:584px; background-color:red; opacity:1;", "<b>-99.0%<br>-99.0°C<br>255</b>");
 	$barrel_dht = new text("left: 690px; top:170px; background-color:red; opacity:1;", "<b>-99.0%<br>-99.0°C<br>255</b>");
 	$outer_dht = new text("left: 1103px; top:552px; background-color:red; opacity:1;", "<b>-99.0%<br>-99.0°C<br>255</b>");
