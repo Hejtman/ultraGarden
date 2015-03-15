@@ -4,6 +4,7 @@
 
 #include "../hw/bh1750.h"
 #include "../hw/dht22.h"
+#include "../hw/hcsr04.h"
 #include "../hw/relay.h"
 #include "../hw/tidegate.h"
 #include "scheduler.h"
@@ -22,6 +23,7 @@ class Garden : public SchedulerWakeUp
 	TideGate		barrelTideGate;
 	dht22			barrelHumidSensor;
 	WatchDog::Color	barrelHumidSensorStatus;
+	HcSr04			barrelWatterLevel;
 
 	relay			pumpRelay;
 	TideGate		pumpTideGate;

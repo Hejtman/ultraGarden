@@ -21,6 +21,7 @@ Garden::Garden()
   barrelTideGate(GPIO_1, 90, 40),
   barrelHumidSensor(GPIO_6),
   barrelHumidSensorStatus(WatchDog::ALERT),
+  barrelWatterLevel(GPIO_27, GPIO_0),
   pumpRelay(GPIO_4),
   pumpTideGate(GPIO_23,  85, 40),
   pumpHumidSensor(GPIO_25),
@@ -70,6 +71,7 @@ void Garden::CheckSensors()
 	pumpHumidSensorStatus = pumpHumidSensor.ReadValues() ?  WatchDog::ALERT : watchDog.GetHumidStatus( pumpHumidSensor.GetLastSuccess() );
 	outerHumidSensorStatus = outerHumidSensor.ReadValues() ?  WatchDog::ALERT : watchDog.GetHumidStatus( outerHumidSensor.GetLastSuccess() );
 	outerLightSensorStatus = outerLightSensor.ReadValue() ?  WatchDog::ALERT : WatchDog::OK;
+	barrelWatterLevel.ReadValue(); //TODO watchdog
 
 	/* TODO: WATCHDOG for sensors
 	switch (DutyCycle) {
@@ -147,10 +149,11 @@ void Garden::SendStatusFile()
 			);
 
 		fprintf(pFile,
-			"	$barrel_wlevel = new text(\"left: 655px; top:230px;\", \"<b>XX.Xcm (5 d)<br>today: -AA.Acm<br>yrday: -BB.Bcm</b>\");\n" //TODO
+			"	$barrel_wlevel = new text(\"left: 655px; top:230px;\", \"<b>%umm (X d)<br>today: -AAmm<br>yrday: -BBmm</b>\");\n" // TODO
 			"\n"
 			"	$outer_light = new text(\"left: 950px; top:571px; %s\", \"<b>%d Lux</b>\");\n"
 			"?>\n",
+			barrelWatterLevel.GetValue(),
 			outerLightSensorStatus == WatchDog::ALERT ?  ALERT_STYLE : "",
 			outerLightSensor.GetValue()
 			);
@@ -159,7 +162,6 @@ void Garden::SendStatusFile()
 
 		UploadFile2FTP(STATUS_FILE, "ftp://" FTP_USER ":" FTP_PASSWORD "@ftp.malina.moxo.cz/ultraGarden/balcony1/status.php");
 	}
-	// TODO ErrorHandling
 }
 
 void Garden::SwitchDutyCycle()

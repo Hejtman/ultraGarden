@@ -24,7 +24,7 @@
 	$barrel_dht = new text("left: 690px; top:170px; background-color:red; opacity:1;", "<b>-99.0%<br>-99.0°C<br>255</b>");
 	$outer_dht = new text("left: 1103px; top:552px; background-color:red; opacity:1;", "<b>-99.0%<br>-99.0°C<br>255</b>");
 
-	$barrel_wlevel = new text("left: 655px; top:230px;", "<b>XX.Xcm (5 d)<br>today: -AA.Acm<br>yrday: -BB.Bcm</b>");
+	$barrel_wlevel = new text("left: 655px; top:230px;", "<b>86mm (X d)<br>today: -AAmm<br>yrday: -BBmm</b>");
 
 	$outer_light = new text("left: 950px; top:571px; background-color:red; opacity:1;", "<b>0 Lux</b>");
 ?>
