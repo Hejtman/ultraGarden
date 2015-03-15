@@ -184,7 +184,12 @@ void Garden::SwitchDutyCycle()
 void Garden::StartFogging()
 {
 	printf("fogging\n"); // debug log
-	//set HW
+
+	pumpTideGate.Close();
+	barrelTideGate.Close();
+	barrelFogRelay.TurnOn();
+	barrelFunRelay.TurnOn();
+
 	dutyStartTime = millis();
 	dutyCycle = FOGGING;
 }
@@ -192,7 +197,12 @@ void Garden::StartFogging()
 void Garden::StartIdling()
 {
 	printf("iddling\n"); // debug log
-	//set HW
+
+	pumpTideGate.Close();
+	barrelTideGate.Close();
+	barrelFogRelay.TurnOff();
+	barrelFunRelay.TurnOff();
+
 	dutyStartTime = millis();
 	dutyCycle = IDLING;
 }
@@ -200,7 +210,12 @@ void Garden::StartIdling()
 void Garden::StartAiring()
 {
 	printf("airing\n"); // debug log
-	//set HW
+
+	pumpTideGate.Open();
+	barrelTideGate.Open();
+	barrelFogRelay.TurnOff();
+	barrelFunRelay.TurnOn();
+
 	dutyStartTime = millis();
 	dutyCycle = AIRING;
 }
@@ -208,13 +223,16 @@ void Garden::StartAiring()
 void Garden::StartPumpingCycle()
 {
 	printf("%u starting pumping cycle\n", millis()); // debug log
-	//TODO relay
+
+	pumpRelay.TurnOn();
 }
 
 void Garden::StopPumpingCycle()
 {
 	printf("%u stopping pumping cycle\n", millis()); // debug log
-	//TODO relay
+
+	pumpRelay.TurnOff();
 }
+
 // TODO: server restart every 49 days? (WiringPi initialie) + Time2Restart
 
