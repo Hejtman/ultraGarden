@@ -1,12 +1,15 @@
 #include "log.h"
 #include "gardener/gardener.h"
 #include <wiringPi.h>
-
+#include "extlib/c-log/src/log.h"
 
 int main(int, char **)
 {
 	if ( wiringPiSetup() == -1 )
     	return 1;
+
+	log_init(LL_DEBUG, "ultra_gardend", "tmp/log");
+	LOG_NOTICE("Server started.");
 
 	piHiPri(99); // might have better performance for reading from dht22?
 
@@ -25,6 +28,7 @@ int main(int, char **)
 		}
 	}
 
+	LOG_NOTICE("Server ended.");
 	return 0;
 }
 

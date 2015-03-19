@@ -7,7 +7,7 @@
 
 
 const uint8_t BH1750FVI_I2C_ADDRESS = 0x23;  // sudo i2cdetect -y 1
-const char STATUS_FILE[] = "status.php";
+const char STATUS_FILE[] = "tmp/status.php";
 const char ALERT_STYLE[] = "background-color:red; opacity:1;";
 
 Garden::Garden()
