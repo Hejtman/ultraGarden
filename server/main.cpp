@@ -1,4 +1,3 @@
-#include "log.h"
 #include "gardener/gardener.h"
 #include <wiringPi.h>
 #include "extlib/c-log/src/log.h"
@@ -16,19 +15,19 @@ int main(int, char **)
 	Gardener gardener;
 	if ( gardener.StartLoop(Gardener::AUTO) != 0 ) {
 
-		// TODO log: gardner AUTO mode failed!  SAFE mode started!
+		LOG_ERROR("AUTO mode failed!  SAFE mode started!");
 		if ( gardener.StartLoop(Gardener::SAFE) != 0 ) {
 
-			// TODO log: gardener SAFE mode failed!  EMERGENCY SHUT-DOWN activated
+			LOG_ERROR("SAFE mode failed!  EMERGENCY SHUT-DOWN activated!");
 			if ( gardener.StartLoop(Gardener::EMERGENCY) != 0 ) {
 
-				// TODO log: gardener EMERGENCY SHUT-DOWN mode failed!  You are doomed! DOOMED!
+				LOG_ERROR("EMERGENCY SHUT-DOWN mode failed!  You are doomed! DOOMED!");
 				return 1;
 			}
 		}
 	}
 
-	LOG_NOTICE("Server ended.");
+	LOG_NOTICE("Server finished.");
 	return 0;
 }
 
