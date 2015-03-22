@@ -4,7 +4,7 @@
 
 #include "extlib/c-log/src/log.h"
 
-#define FAIL_LOG(RC) do { \
+#define FAIL_LOG(EXPR) do { \
     int r = (EXPR); \
     if (r != 0) { \
 		LOG_ERROR("'%s' ended with: %d\n", #EXPR, r); \
