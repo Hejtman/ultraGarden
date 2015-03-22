@@ -3,7 +3,7 @@
 #include "../config.h" // OS_USER, FTP_USER, FTP_PASSWORD
 #include <stdio.h>
 #include <wiringPi.h>
-
+#include "../log.h"
 
 
 const uint8_t BH1750FVI_I2C_ADDRESS = 0x23;  // sudo i2cdetect -y 1
@@ -65,7 +65,7 @@ void Garden::SchedulerWakeUpCall(const uint8_t id)
 
 void Garden::CheckSensors()
 {
-	printf("%d\tCheckSensors\n", millis()); // debug log
+	LOG_DEBUG("Checking sensors.");
 
 	barrelHumidSensorStatus = barrelHumidSensor.ReadValues() ?  WatchDog::ALERT : watchDog.GetHumidStatus( barrelHumidSensor.GetLastSuccess() );
 	pumpHumidSensorStatus = pumpHumidSensor.ReadValues() ?  WatchDog::ALERT : watchDog.GetHumidStatus( pumpHumidSensor.GetLastSuccess() );
@@ -81,7 +81,7 @@ void Garden::CheckSensors()
 
 void Garden::SendStatusFile()
 {
-	printf("%d\tSendStatusFile\n", millis()); // debug log
+	LOG_DEBUG("Sending status file");
 
 	FILE* pFile = fopen(STATUS_FILE,"w");
 
@@ -167,7 +167,7 @@ void Garden::SendStatusFile()
 void Garden::SwitchDutyCycle()
 {
 	const unsigned int t = millis();
-	printf("%s\tSwitchDutyCycle\n", dutyCycleNames[dutyCycle]); // debug log
+	LOG_DEBUG("Duty cycle (%s: %dms)", dutyCycleNames[dutyCycle], t - dutyStartTime);
 
 	if (dutyStartTime == 0)
 		StartFogging();
@@ -183,7 +183,7 @@ void Garden::SwitchDutyCycle()
 
 void Garden::StartFogging()
 {
-	printf("fogging\n"); // debug log
+	LOG_DEBUG("Starting fogging.");
 
 	pumpTideGate.Close();
 	barrelTideGate.Close();
@@ -196,7 +196,7 @@ void Garden::StartFogging()
 
 void Garden::StartIdling()
 {
-	printf("iddling\n"); // debug log
+	LOG_DEBUG("Starting idling.");
 
 	pumpTideGate.Close();
 	barrelTideGate.Close();
@@ -209,7 +209,7 @@ void Garden::StartIdling()
 
 void Garden::StartAiring()
 {
-	printf("airing\n"); // debug log
+	LOG_DEBUG("Starting airing.");
 
 	pumpTideGate.Open();
 	barrelTideGate.Open();
@@ -222,14 +222,14 @@ void Garden::StartAiring()
 
 void Garden::StartPumpingCycle()
 {
-	printf("%u starting pumping cycle\n", millis()); // debug log
+	LOG_DEBUG("Pumping started.");
 
 	pumpRelay.TurnOn();
 }
 
 void Garden::StopPumpingCycle()
 {
-	printf("%u stopping pumping cycle\n", millis()); // debug log
+	LOG_DEBUG("Pumping stopped.");
 
 	pumpRelay.TurnOff();
 }

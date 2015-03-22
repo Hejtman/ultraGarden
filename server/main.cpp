@@ -4,13 +4,12 @@
 
 int main(int, char **)
 {
+	log_init(LL_DEBUG, "ultra_gardend", "tmp/log");
 	if ( wiringPiSetup() == -1 )
     	return 1;
 
-	log_init(LL_DEBUG, "ultra_gardend", "tmp/log");
 	LOG_NOTICE("Server started.");
-
-	piHiPri(99); // might have better performance for reading from dht22?
+	piHiPri(99); // less interruptions during reading from devices (e.g. dht22)
 
 	Gardener gardener;
 	if ( gardener.StartLoop(Gardener::AUTO) != 0 ) {

@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
+#include "../log.h"
 
  
 void UploadFile2FTP(const char* filePath, const char* url)
@@ -14,7 +15,7 @@ void UploadFile2FTP(const char* filePath, const char* url)
 
 	struct stat file_info;
 	if(stat(filePath, &file_info)) {
-		printf("Couldnt open '%s': %s\n", filePath, strerror(errno));
+		LOG_ERROR("Couldnt open '%s': %s\n", filePath, strerror(errno));
 		return;
 	}
 	FILE *hd_src = fopen(filePath, "rb");
@@ -31,7 +32,7 @@ void UploadFile2FTP(const char* filePath, const char* url)
 
 		CURLcode res = curl_easy_perform(curl);
 		if(res != CURLE_OK)
-			fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+			LOG_ERROR("curl_easy_perform() failed: %s", curl_easy_strerror(res));
 
 		curl_slist_free_all (headerlist);
 		curl_easy_cleanup(curl);

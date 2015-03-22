@@ -8,7 +8,6 @@
     int r = (EXPR); \
     if (r != 0) { \
 		LOG_ERROR("'%s' ended with: %d\n", #EXPR, r); \
-        return r; \
     } \
 } while(0)
 
@@ -19,7 +18,6 @@
         return r; \
     } \
 } while(0)
-
 
 #endif // LOG_H
 

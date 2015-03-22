@@ -16,3 +16,4 @@ void secs2time(unsigned int sec, unsigned int& number, char& suffix)
 		suffix = 'd';
 	}
 }
+

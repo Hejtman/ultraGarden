@@ -1,6 +1,7 @@
 #include "scheduler.h"
 #include <wiringPi.h>
 #include <stdlib.h>
+#include "../log.h"
 
 
 SchedulerWakeUp::~SchedulerWakeUp(){}
@@ -15,6 +16,8 @@ Scheduler::Scheduler()
 
 void Scheduler::StartLoop()
 {
+	LOG_DEBUG("Loop started.");
+
 	// doTask if time is right or sleep to next action (TODO: signal waking up)
 	while(run){
 		const unsigned int t = millis();
@@ -26,7 +29,7 @@ void Scheduler::StartLoop()
 			else
 				Do(nt);
 		} else {
-			// TODO: log empty scheduler
+			LOG_ERROR("Empty scheduler queue!  Sleeping 0.1s");
 			delay(100);
 		}
 	}
@@ -36,6 +39,8 @@ void Scheduler::StartLoop()
 void Scheduler::StopLoop()
 {
 	run = false;
+
+	LOG_DEBUG("Loop stopped.");
 }
 
 
@@ -66,6 +71,7 @@ void Scheduler::CleanUp()
 
 void Scheduler::Do(std::list<Scheduler::Task>::iterator task)
 {
+	LOG_DEBUG("Task %d started", task->id_start);
 	const unsigned int t = millis();
 
 	// fire start task and prepare stop task or next re-occurrence if necessary
