@@ -15,7 +15,7 @@ void UploadFile2FTP(const char* filePath, const char* url)
 
 	struct stat file_info;
 	if(stat(filePath, &file_info)) {
-		LOG_ERROR("Couldnt open '%s': %s\n", filePath, strerror(errno));
+		LOG_ERRORF("Couldnt open '%s': %s\n", filePath, strerror(errno));
 		return;
 	}
 	FILE *hd_src = fopen(filePath, "rb");
@@ -32,7 +32,7 @@ void UploadFile2FTP(const char* filePath, const char* url)
 
 		CURLcode res = curl_easy_perform(curl);
 		if(res != CURLE_OK)
-			LOG_ERROR("curl_easy_perform() failed: %s", curl_easy_strerror(res));
+			LOG_ERRORF("curl_easy_perform() failed: %s", curl_easy_strerror(res));
 
 		curl_slist_free_all (headerlist);
 		curl_easy_cleanup(curl);

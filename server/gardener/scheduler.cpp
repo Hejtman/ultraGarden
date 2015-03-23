@@ -71,7 +71,7 @@ void Scheduler::CleanUp()
 
 void Scheduler::Do(std::list<Scheduler::Task>::iterator task)
 {
-	LOG_DEBUG("Task %d started", task->id_start);
+	LOG_DEBUGF("Task %d started", task->id_start);
 	const unsigned int t = millis();
 
 	// fire start task and prepare stop task or next re-occurrence if necessary

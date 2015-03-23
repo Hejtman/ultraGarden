@@ -7,14 +7,14 @@
 #define FAIL_LOG(EXPR) do { \
     int r = (EXPR); \
     if (r != 0) { \
-		LOG_ERROR("'%s' ended with: %d\n", #EXPR, r); \
+		LOG_ERRORF("'%s' ended with: %d\n", #EXPR, r); \
     } \
 } while(0)
 
 #define FAIL_LOG_RET(EXPR) do { \
     int r = (EXPR); \
     if (r != 0) { \
-		LOG_ERROR("'%s' ended with: %d\n", #EXPR, r); \
+		LOG_ERRORF("'%s' ended with: %d\n", #EXPR, r); \
         return r; \
     } \
 } while(0)

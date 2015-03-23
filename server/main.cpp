@@ -9,6 +9,9 @@ int main(int, char **)
     	return 1;
 
 	LOG_NOTICE("Server started.");
+	LOG_ERROR("aaaaa.");
+	LOG_ERRORF("bbb:%d",10);
+	return 0;
 	piHiPri(99); // less interruptions during reading from devices (e.g. dht22)
 
 	Gardener gardener;

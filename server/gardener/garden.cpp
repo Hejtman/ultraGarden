@@ -167,7 +167,7 @@ void Garden::SendStatusFile()
 void Garden::SwitchDutyCycle()
 {
 	const unsigned int t = millis();
-	LOG_DEBUG("Duty cycle (%s: %dms)", dutyCycleNames[dutyCycle], t - dutyStartTime);
+	LOG_DEBUGF("Duty cycle (%s: %dms)", dutyCycleNames[dutyCycle], t - dutyStartTime);
 
 	if (dutyStartTime == 0)
 		StartFogging();
