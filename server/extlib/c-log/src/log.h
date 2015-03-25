@@ -48,7 +48,7 @@ class Log_Writer
 		~Log_Writer();
 
 		bool loginit(LogLevel l, const  char *filelocation, bool append = true, bool issync = false);
-		bool log(LogLevel l,char *logformat,...);
+		bool log(LogLevel l,const char *logformat,...);
 		LogLevel get_level();
 		bool logclose();
 		//The __thread specifier may be applied to any global, file-scoped static, function-scoped static, 
