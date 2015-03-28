@@ -1,56 +1,39 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <vector>
- 
-
-class CpuMonitor
-{
-	std::vector<unsigned long long int> total_tick_old, idle_old;
-	unsigned int time_old;
-
-	int ReadFields(FILE *fp, unsigned long long int *fields);
-
-public:
-	CpuMonitor();
-
-	int GetCpuUsage();
-};
+#include "lib.h"
+#include "../log.h"
 
 
-CpuMonitor::CpuMonitor() : time_old(0) 
+CpuMonitor::CpuMonitor()
+: fp(fopen("/proc/stat", "r"), [](FILE *f){ fclose(f); }),
+  total_tick_old(),
+  idle_old()
 {
 }
 
-int CpuMonitor::ReadFields(FILE *fp, unsigned long long int *fields)
+int CpuMonitor::ReadFields(unsigned long long int *fields)
 {
 	const int BUF_MAX = 1024;
 	char buffer[BUF_MAX];
 
-	if (!fgets (buffer, BUF_MAX, fp))
-		perror ("Error");
+	FAIL_LOG(fgets(buffer, BUF_MAX, fp.get()) == NULL);
+	FAIL_LOG(fseek(fp.get(), 0, SEEK_SET));
 	// line starts with c and a string. This is to handle cpu, cpu[0-9]+
-	const int retval = sscanf(buffer, "c%*s %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", 
+	const int retval = sscanf(buffer, "c%*s %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu",
 			&fields[0], &fields[1], &fields[2], &fields[3], &fields[4], &fields[5], &fields[6], &fields[7], &fields[8], &fields[9]);
-	
+
 	if (retval == 0)
 		return -1;
 	if (retval < 4) { // Atleast 4 fields is to be read
-		fprintf (stderr, "Error reading /proc/stat cpu field\n");
+		LOG_ERROR("Error while reading /proc/stat cpu field.");
 		return 1;
 	}
 	return 0;
 }
 
-int CpuMonitor::GetCpuUsage()
+int CpuMonitor::GetCpuUsage(const uint8_t cpus_max, float* loads)
 {
-	// TODO LOG, keep fp open, dynamic closing fp
-	FILE* fp = fopen("/proc/stat", "r");
-	if (fp == NULL)
-		return 1;
-
 	const int MAX_FILDS = 10;
 	unsigned long long int fields[MAX_FILDS], total_tick, idle;
-	for (unsigned int cpu = 0  ;  ReadFields(fp, fields) == 0  ;  ++cpu)
+	for (unsigned int cpu = 0  ;  cpu < cpus_max  &&  ReadFields(fields) == 0  ;  ++cpu)
 	{
 		total_tick = 0;
 		for (int i = 0  ;  i < MAX_FILDS  ;  ++i)
@@ -66,29 +49,12 @@ int CpuMonitor::GetCpuUsage()
 			unsigned long long int del_total_tick = total_tick - total_tick_old[cpu];
 			unsigned long long int del_idle = idle - idle_old[cpu];
 
-			double percent_usage = ((del_total_tick - del_idle) / (double) del_total_tick) * 100;
-			if (cpu == 0)
-				printf ("%3.2lf%%: ", percent_usage);
-			else
-				printf ("%3.2lf%% ", percent_usage);
+			loads[cpu] = ((del_total_tick - del_idle) / (float) del_total_tick) * 100;
 
 			total_tick_old[cpu] = total_tick;
 			idle_old[cpu] = idle;
 		}
 	}
-
-	fclose(fp);
 	return 0;
 }
-/*
-int main (void)
-{
-	CpuMonitor monitor;
 
-	monitor.GetCpuUsage();
-	sleep(1);
-	printf("\n");
-	monitor.GetCpuUsage();
-	return 0;
-}
-*/
