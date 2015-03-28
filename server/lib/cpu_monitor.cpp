@@ -1,5 +1,6 @@
 #include "lib.h"
 #include "../log.h"
+#include <fstream>
 
 
 CpuMonitor::CpuMonitor()
@@ -15,7 +16,6 @@ int CpuMonitor::ReadFields(unsigned long long int *fields)
 	char buffer[BUF_MAX];
 
 	FAIL_LOG(fgets(buffer, BUF_MAX, fp.get()) == NULL);
-	FAIL_LOG(fseek(fp.get(), 0, SEEK_SET));
 	// line starts with c and a string. This is to handle cpu, cpu[0-9]+
 	const int retval = sscanf(buffer, "c%*s %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu",
 			&fields[0], &fields[1], &fields[2], &fields[3], &fields[4], &fields[5], &fields[6], &fields[7], &fields[8], &fields[9]);
@@ -55,6 +55,21 @@ int CpuMonitor::GetCpuUsage(const uint8_t cpus_max, float* loads)
 			idle_old[cpu] = idle;
 		}
 	}
+	FAIL_LOG(fseek(fp.get(), 0, SEEK_SET));
 	return 0;
+}
+
+int CpuMonitor::GetCpuClock(const uint8_t) const
+{
+	// FIXME 0 > core
+	std::unique_ptr<FILE, void (*)(FILE*)> fx(fopen("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq", "r"), [](FILE *f){ fclose(f); });
+
+	int clock = 0;
+	const int BUF_MAX = 16;
+	char buffer[BUF_MAX];
+
+	FAIL_LOG(fgets(buffer, BUF_MAX, fx.get()) == NULL);
+	FAIL_LOG(sscanf(buffer, "%d",&clock) == 1);
+	return clock;
 }
 

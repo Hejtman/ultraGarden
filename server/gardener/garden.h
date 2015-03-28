@@ -7,6 +7,7 @@
 #include "../hw/hcsr04.h"
 #include "../hw/relay.h"
 #include "../hw/tidegate.h"
+#include "../lib/lib.h"
 #include "scheduler.h"
 #include "watchdog.h"
 
@@ -34,6 +35,8 @@ class Garden : public SchedulerWakeUp
 	WatchDog::Color	outerHumidSensorStatus;
 	bh1750			outerLightSensor;
 	WatchDog::Color	outerLightSensorStatus;
+
+	CpuMonitor		cpuMonitor;
 
 	void CheckSensors();
 	void SendStatusFile();

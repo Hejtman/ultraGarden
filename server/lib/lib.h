@@ -21,6 +21,7 @@ public:
 	CpuMonitor();
 
 	int GetCpuUsage(const uint8_t cpus_max, float* loads);
+	int GetCpuClock(const uint8_t core) const;
 };
 
 

@@ -30,6 +30,7 @@ Garden::Garden()
   outerHumidSensorStatus(WatchDog::ALERT),
   outerLightSensor(BH1750FVI_I2C_ADDRESS),
   outerLightSensorStatus(WatchDog::ALERT),
+  cpuMonitor(),
   checkSensorOccurrence(10*1000),
   sendStatusFileOccurrence(1*60*1000),
   switchDutyCycleOccurrence(10*1000),
@@ -90,6 +91,10 @@ void Garden::SendStatusFile()
 		unsigned int uptime;
 		char uptimeSuffix;
 		secs2time(t/1000, uptime, uptimeSuffix);
+
+		float cpuLoad[5];
+		cpuMonitor.GetCpuUsage(5, cpuLoad);
+
 		fprintf(pFile,
 			"<?php\n"
 			"	const REFRESHINTERVAL = %u;\n"
@@ -99,7 +104,7 @@ void Garden::SendStatusFile()
 			"			<tr           ><th colspan=\"2\">	UltraGarden server 				</th></tr>\n"
 			"			<tr           ><td>	State:	</td><td>	%s (%us / %us)			</td></tr>\n"
 			"			<tr           ><td>	Time:	</td><td>	%u%c						</td></tr>\n"
-			"			<tr           ><td>	CPU:	</td><td>	XXX MHz  XX%%  XX		</td></tr>\n" //TODO
+			"			<tr           ><td>	CPU:	</td><td>	%d MHz (%d%%, %d%%, %d%%, %d%%)</td></tr>\n"
 			"			<tr           ><td>	Memory:	</td><td>	XXXMB / XXXMB			</td></tr>\n" //TODO
 			"			<tr           ><td>	Video:	</td><td>	XXXXxXXXX (XX.XX fps)	</td></tr>\n" //TODO
 			"			<tr id=\"alert\"><td> Network:</td><td>	192.168.0.104			</td></tr>\n" //TODO
@@ -110,7 +115,8 @@ void Garden::SendStatusFile()
 			"\n",
 			sendStatusFileOccurrence / 1000, // millis > sec
 			dutyCycleNames[dutyCycle], (t-dutyStartTime)/1000, dutyCycleTiming[dutyCycle]/1000,
-			uptime, uptimeSuffix
+			uptime, uptimeSuffix,
+			cpuMonitor.GetCpuClock(0) / 1000, (int)cpuLoad[1], (int)cpuLoad[2], (int)cpuLoad[3], (int)cpuLoad[4]
 			);
 
 		fprintf(pFile,
