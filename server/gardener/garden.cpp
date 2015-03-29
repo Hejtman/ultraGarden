@@ -113,15 +113,25 @@ void Garden::SendStatusFile()
 
 		WriteCPUStatusLine(pFile);
 
+		const int BUFFER_SIZE = 128;
+		char line[BUFFER_SIZE];
+		char diskInfo[3][16] = { 0 };
+		FILE* apipe = popen("df -h /", "r");
+		while( fgets(line, BUFFER_SIZE, apipe) ) {
+			if (sscanf(line, "/%*s	%s	%*s	%s	%s", diskInfo[0], diskInfo[1], diskInfo[2]))
+				break;
+		}
+		pclose(apipe);
+
 		fprintf(pFile,
 			"			<tr           ><td>	Memory:	</td><td>	%luMB / %luMB			</td></tr>\n"
-			"			<tr           ><td>	Video:	</td><td>	XXXXxXXXX (XX.XX fps)	</td></tr>\n" //TODO
+			"			<tr           ><td>	Storage:</td><td>	%s / %s (%s)			</td></tr>\n"
 			"			<tr id=\"alert\"><td> Network:</td><td>	192.168.0.104			</td></tr>\n" //TODO
-			"			<tr           ><td>	Storage:</td><td>	XXXXGB / XXXXGB (XX%%)	</td></tr>\n" //TODO
 			"			<tr           ><td>	Kernel:	</td><td>	X.XX.X					</td></tr>\n" //TODO
 			"		</table>');\n"
 			"\n",
-			info.freeram/(1024*1024), info.totalram/(1024*1024)
+			info.freeram/(1024*1024), info.totalram/(1024*1024),
+			diskInfo[1], diskInfo[0], diskInfo[2]
 			);
 
 		fprintf(pFile,
