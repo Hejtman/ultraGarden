@@ -3,6 +3,7 @@
 #include "../config.h" // OS_USER, FTP_USER, FTP_PASSWORD
 #include <stdio.h>
 #include <wiringPi.h>
+#include <sys/sysinfo.h>
 #include "../log.h"
 
 
@@ -88,11 +89,14 @@ void Garden::SendStatusFile()
 
 	if (pFile) {
 		const unsigned int t = millis();
-		unsigned int uptime;
-		char uptimeSuffix;
+		unsigned int uptime, rpiUptime;
+		char uptimeSuffix, rpiUptimeSuffix;
 		secs2time(t/1000, uptime, uptimeSuffix);
 
-		// FIXME: print correct number of CPUs
+		struct sysinfo info;
+		sysinfo(&info);
+		secs2time(info.uptime, rpiUptime, rpiUptimeSuffix);
+
 		fprintf(pFile,
 			"<?php\n"
 			"	const REFRESHINTERVAL = %u;\n"
@@ -101,23 +105,23 @@ void Garden::SendStatusFile()
 			"		'<table>\n"
 			"			<tr           ><th colspan=\"2\">	UltraGarden server 				</th></tr>\n"
 			"			<tr           ><td>	State:	</td><td>	%s (%us / %us)			</td></tr>\n"
-			"			<tr           ><td>	Time:	</td><td>	%u%c						</td></tr>\n",
+			"			<tr           ><td>	Uptime:	</td><td>	%u%c / %u%c				</td></tr>\n",
 			sendStatusFileOccurrence / 1000, // millis > sec
 			dutyCycleNames[dutyCycle], (t-dutyStartTime)/1000, dutyCycleTiming[dutyCycle]/1000,
-			uptime, uptimeSuffix
+			uptime, uptimeSuffix, rpiUptime, rpiUptimeSuffix
 			);
 
 		WriteCPUStatusLine(pFile);
 
 		fprintf(pFile,
-			"			<tr           ><td>	Memory:	</td><td>	XXXMB / XXXMB			</td></tr>\n" //TODO
+			"			<tr           ><td>	Memory:	</td><td>	%luMB / %luMB			</td></tr>\n"
 			"			<tr           ><td>	Video:	</td><td>	XXXXxXXXX (XX.XX fps)	</td></tr>\n" //TODO
 			"			<tr id=\"alert\"><td> Network:</td><td>	192.168.0.104			</td></tr>\n" //TODO
 			"			<tr           ><td>	Storage:</td><td>	XXXXGB / XXXXGB (XX%%)	</td></tr>\n" //TODO
 			"			<tr           ><td>	Kernel:	</td><td>	X.XX.X					</td></tr>\n" //TODO
-			"			<tr           ><td>	Uptime:	</td><td>	XX Days					</td></tr>\n" //TODO
 			"		</table>');\n"
-			"\n"
+			"\n",
+			info.freeram/(1024*1024), info.totalram/(1024*1024)
 			);
 
 		fprintf(pFile,
