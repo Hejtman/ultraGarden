@@ -2,21 +2,23 @@
 #define GARDENER_H
 
 
+#include "remote.h"
 #include "garden.h"
 #include "scheduler.h"
 
-class Gardener
+class Gardener : public SchedulerWakeUp
 {
-	Garden garden;
-
-public:
-	enum Mode{  MANUAL, AUTO, SAFE, EMERGENCY  };
-
-private:
+	Garden		garden;
+	Remote		remote;
 	Scheduler	scheduler;
-	Mode		mode;
+
+	enum {  CHECK_COMMAND_FILE  };
+
+	void CheckCommandFile();
+	void SchedulerWakeUpCall(const uint8_t id);
 
 public:
+	enum Mode{  MANUAL, AUTO, SAFE, EMERGENCY  } mode;
 
 	Gardener();
 	int8_t StartLoop(Mode m);

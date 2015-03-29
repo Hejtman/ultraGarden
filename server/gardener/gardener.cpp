@@ -4,9 +4,26 @@
 
 Gardener::Gardener() 
 : garden(),
+  remote(),
   scheduler(),
   mode(MANUAL)
 {
+}
+
+void Gardener::SchedulerWakeUpCall(const uint8_t id)
+{
+	switch (id) {
+		case CHECK_COMMAND_FILE:	CheckCommandFile();		break;
+	}
+}
+
+void Gardener::CheckCommandFile()
+{
+// switch(remote.ParseFile())
+// {
+//		case SCHEDULER_STOP:   scheduler.Stop();   break;
+//		case GARDEN_MODE...
+// }
 }
 
 int8_t Gardener::StartLoop(Mode m)
@@ -25,7 +42,7 @@ int8_t Gardener::StartLoop(Mode m)
 
 		case MANUAL:
 		case EMERGENCY:
-//			scheduler.RegisterTask(0,				1*1000,			&remote, Remote::CHECK_COMMAND_FILE);
+			scheduler.RegisterTask(0,	1*1000,								this,	 CHECK_COMMAND_FILE);
 			scheduler.RegisterTask(0, 	garden.checkSensorOccurrence,		&garden, Garden::CHECK_SENSORS);
 			scheduler.RegisterTask(1,	garden.sendStatusFileOccurrence,	&garden, Garden::SEND_STATUS_FILE);
 	}
