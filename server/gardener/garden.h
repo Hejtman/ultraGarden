@@ -40,6 +40,8 @@ class Garden : public SchedulerWakeUp
 
 	void CheckSensors();
 	void SendStatusFile();
+	void WriteCPUStatusLine(FILE* pFile);
+	
 	void SwitchDutyCycle();
 	void StartFogging();
 	void StartIdling();

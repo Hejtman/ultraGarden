@@ -20,7 +20,7 @@ class CpuMonitor
 public:
 	CpuMonitor();
 
-	int GetCpuUsage(const uint8_t cpus_max, float* loads);
+	int GetCpuUsage(const uint8_t cpus_max, float* loads, uint8_t& cpus);
 	int GetCpuClock(const uint8_t core) const;
 };
 

@@ -92,9 +92,7 @@ void Garden::SendStatusFile()
 		char uptimeSuffix;
 		secs2time(t/1000, uptime, uptimeSuffix);
 
-		float cpuLoad[5];
-		cpuMonitor.GetCpuUsage(5, cpuLoad);
-
+		// FIXME: print correct number of CPUs
 		fprintf(pFile,
 			"<?php\n"
 			"	const REFRESHINTERVAL = %u;\n"
@@ -103,8 +101,15 @@ void Garden::SendStatusFile()
 			"		'<table>\n"
 			"			<tr           ><th colspan=\"2\">	UltraGarden server 				</th></tr>\n"
 			"			<tr           ><td>	State:	</td><td>	%s (%us / %us)			</td></tr>\n"
-			"			<tr           ><td>	Time:	</td><td>	%u%c						</td></tr>\n"
-			"			<tr           ><td>	CPU:	</td><td>	%d MHz (%d%%, %d%%, %d%%, %d%%)</td></tr>\n"
+			"			<tr           ><td>	Time:	</td><td>	%u%c						</td></tr>\n",
+			sendStatusFileOccurrence / 1000, // millis > sec
+			dutyCycleNames[dutyCycle], (t-dutyStartTime)/1000, dutyCycleTiming[dutyCycle]/1000,
+			uptime, uptimeSuffix
+			);
+
+		WriteCPUStatusLine(pFile);
+
+		fprintf(pFile,
 			"			<tr           ><td>	Memory:	</td><td>	XXXMB / XXXMB			</td></tr>\n" //TODO
 			"			<tr           ><td>	Video:	</td><td>	XXXXxXXXX (XX.XX fps)	</td></tr>\n" //TODO
 			"			<tr id=\"alert\"><td> Network:</td><td>	192.168.0.104			</td></tr>\n" //TODO
@@ -112,11 +117,7 @@ void Garden::SendStatusFile()
 			"			<tr           ><td>	Kernel:	</td><td>	X.XX.X					</td></tr>\n" //TODO
 			"			<tr           ><td>	Uptime:	</td><td>	XX Days					</td></tr>\n" //TODO
 			"		</table>');\n"
-			"\n",
-			sendStatusFileOccurrence / 1000, // millis > sec
-			dutyCycleNames[dutyCycle], (t-dutyStartTime)/1000, dutyCycleTiming[dutyCycle]/1000,
-			uptime, uptimeSuffix,
-			cpuMonitor.GetCpuClock(0) / 1000, (int)cpuLoad[1], (int)cpuLoad[2], (int)cpuLoad[3], (int)cpuLoad[4]
+			"\n"
 			);
 
 		fprintf(pFile,
@@ -168,6 +169,21 @@ void Garden::SendStatusFile()
 
 		UploadFile2FTP(STATUS_FILE, "ftp://" FTP_USER ":" FTP_PASSWORD "@ftp.malina.moxo.cz/ultraGarden/balcony1/status.php");
 	}
+}
+
+void Garden::WriteCPUStatusLine(FILE* pFile)
+{
+	float cpuLoad[5] = {0};
+	uint8_t cpus;
+	cpuMonitor.GetCpuUsage(5, cpuLoad, cpus);
+
+	fprintf(pFile,"			<tr           ><td>	CPU:	</td><td>	%d MHz (", cpuMonitor.GetCpuClock(0) / 1000);
+	for (int i = 1  ;  i < cpus  ;  ){
+		fprintf(pFile, "%d%%",(int)cpuLoad[i]);
+		if (++i < cpus)
+			fprintf(pFile, " ");
+	}
+	fprintf(pFile, ")</td></tr>\n");
 }
 
 void Garden::SwitchDutyCycle()

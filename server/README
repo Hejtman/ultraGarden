@@ -1,0 +1,3 @@
+debug:
+	sudo gdb ultraGarden -tui -d ~/ultraGarden/server/
+	handle SIGILL nostop

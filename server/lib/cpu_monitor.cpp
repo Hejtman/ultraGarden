@@ -29,11 +29,12 @@ int CpuMonitor::ReadFields(unsigned long long int *fields)
 	return 0;
 }
 
-int CpuMonitor::GetCpuUsage(const uint8_t cpus_max, float* loads)
+int CpuMonitor::GetCpuUsage(const uint8_t cpus_max, float* loads, uint8_t& cpus)
 {
 	const int MAX_FILDS = 10;
 	unsigned long long int fields[MAX_FILDS], total_tick, idle;
-	for (unsigned int cpu = 0  ;  cpu < cpus_max  &&  ReadFields(fields) == 0  ;  ++cpu)
+	unsigned int cpu = 0;
+	for (  ;  cpu < cpus_max  &&  ReadFields(fields) == 0  ;  ++cpu)
 	{
 		total_tick = 0;
 		for (int i = 0  ;  i < MAX_FILDS  ;  ++i)
@@ -55,7 +56,8 @@ int CpuMonitor::GetCpuUsage(const uint8_t cpus_max, float* loads)
 			idle_old[cpu] = idle;
 		}
 	}
-	FAIL_LOG(fseek(fp.get(), 0, SEEK_SET));
+	cpus = cpu;
+	fp.reset(fopen("/proc/stat", "r"));
 	return 0;
 }
 
@@ -69,7 +71,7 @@ int CpuMonitor::GetCpuClock(const uint8_t) const
 	char buffer[BUF_MAX];
 
 	FAIL_LOG(fgets(buffer, BUF_MAX, fx.get()) == NULL);
-	FAIL_LOG(sscanf(buffer, "%d",&clock) == 1);
+	FAIL_LOG(sscanf(buffer, "%d",&clock) != 1);
 	return clock;
 }
 
