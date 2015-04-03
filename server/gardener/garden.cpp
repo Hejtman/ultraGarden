@@ -123,15 +123,22 @@ void Garden::SendStatusFile()
 		}
 		pclose(apipe);
 
+		char os[10]={0}, osVer[10]={0}, krnlVer[15]={0}, ip[15]={0};
+		exec("sed -nr 's/^NAME=\"(.*)\"$/\\1/p' /etc/os-release", os, 10);
+		exec("sed -nr 's/^VERSION_ID=\"(.*)\"$/\\1/p' /etc/os-release", osVer, 10);
+		exec("sed -nr 's/Linux version ([^ ]*) .*/\\1/p' /proc/version", krnlVer, 15);
+		exec("ifconfig | sed -nr 's/.*inet addr:([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)  B.*/\\1/p'", ip, 15);
 		fprintf(pFile,
 			"			<tr           ><td>	Memory:	</td><td>	%luMB / %luMB			</td></tr>\n"
 			"			<tr           ><td>	Storage:</td><td>	%s / %s (%s)			</td></tr>\n"
-			"			<tr id=\"alert\"><td> Network:</td><td>	192.168.0.104			</td></tr>\n" //TODO
-			"			<tr           ><td>	Kernel:	</td><td>	X.XX.X					</td></tr>\n" //TODO
+			"			<tr id=\"alert\"><td> Network:</td><td>	%s			</td></tr>\n"
+			"			<tr           ><td>	OS:	</td><td>	%s %s	(%s)		</td></tr>\n"
 			"		</table>');\n"
 			"\n",
 			info.freeram/(1024*1024), info.totalram/(1024*1024),
-			diskInfo[1], diskInfo[0], diskInfo[2]
+			diskInfo[1], diskInfo[0], diskInfo[2],
+			ip,
+			os, osVer, krnlVer
 			);
 
 		fprintf(pFile,

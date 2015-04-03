@@ -8,6 +8,7 @@
 
 void UploadFile2FTP(const char* filePath, const char* url);
 void secs2time(unsigned int sec, unsigned int& number, char& suffix);
+int exec(const char* cmd, char* buffer, const int length);
 
 
 class CpuMonitor
