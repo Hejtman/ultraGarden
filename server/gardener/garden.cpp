@@ -198,13 +198,23 @@ void Garden::WriteCPUStatusLine(FILE* pFile)
 	uint8_t cpus;
 	cpuMonitor.GetCpuUsage(5, cpuLoad, cpus);
 
-	fprintf(pFile,"			<tr           ><td>	CPU:	</td><td>	%d MHz (", cpuMonitor.GetCpuClock(0) / 1000);
-	for (int i = 1  ;  i < cpus  ;  ){
-		fprintf(pFile, "%d%%",(int)cpuLoad[i]);
-		if (++i < cpus)
-			fprintf(pFile, " ");
+	char temp[10] = {0};
+	exec("perl -e 'm/(\\d+)/; $x=$1; s/\\d+//; printf(\"%.1f\", ($x/1000))' -p /sys/class/thermal/thermal_zone0/temp 2>/dev/null", temp, 10);
+
+	fprintf(pFile,
+			"			<tr           ><td>	CPU:	</td><td>%d MHz &nbsp; %.2f%%	&nbsp; %s°C</td></tr>\n",
+			cpuMonitor.GetCpuClock(0) / 1000, cpuLoad[0], temp
+		);
+
+	if (cpus > 1){
+		fprintf(pFile,"			<tr           ><td> CORES:	</td><td>");
+		for (int i = 1  ;  i < cpus  ;  ){
+			fprintf(pFile, "%d%%",(int)cpuLoad[i]);
+			if (++i < cpus)
+				fprintf(pFile, "	");
+		}
+		fprintf(pFile, "</td></tr>\n");
 	}
-	fprintf(pFile, ")</td></tr>\n");
 }
 
 void Garden::SwitchDutyCycle()
