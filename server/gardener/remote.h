@@ -3,15 +3,20 @@
 
 
 #include <stdint.h>
+#include "../lib/scheduler.h"
 
-class Remote
+class Gardener;
+class Remote : public SchedulerWakeUp
 {
+	Gardener& gardener;
 
 public:
-	Remote();
+	Remote(Gardener& g);
 
+	const int checkCommandFileOccurrence;
 	enum {  CHECK_COMMAND_FILE  };
 	void SchedulerWakeUpCall(const uint8_t id);
+	void CheckCommandFile();
 };
 
 #endif // REMOTE_H

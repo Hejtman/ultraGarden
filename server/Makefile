@@ -11,9 +11,9 @@ DEPFILES    = $(SOURCES:.cpp=.d) $(EXTLIBS_OBJ:.o=.d)
 
 BUILD	= debug
 ifeq ($(BUILD),debug)
-	CXXFLAGS= -g3 -ggdb -O0 -DDEBUG -std=gnu++11 -fstack-protector
+	CXXFLAGS= -g3 -ggdb -O0 -DDEBUG -std=gnu++14 -fstack-protector
 else
-	CXXFLAGS= -g3 -O3 -DDEBUG -std=gnu++11
+	CXXFLAGS= -g3 -O3 -DDEBUG -std=gnu++14
 endif
 
 

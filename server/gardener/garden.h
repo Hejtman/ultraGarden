@@ -8,7 +8,7 @@
 #include "../hw/relay.h"
 #include "../hw/tidegate.h"
 #include "../lib/lib.h"
-#include "scheduler.h"
+#include "../lib/scheduler.h"
 #include "watchdog.h"
 
 class Garden : public SchedulerWakeUp

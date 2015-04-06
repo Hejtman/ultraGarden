@@ -11,6 +11,12 @@ void secs2time(unsigned int sec, unsigned int& number, char& suffix);
 int exec(const char* cmd, char* buffer, const int length);
 
 
+constexpr unsigned int saxHash(const char* key, unsigned int h=0)
+{
+	return (*key) ?  saxHash(key+1, h ^ ((h << 5) + (h >> 2) + *key))  :  h;
+}
+
+
 class CpuMonitor
 {
 	std::unique_ptr<FILE, void (*)(FILE*)> fp;
