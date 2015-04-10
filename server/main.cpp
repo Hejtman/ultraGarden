@@ -12,6 +12,7 @@ int main(int, char **)
 	LOG_NOTICE("Server started.");
 	piHiPri(99); // less interruptions during reading from devices (e.g. dht22)
 
+	// handle exceptions here
 	Gardener gardener;
 	if ( gardener.StartLoop(Gardener::AUTO) != 0 ) {
 

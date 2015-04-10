@@ -1,6 +1,6 @@
 #include "garden.h"
 #include "../lib/lib.h"
-#include "../config.h" // OS_USER, FTP_USER, FTP_PASSWORD
+#include "../config.h" // define: OS_USER, FTP_USER, FTP_PASSWORD as const char[]
 #include <stdio.h>
 #include <wiringPi.h>
 #include <sys/sysinfo.h>
