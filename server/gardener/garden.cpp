@@ -132,6 +132,7 @@ void Garden::SendStatusFile()
 			"			<tr           ><td>	Memory:	</td><td>	%luMB / %luMB			</td></tr>\n"
 			"			<tr           ><td>	Storage:</td><td>	%s / %s (%s)			</td></tr>\n"
 			"			<tr id=\"alert\"><td> Network:</td><td>	%s			</td></tr>\n"
+//TODO wifi signal quality
 			"			<tr           ><td>	OS:	</td><td>	%s %s	(%s)		</td></tr>\n"
 			"		</table>');\n"
 			"\n",
