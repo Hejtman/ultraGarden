@@ -22,7 +22,7 @@ void Remote::SchedulerWakeUpCall(const uint8_t id)
 
 void Remote::CheckCommandFile()
 {
-	const char CMD_FILE[] = "tmp/cmdfile";
+/*	const char CMD_FILE[] = "tmp/cmdfile";
 	FILE* fp = fopen(CMD_FILE, "r");
 
 	if (fp) {
@@ -46,5 +46,5 @@ void Remote::CheckCommandFile()
 	} else {
 		LOG_ERRORF("Error opening file: '%s'", CMD_FILE);
 	}
-}
+*/}
 

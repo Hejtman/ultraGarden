@@ -5,12 +5,12 @@
 #include "gpio.h"
 #include <stdint.h>
 
-class relay
+class Relay
 {
     const GPIO_PIN PIN;
 
 public:
-    relay(GPIO_PIN p);
+    Relay(GPIO_PIN p);
 
     void TurnOn();
     void TurnOff();

@@ -2,17 +2,18 @@
 #include <wiringPi.h>
 
 
-relay::relay(GPIO_PIN p)
+Relay::Relay(GPIO_PIN p)
 : PIN(p) 
 {}
 
-void relay::TurnOn()
+void Relay::TurnOn()
 {
-    pinMode( PIN, OUTPUT );
+    pinMode(PIN, OUTPUT);
+	 digitalWrite(PIN, HIGH);
 }
 
-void relay::TurnOff()
+void Relay::TurnOff()
 {
-    pinMode( PIN, INPUT );
+	 digitalWrite(PIN, LOW);
 }
 

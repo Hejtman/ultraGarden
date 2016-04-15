@@ -1,9 +1,11 @@
 web:
+ new hosting for web
 	fan.gif
 	fogging.gif
 	pumping.gif
 
 server:
+	config.cpp does not exist
 	errorHandling
 hw:
 	webcam

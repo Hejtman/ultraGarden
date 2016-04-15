@@ -19,14 +19,14 @@ class Garden : public SchedulerWakeUp
 	const char		dutyCycleNames[3][10];
 	unsigned int	dutyStartTime;
 
-	relay			barrelFogRelay;
-	relay			barrelFunRelay;
+	Relay			barrelFogRelay;
+	Relay			barrelFunRelay;
 	TideGate		barrelTideGate;
 	dht22			barrelHumidSensor;
 	WatchDog::Color	barrelHumidSensorStatus;
 	HcSr04			barrelWatterLevel;
 
-	relay			pumpRelay;
+	Relay			pumpRelay;
 	TideGate		pumpTideGate;
 	dht22   		pumpHumidSensor;
 	WatchDog::Color	pumpHumidSensorStatus;
