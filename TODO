@@ -11,3 +11,13 @@ hw:
 	webcam
 
 make install
+
+
+
+
++USAGE
+git clone git://git.drogon.net/wiringPi
+cd wiringPi
+./build
+
+libcurl4-openssl-dev

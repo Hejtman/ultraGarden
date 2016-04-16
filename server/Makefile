@@ -6,9 +6,9 @@ WARNLFLAGS  =
 
 BUILD	= debug
 ifeq ($(BUILD),debug)
-	CXXFLAGS= -g3 -ggdb -O0 -DDEBUG -std=gnu++14 -fstack-protector
+	CXXFLAGS= -g3 -ggdb -O0 -DDEBUG -std=gnu++1y -fstack-protector
 else
-	CXXFLAGS= -g3 -O3 -std=gnu++14
+	CXXFLAGS= -g3 -O3 -std=gnu++1y
 endif
 
 rwildcard	= $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))

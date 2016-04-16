@@ -8,12 +8,12 @@ Relay::Relay(GPIO_PIN p)
 
 void Relay::TurnOn()
 {
-    pinMode(PIN, OUTPUT);
-	 digitalWrite(PIN, HIGH);
+	pinMode(PIN, OUTPUT);
+	digitalWrite(PIN, HIGH);
 }
 
 void Relay::TurnOff()
 {
-	 digitalWrite(PIN, LOW);
+	digitalWrite(PIN, LOW);
 }
 
