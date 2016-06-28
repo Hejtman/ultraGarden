@@ -18,75 +18,45 @@
       	<li><a href="../others/index.htm"> Others </a></li>      
    	</ul>
 	</div>
-
-	<h2>Function</h2>
-	2 weeks self-sustaining aerophonics system for extreme sunbeam.
-	Ultra sound made nutrient fog circling in pipes on balcony trough plants roots.
-	<p>
-		Raspberry Pi collects information about outside light density, humidity, temperature, inside humidity, temperature and manages closed fogging vs opened airing cycles for optimal plants irrigation.
-	</p>
-
-
-	<a href="balcony1/index.php"><h2>balcony 1</h2></a>
-	<iframe src="balcony1/index.php" style="width:100%" height="730" frameborder="0" scrolling="no"></iframe>
-
-	<h2>Wiring</h2>
-	<div>
-		<a href="wiring.jpg"><img src="wiring.jpg" alt="wiring"></a>
-		<table style="width:49%;float:left">
-			<tr><th colspan="2">unscreened 8-cored cable 1</th></tr>
-			<tr style="color:#0000FF"><td>GPIO_5 	</td><td>dht22 outer 			</td></tr>
-			<tr style="color:#505050"><td>GPIO_1 	</td><td>tidegate barrel 		</td></tr>
-			<tr style="color:#00FF00"><td>GPIO_6 	</td><td>dht22 barrel 			</td></tr>
-			<tr style="color:#FF0000"><td>GPIO_2 	</td><td>relay fan barrel 		</td></tr>
-			<tr style="color:#FFFFFF"><td>GPIO_23 	</td><td>tidegate pump 			</td></tr>
-			<tr style="color:#FF9900"><td>GPIO_3 	</td><td>relay foggler barrel 	</td></tr>
-			<tr style="color:#FFFF00"><td>GPIO_4 	</td><td>relay pump 				</td></tr>
-			<tr style="color:#CC6600"><td>GPIO_25 	</td><td>dht22 pump 				</td></tr>
-		</table>
-
-		<table style="width:49%">
-			<tr><th colspan="2">unscreened 8-cored cable 2</th></tr>
-			<tr style="color:#0000FF"><td>GPIO_8 	</td><td>bh1750 SDA outer 		</td></tr>
-			<tr style="color:#505050"><td>GPIO_9 	</td><td>bh1750 SCL outer  	</td></tr>
-			<tr style="color:#00FF00"><td>GPIO_0 	</td><td>hc-sr04 trig outer 	</td></tr>
-			<tr style="color:#FF0000"><td>GPIO_27 	</td><td>hc-sr04 echo outer 	</td></tr>
-		</table>
-
-		<table style="width:99%">
-			<tr><th colspan="2"> 3x power cable</th></tr>
-			<tr style="color:#FF0000"><td>24V+ trafo 	</td><td>relay 1,2,3 barrel </td></tr>
-			<tr style="color:#0000FF"><td>ground trafo</td><td>fan, foggler, pump, 1x relay, 1x hc-sr04, 1x bh1750, 2x tidegate, 3x dht22</td></tr>
-			<tr style="color:#FF0000"><td>power 5V 	</td><td>1x relay, 1x hc-sr04, 2x tidegate, 3x dht22, 1x bh1750</td></tr>
-		</table>
+	<div class="center">
+		<a href="balcony_left.jpg"><img src="balcony_left.jpg" alt="Balcon left part" style="width:49%"></a>
+		<a href="balcony_right.jpg"><img src="balcony_right.jpg" alt="Balcon right part" style="width:49%"></a>
 	</div>
 
-	<h2>Source codes</h2>
-	Can be found on <a href="https://github.com/Hejtman/ultraGarden">GitHub</a>
+
+	<h2>Function</h2>
+   2 weeks self-sustaining aero/hydroponics system for extreme sunbeam. Ultra sound made nutrient fog circling in pipes on balcony trough plants roots. 
+   2 liters of liquid water are pumped every quarter hour for fully grown plants with roots reaching bottom of pipe via aquarium watter pump.
+	<p>
+      Raspberry Pi collects information (light density, humidity, temperature, watter level and manages fogging, watering, airing/cooling cycles for optimal plants irrigation.
+	</p>
+	<p>
+	  <a href="https://github.com/Hejtman/ultraGarden">Source code</a>
+	</p>
+
 
 	<h2>Watering</h2>
 	Weakly consumption:
 	<ul>
-		<li>8l tap watter</li>
-		<li>1l distiled watter - tap watter is too hard (better to use rainwater)</li>
-		<li>4ml hydrogen peroxide - mildew prevention, root aeration</li>
-		<li>2ml Nitric acid - pH reduction 7 >> 6, root aeration</li>
+		<li>20l tap watter</li>
+		<li>10ml hydrogen peroxide - mildew prevention, root aeration</li>
+		<li>5ml Nitric acid - pH reduction 7 >> 6, root aeration</li>
+		<li>2 banana peelings as fertilizer
 	</ul>
 	
 	<h2>Log</h2>
 	<table>
-		<tr><td> 1.5 </td>	<td>planted</td></tr>
-		<tr><td>10.5 </td>	<td>significant root grow</td></tr>
-		<tr><td>15.5 </td>	<td>new strong lettuce leafs</td></tr>
-		<tr><td>31.5 </td>	<td>harvested first <a href="http://playground.1117545.n5.nabble.com/Aeroponic-garden-success-stories-td4.html#a7">strawberry</a></td></tr>
+	  <tr><td>2016</td><td>improvements: raspberry Pi2 with relay and 3 temperature sensors, IP-68 fan, white HT pipes, aluminum groundsheet</td></tr>
+	  <tr><td>2015</td><td>proof of concept, experiments</td></tr>
+	  <tr><td>2014</td><td>idea, component preparations</td></tr>
 	</table>
 
 	<h2>Plan</h2>
 	<pre><code>
-TODO: complete HW
-TODO:	fogging cycle depend on outside light density and airing cycle depend on inside humidity
-TODO:	checking expected values (fogging = humidity is raising, airing = temperature is decreasing)
-TODO:	photos &amp; statistics (water consumption, grow speed comparison with earth growing, ...)
+TODO: more robust wiring
+TODO: ultrasound distant sensor for watter level measurements
+TODO: servo motors for opening/closing pipes valve 
+TODO: photos &amp; statistics (water consumption, grow speed comparison with earth growing, ...)
 	</code></pre>
 
 	<div class="center">
