@@ -23,5 +23,6 @@ This software is written by [Hejtman][3] for fun.
 Contributing is warmly welcomed. There is no point in doing everything from scratch nor all alone.
 
 You can do it by [forking](https://help.github.com/articles/fork-a-repo), committing modifications and then [pulling requests](https://help.github.com/articles/using-pull-requests).
-  
+[1]: http://83.240.76.4/ultraGarden/index.htm
+[2]: web/ultraGarden/balcony_left.jpg
 [3]: mailto://hejtman2@centrum.cz
