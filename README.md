@@ -1,10 +1,11 @@
 [UltraGarden][1]
 ----------------
   
-Two weeks self-sustaining aero/hydroponics system for extreme sunbeam. Ultra sound made nutrient fog circling in pipes on balcony trough plants roots. 
-Two liters of liquid water are pumped every quarter hour for fully grown plants with roots reaching bottom of the pipe via aquarium water pump.
+Two weeks self-sustaining aero/hydroponics system for extreme sunbeam. Ultra sound made nutrient fog circling in pipes trough plants roots.
+Two liters of liquid water are pumped every quarter hour for fully grown plants with roots reaching bottom of the pipe.
 
 Raspberry Pi collects information (light density, humidity, temperature, watter level and manages fogging, watering, airing/cooling cycles for optimal plants irrigation.
+
 
 [![UltraGarden][2]][1]
   
