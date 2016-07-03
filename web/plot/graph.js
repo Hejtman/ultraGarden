@@ -1,12 +1,12 @@
 var chart = AmCharts.makeChart("chartdiv", {
     "type": "serial",
-    "theme": "light",
-    "marginRight": 20,
-    "marginLeft": 20,
-    "autoMarginOffset": 10,
-    "mouseWheelZoomEnabled":true,
+    "theme": "dark",
+	 "backgroundColor": "#282828",
+	 "backgroundAlpha": 1,
     "legend": {
-        "useGraphSettings": true
+        "useGraphSettings": true,
+	     "backgroundColor": "#282828",
+	     "backgroundAlpha": 1
     },
     "dataProvider": chartData,
     "synchronizeGrid": true,
@@ -55,7 +55,7 @@ var chart = AmCharts.makeChart("chartdiv", {
     }],
     "graphs": [{
         "valueAxis": "v1",
-        "lineColor": "#000000",
+        "lineColor": "#FF0000",
         "title": "temperature inside tube",
         "valueField": "tube",
 		  "fillAlphas": 0
@@ -105,24 +105,18 @@ var chart = AmCharts.makeChart("chartdiv", {
 	 "chartScrollbar": {
         "graph": "v3",
         "scrollbarHeight": 80,
-        "backgroundAlpha": 0,
-        "selectedBackgroundAlpha": 0.1,
-        "selectedBackgroundColor": "#888888",
-        "graphFillAlpha": 0,
-        "graphLineAlpha": 0.5,
-        "selectedGraphFillAlpha": 0,
-        "selectedGraphLineAlpha": 1,
-        "autoGridCount": true,
-        "color": "#AAAAAA"
+        "autoGridCount": true
     },
+    "mouseWheelZoomEnabled":true,
     "categoryField": "date",
     "export": {
-    	"enabled": true,
+    	"enabled": true
     }
 });
 
 chart.addListener("dataUpdated", zoomChart);
 
 function zoomChart(){
-    chart.zoomToDates(new Date(new Date().setDate(new Date().getDate()-2)), new Date());
+//    chart.zoomToDates(new Date(new Date().setDate(new Date().getDate()-2)), new Date());
+    chart.zoomToIndexes(chart.dataProvider.length - 2500, chart.dataProvider.length)
 }

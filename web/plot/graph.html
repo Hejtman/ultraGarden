@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="googlebot" content="noindex, nofollow">
-  <link rel="stylesheet" type="text/css" href="graph.css">
   <title>SmartGarden stats</title>
-</head>
-<body>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+  <meta name="robots" content="noindex, nofollow"/>
+  <meta name="googlebot" content="noindex, nofollow"/>
+  <link href="graph.css" rel="stylesheet" type="text/css"/>
+  <link href="https://www.amcharts.com/lib/3/plugins/export/export.css" media="all" rel="stylesheet" type="text/css"/>
   <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+  <script src="https://www.amcharts.com/lib/3/themes/dark.js"></script>
+  <script src="https://www.amcharts.com/lib/3/plugins/export/export.js"></script>
   <script src="https://www.amcharts.com/lib/3/serial.js"></script>
-  <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
-  <!--script src="http://192.168.10.7:/sensors_data"></script--> 
   <script src="sensors_data"></script> 
   <script src="graph.js"></script> 
+</head>
+<body>
+ <!--script src="http://192.168.10.7:/sensors_data"></script--> 
   <div id="chartdiv"></div>
 </body>
 </html>
