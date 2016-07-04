@@ -2,12 +2,23 @@
 <html lang="en">
 <head>
 	<title>Malina</title>
-	<link rel="stylesheet" type="text/css" href="../style.css">
-	<link rel="shortcut icon" href="../rasp.png">
-	<meta name="Description" content="self-sustaining aerophonics system">
-	<meta name="Keywords" content="Raspbery Pi,aerophonics,ultraphonics,garden">
-	<meta name="author" content="Michal Hejtm&aacute;nek, http://malina.moxo.cz">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="../style.css"/>
+	<link rel="shortcut icon" href="../rasp.png"/>
+	<meta name="Description" content="self-sustaining aerophonics system"/>
+	<meta name="Keywords" content="Raspbery Pi,aerophonics,ultraphonics,garden"/>
+	<meta name="author" content="Michal Hejtm&aacute;nek, http://malina.moxo.cz"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	<meta name="robots" content="noindex, nofollow"/>
+	<meta name="googlebot" content="noindex, nofollow"/>
+	<link href="graph.css" rel="stylesheet" type="text/css"/>
+	<link href="https://www.amcharts.com/lib/3/plugins/export/export.css" media="all" rel="stylesheet" type="text/css"/>
+	<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+	<script src="https://www.amcharts.com/lib/3/themes/dark.js"></script>
+	<script src="https://www.amcharts.com/lib/3/plugins/export/export.js"></script>
+	<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+	<script src="sensors_data"></script> 
+	<script src="graph.js"></script>
 </head>
 <body>
 	<div>
@@ -34,6 +45,8 @@
 	  <a href="https://github.com/Hejtman/ultraGarden">Source code</a>
 	</p>
 
+	<h2>Sensor data</h2>
+   <div id="chartdiv" style="width: 100%;  height: 600px;"></div>
 
 	<h2>Watering</h2>
 	Weakly consumption:
@@ -53,6 +66,7 @@
 
 	<h2>Plan</h2>
 	<pre><code>
+TODO: realtime data: wifi auto-reconnection, caching results
 TODO: ploting graphs - check, copy, repare, restore
 TODO: finish wrapping pipes by aluminum groundsheet against sun
 TODO: more robust wiring
@@ -62,7 +76,6 @@ TODO: deep UV LED for water sterilization
 TODO: set upper part pump pipe up to pumped water level so it won't sack water back to barrel once it is off
 TODO: solve water condensation in outside electronics box
 TODO: photos &amp; statistics (water consumption, grow speed comparison with earth growing, ...)
-TODO: plotting sensor data graphs
 TODO: remote controll
 	</code></pre>
 
