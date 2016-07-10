@@ -10,8 +10,8 @@ class Relays:
         self.relays = relays
         self.timing = timing
 
-        for r in self.relays:
-            wiringpi.pinMode(r[PIN], wiringpi.GPIO.OUTPUT)
+        for key,relay in self.relays.iteritems():    
+            wiringpi.pinMode(relay[PIN], wiringpi.GPIO.OUTPUT)
 
     def pumping_cycle(self):
         try:
