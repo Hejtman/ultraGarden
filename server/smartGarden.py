@@ -2,93 +2,40 @@ import wiringpi
 from time import sleep
 from datetime import datetime
 # from hw.releTest inport releTest
+from relays import Relays
+from sensors import Sensors
 from hw.ds18b20.ds18b20 import ds18b20
 
 
-# WRING PI
-FOG_RELE = 28
-FUN_RELE = 29
-PUMP_RELE = 26
-UNUSED_RELE = 11
-
-# WIRING
-FOG_ON = wiringpi.GPIO.LOW
-FOG_OFF = wiringpi.GPIO.HIGH
-FUN_ON = wiringpi.GPIO.LOW
-FUN_OFF = wiringpi.GPIO.HIGH
-PUMP_ON = wiringpi.GPIO.HIGH
-PUMP_OFF = wiringpi.GPIO.LOW
-sensors = [ds18b20("28-011564aee4ff", "tube"),
-           ds18b20("28-011564d01bff", "barel"),
-           ds18b20("28-011564df1dff", "balcony")]
-
-# timing
-PUMPING_TIME = 6
-FUN_PROTECT_TIME = 10
-
 # files
-SENSOR_DATA_FILE = "/var/www/html/sensors_data"
-
-
-def pumpingCycle():
-    try:
-        wiringpi.digitalWrite(FUN_RELE, FUN_OFF)
-        wiringpi.digitalWrite(FOG_RELE, FOG_OFF)
-        wiringpi.digitalWrite(PUMP_RELE, PUMP_ON)
-        sleep(PUMPING_TIME)
-
-        wiringpi.digitalWrite(FUN_RELE, FUN_OFF)
-        wiringpi.digitalWrite(FOG_RELE, FOG_ON)
-        wiringpi.digitalWrite(PUMP_RELE, PUMP_OFF)
-        sleep(FUN_PROTECT_TIME)
-
-        # run fun after watter level drops
-        wiringpi.digitalWrite(FUN_RELE, FUN_ON)
-        wiringpi.digitalWrite(FOG_RELE, FOG_ON)
-        wiringpi.digitalWrite(PUMP_RELE, PUMP_OFF)
-    except:
-        pass
-
-
-def readValues():
-    record = "{  " + "date: new Date(\"{}\")".format(datetime.now().strftime('%Y-%m-%dT%H:%M'))
-
-    for s in sensors:
-        try:
-            s.readValue()
-        except IOError:
-            pass
-        else:
-            record += ", {}: {}".format(s.name, s.value)
-
-    record += "  },"
-
-
-def collectSensorsData():
-    try:
-        record = readValues()
-        try:
-            with open(SENSOR_DATA_FILE, "r+") as f:
-                f.seek(-2, 2)
-                f.write(record + "\n];")
-        except IOError:
-            with open(SENSOR_DATA_FILE, "w") as f:
-                f.write("var chartData = [\n{}\n];".format(record))
-    except:
-        pass
-
+SENSOR_DATA_SHORT_FILE = "/var/www/html/sensors_data_short"
+SENSOR_DATA_FULL_FILE = "/var/www/html/sensors_data_full"
 
 # MAIN
 wiringpi.wiringPiSetup()
-for pin in [FOG_RELE, FUN_RELE, PUMP_RELE, UNUSED_RELE]:
-    wiringpi.pinMode(pin, wiringpi.GPIO.OUTPUT)
 
-pumpingCycle()
+# WIRING
+relays = Relays(relays={"FOG": [28, wiringpi.GPIO.LOW, wiringpi.GPIO.HIGH],
+                        "FUN": [29, wiringpi.GPIO.LOW, wiringpi.GPIO.HIGH],
+                        "PUMP": [26, wiringpi.GPIO.HIGH, wiringpi.GPIO.LOW]},  # PIN 11 unused yet
+                timing={"PUMPING": 6,
+                        "FUN_PROTECTION": 10})
 
-while(True):
-    collectSensorsData()
+sensors = Sensors([ds18b20("28-011564aee4ff", "tube"),
+                   ds18b20("28-011564d01bff", "barel"),
+                   ds18b20("28-011564df1dff", "balcony")])
 
-    if datetime.now().minute in [0, 15, 30, 45]:
-        pumpingCycle()
+relays.pumping_cycle()
+
+while True:
+    record = sensors.read_sensors_data()
+
+    if datetime.now().minute % 5 == 0:
+        sensors.write_sensors_data(record, SENSOR_DATA_FULL_FILE)
+
+    if datetime.now().minute % 15 == 0:
+        week_records_count = 4*24*7
+        sensors.write_sensors_data(record, SENSOR_DATA_SHORT_FILE, max_records=week_records_count)
+        relays.pumping_cycle()
 
     sleep(60-datetime.now().second)
