@@ -39,3 +39,6 @@ while True:
         relays.pumping_cycle()
 
     sleep(60-datetime.now().second)
+
+#TODO: no point in making fog when temperature is up to 26C or below 5C ?
+#TODO: no point in funing when temperature is below 5C

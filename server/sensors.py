@@ -57,3 +57,5 @@ if __name__ == '__main__':
     Sensors.write_sensors_data('    record3', "test_file", 3)
     Sensors.write_sensors_data('    record4', "test_file", 3)
     Sensors.write_sensors_data('    record5', "test_file", 3)
+# TODO check file content
+
