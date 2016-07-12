@@ -1,4 +1,5 @@
 server:
  * install
-
-web
+   * cp /home/pi/ultraGarden/server/utils/ultraGarden.sh /etc/init.d/ultraGarden
+   * update-rc.d /etc/init.d/ultraGarden defaults
+   * echo "*/5 *   * * *   root    /home/pi/ultraGarden/server/utils/wifi_rebooter.sh" >> /etc/crontab
