@@ -21,9 +21,8 @@ relays = Relays(relays={"FOG": [28, wiringpi.GPIO.LOW, wiringpi.GPIO.HIGH],
                 timing={"PUMPING": 6,
                         "FUN_PROTECTION": 10})
 
-sensors = Sensors([ds18b20("28-011564aee4ff", "tube"),
-                   ds18b20("28-011564d01bff", "barel"),
-                   ds18b20("28-011564df1dff", "balcony")])
+sensors = Sensors([ds18b20("28-011564df1dff", "barel"),
+                   ds18b20("28-011564aee4ff", "balcony")])
 
 relays.pumping_cycle()
 
