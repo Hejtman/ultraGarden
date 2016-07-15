@@ -57,7 +57,7 @@ var chart = AmCharts.makeChart("chartdiv", {
         "id": "v3",
         "valueAxis": "v3",
         "lineColor": "#FFAA00",
-        "title": "balcony temperature in shadow",
+        "title": "balcony shadow temperature",
         "valueField": "balcony",
 		  "fillAlphas": 0
     }],
