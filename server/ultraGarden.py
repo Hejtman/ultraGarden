@@ -18,7 +18,8 @@ wiringpi.wiringPiSetup()
 relays = Relays(relays={"FOG": [28, wiringpi.GPIO.LOW, wiringpi.GPIO.HIGH],
                         "FUN": [29, wiringpi.GPIO.LOW, wiringpi.GPIO.HIGH],
                         "PUMP": [26, wiringpi.GPIO.HIGH, wiringpi.GPIO.LOW]},  # PIN 11 unused yet
-                timing={"PUMPING": 6,
+                timing={"BEFOR_PUMP" : 2,
+                        "PUMPING": 8,
                         "FUN_PROTECTION": 10})
 
 sensors = Sensors([ds18b20("28-011564df1dff", "barel"),

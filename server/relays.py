@@ -15,7 +15,8 @@ class Relays:
 
     def pumping_cycle(self):
         try:
-            for value, time in [[[OFF, OFF, ON], self.timing["PUMPING"]],         # just pump for a while
+            for value, time in [[[OFF, OFF, OFF], self.timing["BEFOR_PUMP"]],     # stabilize power for pump
+                                [[OFF, OFF, ON], self.timing["PUMPING"]],         # just pump for a while
                                 [[OFF, ON, OFF], self.timing["FUN_PROTECTION"]],  # run fun after water level drops
                                 [[ON, ON, OFF], 0]]:                              # change back to normal and continue
                 for i, relay in enumerate(["FUN", "FOG", "PUMP"]):
