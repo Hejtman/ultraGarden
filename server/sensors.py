@@ -1,6 +1,8 @@
 import os
 from datetime import datetime
 
+# noinspection PyBroadException
+
 
 class Sensors:
     def __init__(self, sensor_list):
@@ -58,4 +60,3 @@ if __name__ == '__main__':
     Sensors.write_sensors_data('    record4', "test_file", 3)
     Sensors.write_sensors_data('    record5', "test_file", 3)
 # TODO check file content
-

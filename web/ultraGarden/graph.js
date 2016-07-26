@@ -50,8 +50,8 @@ var chart = AmCharts.makeChart("chartdiv", {
     }, {
         "valueAxis": "v2",
         "lineColor": "#00BBBB",
-        "title": "barel watter temperature",
-        "valueField": "barel",
+        "title": "barrel watter temperature",
+        "valueField": "barrel",
 		  "fillAlphas": 0
     }, {
         "id": "v3",

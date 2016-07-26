@@ -1,7 +1,7 @@
 import wiringpi
 from time import sleep
 from datetime import datetime
-# from hw.releTest inport releTest
+# from hw.releTest import releTest
 from relays import Relays
 from sensors import Sensors
 from hw.ds18b20.ds18b20 import ds18b20
@@ -18,11 +18,11 @@ wiringpi.wiringPiSetup()
 relays = Relays(relays={"FOG": [28, wiringpi.GPIO.LOW, wiringpi.GPIO.HIGH],
                         "FUN": [29, wiringpi.GPIO.LOW, wiringpi.GPIO.HIGH],
                         "PUMP": [26, wiringpi.GPIO.HIGH, wiringpi.GPIO.LOW]},  # PIN 11 unused yet
-                timing={"BEFOR_PUMP" : 2,
+                timing={"BEFORE_PUMP": 2,
                         "PUMPING": 8,
                         "FUN_PROTECTION": 10})
 
-sensors = Sensors([ds18b20("28-011564df1dff", "barel"),
+sensors = Sensors([ds18b20("28-011564df1dff", "barrel"),
                    ds18b20("28-011564aee4ff", "balcony")])
 
 relays.pumping_cycle()
@@ -40,5 +40,5 @@ while True:
 
     sleep(60-datetime.now().second)
 
-#TODO: no point in making fog when temperature is up to 26C or below 5C ?
-#TODO: no point in funing when temperature is below 5C
+# TODO: no point in making fog when temperature is up to 26C or below 5C ?
+# TODO: no point in funing when temperature is below 5C
