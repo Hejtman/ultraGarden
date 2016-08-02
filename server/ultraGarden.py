@@ -5,6 +5,8 @@ from datetime import datetime
 from relays import Relays
 from sensors import Sensors
 from hw.ds18b20.ds18b20 import ds18b20
+from config import gmail_account, sms_gateway
+from utils.communication import send_mail
 
 
 # files
@@ -28,15 +30,19 @@ sensors = Sensors([ds18b20("28-011564df1dff", "barrel"),
 relays.pumping_cycle()
 
 while True:
+    now = datetime.now()
     record = sensors.read_sensors_data()
 
-    if datetime.now().minute % 5 == 0:
+    if now.minute % 5 == 0:
         sensors.write_sensors_data(record, SENSOR_DATA_FULL_FILE)
 
-    if datetime.now().minute % 15 == 0:
+    if now.minute % 15 == 0:
         week_records_count = 4*24*7
         sensors.write_sensors_data(record, SENSOR_DATA_SHORT_FILE, max_records=week_records_count)
         relays.pumping_cycle()
+
+    if sms_gateway and (now.hour, now.minute) == (12, 00):
+        send_mail(gmail_account.address, gmail_account.password, sms_gateway, "I am alive")  # TODO: send water level info
 
     sleep(60-datetime.now().second)
 
