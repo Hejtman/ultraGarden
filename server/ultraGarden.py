@@ -17,9 +17,9 @@ SENSOR_DATA_FULL_FILE = "/var/www/html/sensors_data_full"
 wiringpi.wiringPiSetup()
 
 # WIRING
-relays = Relays(relays={"FOG": [28, wiringpi.GPIO.LOW, wiringpi.GPIO.HIGH],
-                        "FUN": [29, wiringpi.GPIO.LOW, wiringpi.GPIO.HIGH],
-                        "PUMP": [26, wiringpi.GPIO.HIGH, wiringpi.GPIO.LOW]},  # PIN 11 unused yet
+relays = Relays(relays={"FOG": {"PIN": 28, "ON": wiringpi.GPIO.LOW, "OFF": wiringpi.GPIO.HIGH},
+                        "FUN": {"PIN": 29, "ON": wiringpi.GPIO.LOW, "OFF": wiringpi.GPIO.HIGH},
+                        "PUMP": {"PIN": 26, "ON": wiringpi.GPIO.HIGH, "OFF": wiringpi.GPIO.LOW}},  # PIN 11 unused yet
                 timing={"BEFORE_PUMP": 2,
                         "PUMPING": 8,
                         "FUN_PROTECTION": 10})
