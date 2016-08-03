@@ -1,17 +1,29 @@
-from decimal import Decimal
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Malina</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+	<link rel="shortcut icon" href="../rasp.png">
+	<meta name="Description" content="Calculation of Ludolph number">
+	<meta name="Keywords" content="Ludolph number">
+	<meta name="author" content="Michal Hejtm&aacute;nek, http://83.240.76.4"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<pre style="background:#000;color:#f8f8f8"><span style="color:#e28964">from</span> decimal <span style="color:#e28964">import</span> Decimal
 
 
-def n_angle_side():
-    side = Decimal(0.5)
-    while True:
-        yield side
-        side = ((1+side)**Decimal(0.5) - (1-side)**Decimal(0.5))/2
+<span style="color:#99cf50">def</span> <span style="color:#89bdff">n_angle_side</span>():
+    side <span style="color:#e28964">=</span> Decimal(<span style="color:#3387cc">0.5</span>)
+    <span style="color:#e28964">while</span> <span style="color:#3387cc">True</span>:
+        <span style="color:#e28964">yield</span> side
+        side <span style="color:#e28964">=</span> ((<span style="color:#3387cc">1</span><span style="color:#e28964">+</span>side)<span style="color:#e28964">*</span><span style="color:#e28964">*</span>Decimal(<span style="color:#3387cc">0.5</span>) <span style="color:#e28964">-</span> (<span style="color:#3387cc">1</span><span style="color:#e28964">-</span>side)<span style="color:#e28964">*</span><span style="color:#e28964">*</span>Decimal(<span style="color:#3387cc">0.5</span>))<span style="color:#e28964">/</span><span style="color:#3387cc">2</span>
 
-for n, s in zip(range(26), n_angle_side()):
-    print "{}. {}-angle side: {} circumference: {}".format(n, 6*2**n, s, 6*2**n*s)
+<span style="color:#e28964">for</span> n, s <span style="color:#e28964">in</span> <span style="color:#dad085">zip</span>(<span style="color:#dad085">range</span>(<span style="color:#3387cc">26</span>), n_angle_side()):
+    <span style="color:#e28964">print</span> <span style="color:#65b042">"{}. {}-angle side: {} circumference: {}"</span>.format(n, <span style="color:#3387cc">6</span><span style="color:#e28964">*</span><span style="color:#3387cc">2</span><span style="color:#e28964">*</span><span style="color:#e28964">*</span>n, s, <span style="color:#3387cc">6</span><span style="color:#e28964">*</span><span style="color:#3387cc">2</span><span style="color:#e28964">*</span><span style="color:#e28964">*</span>n<span style="color:#e28964">*</span>s)
 
 
-'''
+<span style="color:#65b042">'''
 OUTPUT:
 0. 6-angle side: 0.5 circumference: 3.0
 1. 12-angle side: 0.2588190451025207623488988374 circumference: 3.105828541230249148186786049
@@ -41,4 +53,8 @@ OUTPUT:
 25. 201326592-angle side: 1.560445951218303596465E-8 circumference: 3.141592653589793110976416973
 
 Process finished with exit code 0
-'''
+'''</span>
+
+</pre>
+</body>
+</html>
