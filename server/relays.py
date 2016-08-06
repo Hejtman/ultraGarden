@@ -26,3 +26,4 @@ class Relays:
                 sleep(configuration["DELAY"])
         except:
             pass
+
