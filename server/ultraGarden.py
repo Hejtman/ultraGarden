@@ -42,9 +42,10 @@ while True:
         relays.pumping_cycle()
 
     if sms_gateway and (now.hour, now.minute) == (12, 00):
-        send_mail(gmail_account.address, gmail_account.password, sms_gateway, "I am alive")  # TODO: send water level info
+        send_mail(gmail_account["address"], gmail_account["password"], sms_gateway, "I am alive")  # TODO: send water level info
 
     sleep(60-datetime.now().second)
 
+# TODO: create more oxigen when high temperature
 # TODO: no point in making fog when temperature is up to 26C or below 5C ?
 # TODO: no point in funing when temperature is below 5C
