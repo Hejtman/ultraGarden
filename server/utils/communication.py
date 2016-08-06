@@ -6,6 +6,6 @@ def send_mail(address_from, password, address_to, message):
     server.starttls()
     server.login(address_from, password)
 
-    message = "From:{}\nTo:{}\nSubject:garden daily report\n\n{}".format(address_from, address_to, message)
+    message = "From:{}\nTo:{}\nSubject:Garden: \n\n{}".format(address_from, address_to, message)
     server.sendmail(address_from, address_to, message)
     server.quit()
