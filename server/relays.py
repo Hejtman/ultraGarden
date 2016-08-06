@@ -16,14 +16,10 @@ class Relays:
             wiringpi.pinMode(relay["PIN"], wiringpi.GPIO.OUTPUT)
 
     def pumping_cycle(self):
-        # noinspection PyBroadException
-        try:
-            for configuration in self.PUMPING_SET+[self.default_set]:
-                for relay in ["FUN", "FOG", "PUMP"]:
-                    pin = self.relays[relay]["PIN"]
-                    value = self.relays[relay]["ON" if configuration[relay] and self.operational[relay] else "OFF"]
-                    wiringpi.digitalWrite(pin, value)
-                sleep(configuration["DELAY"])
-        except:
-            pass
+        for configuration in self.PUMPING_SET+[self.default_set]:
+            for relay in ["FUN", "FOG", "PUMP"]:
+                pin = self.relays[relay]["PIN"]
+                value = self.relays[relay]["ON" if configuration[relay] and self.operational[relay] else "OFF"]
+                wiringpi.digitalWrite(pin, value)
+            sleep(configuration["DELAY"])
 

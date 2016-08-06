@@ -9,47 +9,40 @@ class Sensors:
         self.sensors = sensor_list
 
     def read_sensors_data(self):
-        try:
-            record = "{  " + "date: new Date(\"{}\")".format(datetime.now().strftime('%Y-%m-%dT%H:%M'))
+        record = "{  " + "date: new Date(\"{}\")".format(datetime.now().strftime('%Y-%m-%dT%H:%M'))
 
-            for s in self.sensors:
-                try:
-                    s.readValue()
-                except IOError:
-                    pass
-                else:
-                    record += ", {}: {}".format(s.name, s.value)
+        for s in self.sensors:
+            try:
+                s.readValue()
+            except IOError:
+                pass
+            else:
+                record += ", {}: {}".format(s.name, s.value)
 
-            record += "  },"
-            return record
-        except:
-            pass
+        record += "  },"
+        return record
 
     @staticmethod
     def write_sensors_data(record, record_file, max_records=0):
         try:
-            try:
-                with open(record_file) as f1:
-                    # APPEND: overwrite closing line with record and new closing line
-                    data = f1.read().splitlines()
-                    data[-1] = record + '\n];'
+            with open(record_file) as f1:
+                # APPEND: overwrite closing line with record and new closing line
+                data = f1.read().splitlines()
+                data[-1] = record + '\n];'
 
-                    # TRIM OLDEST: overwrite opening line and top record(s) by new opening
-                    if max_records and max_records+1 < len(data):
-                        data = data[len(data)-max_records-1:]
-                        data[0] = "var chartData = ["
+                # TRIM OLDEST: overwrite opening line and top record(s) by new opening
+                if max_records and max_records+1 < len(data):
+                    data = data[len(data)-max_records-1:]
+                    data[0] = "var chartData = ["
 
-                    with open(record_file + "_tmp", 'w') as f2:
-                        f2.write('\n'.join(data))
+                with open(record_file + "_tmp", 'w') as f2:
+                    f2.write('\n'.join(data))
 
-                os.rename(record_file + "_tmp", record_file)
+            os.rename(record_file + "_tmp", record_file)
 
-            except IOError:
-                with open(record_file, "w") as f:
-                    f.write("var chartData = [\n{}\n];".format(record))
-
-        except:
-            pass
+        except IOError:
+            with open(record_file, "w") as f:
+                f.write("var chartData = [\n{}\n];".format(record))
 
 
 # UNIT TESTS

@@ -27,22 +27,31 @@ relays = Relays(relays={"FOG": {"PIN": 28, "ON": wiringpi.GPIO.LOW, "OFF": wirin
 sensors = Sensors([ds18b20("28-011564df1dff", "barrel"),
                    ds18b20("28-011564aee4ff", "balcony")])
 
+
+def _(cmd):
+    # noinspection PyBroadException
+    try:
+        exec cmd
+    except:
+        pass  # FIXME log some error
+
+
 relays.pumping_cycle()
 
 while True:
     now = datetime.now()
-    record = sensors.read_sensors_data()
+    _('record = sensors.read_sensors_data()')
 
     if now.minute % 5 == 0:
-        sensors.write_sensors_data(record, SENSOR_DATA_FULL_FILE)
+        _('sensors.write_sensors_data(record, SENSOR_DATA_FULL_FILE)')
 
     if now.minute % 15 == 0:
         week_records_count = 4*24*7
-        sensors.write_sensors_data(record, SENSOR_DATA_SHORT_FILE, max_records=week_records_count)
-        relays.pumping_cycle()
+        _('sensors.write_sensors_data(record, SENSOR_DATA_SHORT_FILE, max_records=week_records_count)')
+        _('relays.pumping_cycle()')
 
     if sms_gateway and (now.hour, now.minute) == (12, 00):
-        send_mail(gmail_account["address"], gmail_account["password"], sms_gateway, "I am alive")  # TODO: send water level info
+        _('send_mail(gmail_account["address"], gmail_account["password"], sms_gateway, "I am alive")')  # TODO: send water level info
 
     sleep(60-datetime.now().second)
 
