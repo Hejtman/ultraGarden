@@ -6,7 +6,9 @@ from datetime import datetime
 from relays import Relays
 from sensors import Sensors
 from hw.ds18b20.ds18b20 import ds18b20
+# noinspection PyUnresolvedReferences
 from config import gmail_account, sms_gateway
+# noinspection PyUnresolvedReferences
 from utils.communication import send_mail
 
 
@@ -46,13 +48,13 @@ while True:
     now = datetime.now()
     record = _('sensors.read_sensors_data()')
 
-    if now.minute % 5 == 0:
+    if now.minute % 10 == 0:
         _('sensors.write_sensors_data(record, SENSOR_DATA_FULL_FILE)')
-
-    if now.minute % 15 == 0:
-        week_records_count = 4*24*7
-        _('sensors.write_sensors_data(record, SENSOR_DATA_SHORT_FILE, max_records=week_records_count)')
         _('relays.pumping_cycle()')
+
+    if now.minute == 0:
+        month_of_records_count = 24*7*4
+        _('sensors.write_sensors_data(record, SENSOR_DATA_SHORT_FILE, max_records=month_of_records_count)')
 
     if sms_gateway and (now.hour, now.minute) == (12, 00):
         _('send_mail(gmail_account["address"], gmail_account["password"], sms_gateway, "I am alive")')  # TODO: send water level info
