@@ -33,16 +33,18 @@ sensors = Sensors([ds18b20("28-011564df1dff", "barrel"),
 def _(cmd):
     # noinspection PyBroadException
     try:
-        exec cmd
+        exec("ret = " + eval("cmd"))
     except:
         logging.exception("Main oops:")
+    else:
+        return ret
 
 
 relays.pumping_cycle()
 
 while True:
     now = datetime.now()
-    _('record = sensors.read_sensors_data()')
+    record = _('sensors.read_sensors_data()')
 
     if now.minute % 5 == 0:
         _('sensors.write_sensors_data(record, SENSOR_DATA_FULL_FILE)')
