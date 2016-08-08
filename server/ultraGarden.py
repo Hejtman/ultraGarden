@@ -1,4 +1,5 @@
 import wiringpi
+import logging
 from time import sleep
 from datetime import datetime
 # from hw.releTest import releTest
@@ -15,6 +16,7 @@ SENSOR_DATA_FULL_FILE = "/var/www/html/sensors_data_full"
 
 # MAIN
 wiringpi.wiringPiSetup()
+logging.basicConfig(level=logging.DEBUG, filename='/tmp/ultra_garden.log')
 
 # WIRING
 relays = Relays(relays={"FOG": {"PIN": 28, "ON": wiringpi.GPIO.LOW, "OFF": wiringpi.GPIO.HIGH},
@@ -33,7 +35,7 @@ def _(cmd):
     try:
         exec cmd
     except:
-        pass  # FIXME log some error
+        logging.exception("Main oops:")
 
 
 relays.pumping_cycle()
