@@ -6,7 +6,8 @@ var chart = AmCharts.makeChart("chartdiv", {
     "legend": {
         "useGraphSettings": true,
 	     "backgroundColor": "#282828",
-	     "backgroundAlpha": 1
+	     "backgroundAlpha": 1,
+	     "position":"right"
     },
     "dataProvider": chartData,
     "synchronizeGrid": true,
@@ -44,20 +45,20 @@ var chart = AmCharts.makeChart("chartdiv", {
     "graphs": [{
         "valueAxis": "v1",
         "lineColor": "#FF0000",
-        "title": "temperature inside tube",
+        "title": "inside tube\ntemperature " + chartData[chartData.length - 1]['tube'],
         "valueField": "tube",
 		  "fillAlphas": 0
     }, {
         "valueAxis": "v2",
         "lineColor": "#00BBBB",
-        "title": "barrel watter temperature",
+        "title": "barrel watter\ntemperature " + chartData[chartData.length - 1]['barrel'],
         "valueField": "barrel",
 		  "fillAlphas": 0
     }, {
         "id": "v3",
         "valueAxis": "v3",
         "lineColor": "#FFAA00",
-        "title": "balcony shadow temperature",
+        "title": "balcony shadow\ntemperature " + chartData[chartData.length - 1]['balcony'],
         "valueField": "balcony",
 		  "fillAlphas": 0
     }],
