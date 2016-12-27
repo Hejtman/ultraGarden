@@ -12,7 +12,7 @@ class Relays:
                             {"FUN": 0, "FOG": 0, "PUMP": 1, "DELAY": self.timing["PUMPING"]},         # just pump for a while
                             {"FUN": 0, "FOG": 1, "PUMP": 0, "DELAY": self.timing["FUN_PROTECTION"]}]  # run fun after water level drops
 
-        for key, relay in self.relays.iteritems():
+        for key, relay in self.relays.items():
             wiringpi.pinMode(relay["PIN"], wiringpi.GPIO.OUTPUT)
 
     def pumping_cycle(self):
@@ -22,4 +22,3 @@ class Relays:
                 value = self.relays[relay]["ON" if configuration[relay] and self.operational[relay] else "OFF"]
                 wiringpi.digitalWrite(pin, value)
             sleep(configuration["DELAY"])
-

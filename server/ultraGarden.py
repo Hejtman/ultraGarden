@@ -1,14 +1,14 @@
-import wiringpi
 import logging
 from time import sleep
 from datetime import datetime
+
+import wiringpi     # local emulator version imported when global not found
+
 # from hw.releTest import releTest
 from relays import Relays
 from sensors import Sensors
 from hw.ds18b20.ds18b20 import ds18b20
-# noinspection PyUnresolvedReferences
 from config import gmail_account, sms_gateway
-# noinspection PyUnresolvedReferences
 from utils.communication import send_mail
 
 
@@ -32,35 +32,34 @@ sensors = Sensors([ds18b20("28-011564df1dff", "barrel"),
                    ds18b20("28-011564aee4ff", "balcony")])
 
 
-def _(cmd):
-    # noinspection PyBroadException
-    try:
-        exec("ret = " + eval("cmd"))
-    except:
-        logging.exception("Main oops:")
-    else:
-        return ret
+def _(func, *args, **kwargs):
+        # noinspection PyBroadException
+        try:
+            return func(*args, **kwargs)
+        except:
+            logging.exception("Main oops:")
 
-
-relays.pumping_cycle()
+#####relays.pumping_cycle()
 
 while True:
     now = datetime.now()
-    record = _('sensors.read_sensors_data()')
+    record = _(sensors.read_sensors_data)
 
     if now.minute % 10 == 0:
-        _('sensors.write_sensors_data(record, SENSOR_DATA_FULL_FILE)')
-        _('relays.pumping_cycle()')
+        _(sensors.write_sensors_data, record, SENSOR_DATA_FULL_FILE)
+        _(relays.pumping_cycle)
 
     if now.minute == 0:
         month_of_records_count = 24*7*4
-        _('sensors.write_sensors_data(record, SENSOR_DATA_SHORT_FILE, max_records=month_of_records_count)')
+        _(sensors.write_sensors_data, record, SENSOR_DATA_SHORT_FILE, max_records=month_of_records_count)
 
     if sms_gateway and (now.hour, now.minute) == (12, 00):
-        _('send_mail(gmail_account["address"], gmail_account["password"], sms_gateway, "I am alive")')  # TODO: send water level info
+        # TODO: send water level info
+        _(send_mail, gmail_account["address"], gmail_account["password"], sms_gateway, "I am alive")
 
     sleep(60-datetime.now().second)
 
 # TODO: create more oxigen when high temperature
 # TODO: no point in making fog when temperature is up to 26C or below 5C ?
 # TODO: no point in funing when temperature is below 5C
+# wattering interval in minutes = 60*24*365 if c < 5 else 24*60/(x-4)**1.5

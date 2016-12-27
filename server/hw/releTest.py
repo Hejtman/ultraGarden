@@ -1,3 +1,5 @@
+import wiringpi
+
 def releTest():
     while(True):
         wiringpi.digitalWrite(FUN_RELE, wiringpi.GPIO.LOW)
