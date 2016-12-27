@@ -21,3 +21,10 @@ cd wiringPi
 ./build
 
 libcurl4-openssl-dev
+server:
+ * install
+   * cp /home/pi/ultraGarden/server/utils/ultra-garden.sh /etc/init.d/ultra-garden
+   * update-rc.d /etc/init.d/ultra-garden defaults
+   * echo "*/5 *   * * *   root    /home/pi/ultraGarden/server/utils/wifi-rebooter.sh" >> /etc/crontab
+   * echo "00 05   * * *   root    /sbin/reboot" >> /etc/crontab
+ * reboot each midnight

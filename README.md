@@ -1,34 +1,29 @@
 [UltraGarden][1]
 ----------------
   
-2 weeks self-sustaining aerophonics system for extreme sunbeam. Ultra sound made nutrient fog circling in pipes on balcony trough plants roots.
-  
-Raspberry Pi collects information about outside light density, humidity, temperature, inside humidity, temperature and manages closed fogging vs opened airing cycles for optimal plants irrigation. 
-  
+Two weeks self-sustaining aero/hydroponics system for extreme sunbeam. Ultra sound made nutrient fog circling in pipes trough plants roots.
+Two liters of liquid water are pumped every quarter hour for fully grown plants with roots reaching bottom of the pipe.
+
+Raspberry Pi collects information (light density, humidity, temperature, watter level) and manages fogging, watering, airing/cooling cycles for optimal plants irrigation.
+
+
 [![UltraGarden][2]][1]
   
   
 ### Usage:
 Raspberry Pi terminal:
-```
+```bash
 $ git clone https://github.com/Hejtman/ultraGarden
 $ cd ultraGarden/server
- 
-# configure to your web server address
-$ vim config.cpp
-$ make 
-  
-# start server when Raspberry Pi boot up
-$ make install
+# python smartGarden.py
+
 ```
   
 ### Contribution:
-This software is written by [Hejtman][3] for fun.
+This software/hardware is made by [Hejtman][3] for fun.
 Contributing is warmly welcomed. There is no point in doing everything from scratch nor all alone.
 
-You can do it by [forking](https://help.github.com/articles/fork-a-repo), committing modifications and then [pulling requests](https://help.github.com/articles/using-pull-requests) or by posting ideas, success stories to [forum](http://malina.moxo.cz/).
-Thanks for your contribution and happy growing.
-  
-[1]: http://malina.moxo.cz/ultraGarden
-[2]: http://malina.moxo.cz/ultraGarden/balcone1/background.jpg
+You can do it by [forking](https://help.github.com/articles/fork-a-repo), committing modifications and then [pulling requests](https://help.github.com/articles/using-pull-requests), or sharing your own experiences and success stories. 
+[1]: http://83.240.76.4/ultraGarden/index.htm
+[2]: web/ultraGarden/balcony_left.jpg
 [3]: mailto://hejtman2@centrum.cz

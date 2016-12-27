@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Malina</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+	<link rel="shortcut icon" href="../rasp.png">
+	<meta name="Description" content="Calculation of Ludolph number">
+	<meta name="Keywords" content="Ludolph number">
+	<meta name="author" content="Michal Hejtm&aacute;nek, http://83.240.76.4"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<pre style="background:#000;color:#f8f8f8"><span style="color:#e28964">from</span> decimal <span style="color:#e28964">import</span> Decimal
+
+
+<span style="color:#99cf50">def</span> <span style="color:#89bdff">n_angle_side</span>():
+    side <span style="color:#e28964">=</span> Decimal(<span style="color:#3387cc">0.5</span>)
+    <span style="color:#e28964">while</span> <span style="color:#3387cc">True</span>:
+        <span style="color:#e28964">yield</span> side
+        side <span style="color:#e28964">=</span> ((<span style="color:#3387cc">1</span><span style="color:#e28964">+</span>side)<span style="color:#e28964">*</span><span style="color:#e28964">*</span>Decimal(<span style="color:#3387cc">0.5</span>) <span style="color:#e28964">-</span> (<span style="color:#3387cc">1</span><span style="color:#e28964">-</span>side)<span style="color:#e28964">*</span><span style="color:#e28964">*</span>Decimal(<span style="color:#3387cc">0.5</span>))<span style="color:#e28964">/</span><span style="color:#3387cc">2</span>
+
+<span style="color:#e28964">for</span> n, s <span style="color:#e28964">in</span> <span style="color:#dad085">zip</span>(<span style="color:#dad085">range</span>(<span style="color:#3387cc">26</span>), n_angle_side()):
+    <span style="color:#e28964">print</span> <span style="color:#65b042">"{}. {}-angle side: {} circumference: {}"</span>.format(n, <span style="color:#3387cc">6</span><span style="color:#e28964">*</span><span style="color:#3387cc">2</span><span style="color:#e28964">*</span><span style="color:#e28964">*</span>n, s, <span style="color:#3387cc">6</span><span style="color:#e28964">*</span><span style="color:#3387cc">2</span><span style="color:#e28964">*</span><span style="color:#e28964">*</span>n<span style="color:#e28964">*</span>s)
+
+
+<span style="color:#65b042">'''
+OUTPUT:
+0. 6-angle side: 0.5 circumference: 3.0
+1. 12-angle side: 0.2588190451025207623488988374 circumference: 3.105828541230249148186786049
+2. 24-angle side: 0.1305261922200515915484062279 circumference: 3.132628613281238197161749470
+3. 48-angle side: 0.06540312923014306681531555875 circumference: 3.139350203046867207135146820
+4. 96-angle side: 0.03271908282177614206365992655 circumference: 3.141031950890509638111352949
+5. 192-angle side: 0.0163617316264867816429719238 circumference: 3.141452472285462075450609370
+6. 384-angle side: 0.00818113960393712928519912345 circumference: 3.141557607911857645516463405
+7. 768-angle side: 0.00409060402623478959462105435 circumference: 3.141583892148318408668969741
+8. 1536-angle side: 0.00204530629116409511441305885 circumference: 3.141590463228050095738458394
+9. 3072-angle side: 0.0010226536803383045411929613 circumference: 3.141592105999271550544777114
+10. 6144-angle side: 0.00051132690701369750123581915 circumference: 3.141592516692157447592872858
+11. 12288-angle side: 0.00025566346186241731406164915 circumference: 3.141592619365383955189544755
+12. 24576-angle side: 0.00012783173197565474026172415 circumference: 3.141592645033690896672132710
+13. 49152-angle side: 0.0000639158661183831309347379 circumference: 3.141592651450767651704237261
+14. 98304-angle side: 0.0000319579330755110355803540 circumference: 3.141592653055036841691119616
+15. 196608-angle side: 0.00001597896653979545155469055 circumference: 3.141592653456104139264599654
+16. 393216-angle side: 0.00000798948327015271749792205 circumference: 3.141592653556370963662916813
+17. 786432-angle side: 0.0000039947416351082327140334 circumference: 3.141592653581437669762714829
+18. 1572864-angle side: 0.00000199737081755810060265045 circumference: 3.141592653587704346287197389
+19. 3145728-angle side: 9.986854087795483320293E-7 circumference: 3.141592653589271015417865830
+20. 6291456-angle side: 4.993427043898364198526E-7 circumference: 3.141592653589662682700159386
+21. 12582912-angle side: 2.4967135219492599165595E-7 circumference: 3.141592653589760599519553126
+22. 25165824-angle side: 1.2483567609746396854435E-7 circumference: 3.141592653589785078728648294
+23. 50331648-angle side: 6.24178380487321058618E-8 circumference: 3.141592653589791198534854246
+24. 100663296-angle side: 3.120891902436606812965E-8 circumference: 3.141592653589792728491124326
+25. 201326592-angle side: 1.560445951218303596465E-8 circumference: 3.141592653589793110976416973
+
+Process finished with exit code 0
+'''</span>
+
+</pre>
+</body>
+</html>
