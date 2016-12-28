@@ -6,4 +6,4 @@ gmail_account = {
     "password": None
 }
 sms_gateway = None
-log_level = logging.DEBUG
+log_level = logging.INFO
