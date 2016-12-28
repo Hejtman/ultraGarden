@@ -1,5 +1,6 @@
 # TODO https://github.com/lneoe/ds18b20/blob/master/DS18B20.py
 
+
 class ds18b20:
     """
     Reads from ds18b20 temperature sensor and holds temperature value from last successful reading.

@@ -1,8 +1,6 @@
 import os
 from datetime import datetime
 
-# noinspection PyBroadException
-
 
 class Sensors:
     def __init__(self, sensor_list):
