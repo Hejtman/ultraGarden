@@ -1,5 +1,7 @@
+from time import sleep
+
 try:
-    import wiringpi
+    import wiringpi2 as wiringpi
 except ImportError:
     import wiringpi_fake as wiringpi
 
@@ -28,7 +30,6 @@ class Relays:
 
 # UNIT TESTS
 if __name__ == '__main__':
-    from time import sleep
     from ultraGarden import relays
 
     UNCONNECTED = 11  # GPIO pin number

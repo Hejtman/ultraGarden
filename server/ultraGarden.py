@@ -3,7 +3,7 @@ from time import sleep
 from datetime import datetime
 
 try:
-    import wiringpi
+    import wiringpi2 as wiringpi
 except ImportError:
     import wiringpi_fake as wiringpi
 
