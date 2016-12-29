@@ -34,27 +34,27 @@ if __name__ == '__main__':
     UNCONNECTED = 11  # GPIO pin number
 
     while True:
-        wiringpi.digitalWrite(relays["FAN"]["PIN"], wiringpi.GPIO.LOW)
-        wiringpi.digitalWrite(relays["FOG"]["PIN"], wiringpi.GPIO.LOW)
-        wiringpi.digitalWrite(relays["PUMP"]["PIN"], wiringpi.GPIO.LOW)
+        wiringpi.digitalWrite(relays.relays["FAN"]["PIN"], wiringpi.GPIO.LOW)
+        wiringpi.digitalWrite(relays.relays["FOG"]["PIN"], wiringpi.GPIO.LOW)
+        wiringpi.digitalWrite(relays.relays["PUMP"]["PIN"], wiringpi.GPIO.LOW)
         wiringpi.digitalWrite(UNCONNECTED, wiringpi.GPIO.LOW)
         sleep(5)
 
-        wiringpi.digitalWrite(relays["FAN"]["PIN"], wiringpi.GPIO.HIGH)
-        wiringpi.digitalWrite(relays["FOG"]["PIN"], wiringpi.GPIO.LOW)
-        wiringpi.digitalWrite(relays["PUMP"]["PIN"], wiringpi.GPIO.LOW)
+        wiringpi.digitalWrite(relays.relays["FAN"]["PIN"], wiringpi.GPIO.HIGH)
+        wiringpi.digitalWrite(relays.relays["FOG"]["PIN"], wiringpi.GPIO.LOW)
+        wiringpi.digitalWrite(relays.relays["PUMP"]["PIN"], wiringpi.GPIO.LOW)
         wiringpi.digitalWrite(UNCONNECTED, wiringpi.GPIO.LOW)
         sleep(5)
 
-        wiringpi.digitalWrite(relays["FAN"]["PIN"], wiringpi.GPIO.LOW)
-        wiringpi.digitalWrite(relays["FOG"]["PIN"], wiringpi.GPIO.HIGH)
-        wiringpi.digitalWrite(relays["PUMP"]["PIN"], wiringpi.GPIO.LOW)
+        wiringpi.digitalWrite(relays.relays["FAN"]["PIN"], wiringpi.GPIO.LOW)
+        wiringpi.digitalWrite(relays.relays["FOG"]["PIN"], wiringpi.GPIO.HIGH)
+        wiringpi.digitalWrite(relays.relays["PUMP"]["PIN"], wiringpi.GPIO.LOW)
         wiringpi.digitalWrite(UNCONNECTED, wiringpi.GPIO.LOW)
         sleep(5)
 
-        wiringpi.digitalWrite(relays["FAN"]["PIN"], wiringpi.GPIO.LOW)
-        wiringpi.digitalWrite(relays["FOG"]["PIN"], wiringpi.GPIO.LOW)
-        wiringpi.digitalWrite(relays["PUMP"]["PIN"], wiringpi.GPIO.HIGH)
+        wiringpi.digitalWrite(relays.relays["FAN"]["PIN"], wiringpi.GPIO.LOW)
+        wiringpi.digitalWrite(relays.relays["FOG"]["PIN"], wiringpi.GPIO.LOW)
+        wiringpi.digitalWrite(relays.relays["PUMP"]["PIN"], wiringpi.GPIO.HIGH)
         wiringpi.digitalWrite(UNCONNECTED, wiringpi.GPIO.LOW)
         sleep(5)
 
