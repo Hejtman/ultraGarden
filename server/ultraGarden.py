@@ -3,12 +3,12 @@ from time import sleep
 from datetime import datetime
 
 try:
-    import wiringpi2 as wiringpi
+    import wiringpi
 except ImportError:
     import wiringpi_fake as wiringpi
 
 from utils.logging import log_exceptions
-from relays import Relays
+from relays import Relays, RelayWiring
 from sensors import Sensors
 from hw.ds18b20.ds18b20 import ds18b20
 from config import gmail_account, sms_gateway, log_level
@@ -24,13 +24,9 @@ SENSOR_DATA_SHORT_FILE = "/var/www/html/sensors_data_short"
 SENSOR_DATA_FULL_FILE = "/var/www/html/sensors_data_full"
 
 # WIRING
-# FIXME: named tuples?
-relays = Relays(relays={"FOG": {"PIN": 28, "ON": wiringpi.GPIO.LOW, "OFF": wiringpi.GPIO.HIGH},
-                        "FAN": {"PIN": 29, "ON": wiringpi.GPIO.LOW, "OFF": wiringpi.GPIO.HIGH},
-                        "PUMP": {"PIN": 26, "ON": wiringpi.GPIO.HIGH, "OFF": wiringpi.GPIO.LOW}},  # PIN 11 unused yet
-                timing={"BEFORE_PUMP": 2,
-                        "PUMPING": 8,
-                        "FAN_PROTECTION": 10})
+relays = Relays(fog=RelayWiring(pin=28, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW),     # by default on
+                fan=RelayWiring(pin=29, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW),     # by default on
+                pump=RelayWiring(pin=26, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH))    # by default off
 
 sensors = Sensors([ds18b20("28-011564df1dff", "barrel"),
                    ds18b20("28-011564aee4ff", "balcony")])
@@ -38,7 +34,7 @@ sensors = Sensors([ds18b20("28-011564df1dff", "barrel"),
 
 # START SERVER
 if __name__ == '__main__':
-    relays.pumping_cycle()
+    relays.pumping()
 
     while True:
         now = datetime.now()
@@ -46,7 +42,7 @@ if __name__ == '__main__':
 
         if now.minute % 10 == 0:
             log_exceptions(sensors.write_sensors_data, record, SENSOR_DATA_FULL_FILE)
-            log_exceptions(relays.pumping_cycle)
+            log_exceptions(relays.pumping)
 
         if now.minute == 0:
             month_of_records_count = 24*7*4
