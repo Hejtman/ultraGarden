@@ -1,6 +1,6 @@
 from time import sleep
-from collections import namedtuple
 from itertools import chain
+from collections import namedtuple
 
 try:
     import wiringpi

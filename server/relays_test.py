@@ -6,14 +6,14 @@ try:
 except ImportError:
     import wiringpi_fake as wiringpi
 
-from ultraGarden import UltraGarden  # GPIO initialization
+from garden import Garden  # GPIO initialization
 from relays import RelayWiring
 
 
 def test_that_it_turns_on_and_off_all_relays():
     RelaySetsFull = namedtuple('RelaySetFull', 'fan fog pump unused delay')
 
-    garden = UltraGarden()
+    garden = Garden()
 
     unused_pin = RelayWiring(pin=11, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)
     garden.relays.relays += (unused_pin,)
