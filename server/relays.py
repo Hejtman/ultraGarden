@@ -14,16 +14,16 @@ RelaySets = namedtuple('RelaySet', 'fan fog pump delay')
 
 class Relays:
     def __init__(self, fan, fog, pump: RelayWiring):
-        self.relays = (fan, fog, pump)
+        self.relays = (fan, fog, pump)                                          # relays order has to match relays order in any _cycle
+
+        for r in self.relays:
+            wiringpi.pinMode(r.pin, wiringpi.GPIO.OUTPUT)
 
         self.default_set = RelaySets(fan.off, fog.off, pump.off, delay=0)        # default configuration between cycles
 
         self.pumping_cycle = (RelaySets(fan.off, fog.off, pump.off, delay=1),    # stabilize power for pump
                               RelaySets(fan.off, fog.off, pump.on,  delay=8),    # just pump for a while
                               RelaySets(fan.off, fog.on,  pump.off, delay=10))   # wait with fan until water level drops
-
-        for r in self.relays:
-            wiringpi.pinMode(r.pin, mode=wiringpi.GPIO.OUTPUT)
 
     def pumping(self):
         self.cycling(chain(self.pumping_cycle, (self.default_set,)))

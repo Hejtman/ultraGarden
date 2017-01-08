@@ -1,7 +1,6 @@
 import logging
 from time import sleep
 from datetime import datetime
-from collections import namedtuple
 
 try:
     import wiringpi
@@ -10,7 +9,7 @@ except ImportError:
 
 from utils.logging import log_exceptions as _
 from relays import Relays, RelayWiring
-from sensors import Sensors, SensorsX
+from sensors import Sensors
 from hw.ds18b20.ds18b20 import ds18b20
 from config import SensorData, GMailAccount, sms_gateway, log_level
 from utils.communication import send_mail
@@ -26,8 +25,8 @@ class Garden:
         )
 
         # fixme named tuple?
-        self.sensors = Sensors(SensorsX(barrel_temperature=ds18b20("28-011564df1dff", "barrel_temperature"),
-                                        balcony_temperature=ds18b20("28-011564aee4ff", "balcony_temperature")))
+        self.sensors = Sensors(barrel_temperature=ds18b20("28-011564df1dff", "barrel"),
+                               balcony_temperature=ds18b20("28-011564aee4ff", "balcony"))
 
         self.last_pumping_time = None
 
