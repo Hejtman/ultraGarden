@@ -1,6 +1,6 @@
 import os
 import unittest
-from contextlib import ignored
+from contextlib import suppress
 
 from sensors import Sensors
 from datetime import datetime
@@ -19,48 +19,75 @@ class SensorFake:
 class TestSensors(unittest.TestCase):
 
     def test_that_it_reads_data(self):
+        # given
         sensors = Sensors(balcony_tmp=SensorFake("balcony"),
                           barrel_tmp=SensorFake("barrel"),
                           tune_tmp=SensorFake("tube"))
 
+        # when
         sensors.refresh_values()
 
+        # then
         self.assertEqual(sensors.balcony_tmp.value, 1)
         self.assertEqual(sensors.barrel_tmp.value, 1)
         self.assertEqual(sensors.tune_tmp.value, 1)
 
-    def test_that_it_writes_data_to_file(self):
+    def test_that_it_writes_single_line_data_to_file(self):
         # given
-        now = datetime.now()
-        expected_content = """var chartData = [
-        {{  date: new Date("{0}"), aa: 2, bb: 3, cc: 4  }},
-        ];""".format(now.strftime('%Y-%m-%dT%H:%M'))
-        test_output_file = "/tmp/ultra_garden_test"
-        with ignored(OSError):
-            os.remove(test_output_file)
-
         sensors = Sensors(a=SensorFake("aa"),
                           b=SensorFake("bb"),
                           c=SensorFake("cc"))
 
+        sensors.a.value = 1
+        sensors.b.value = 2
+        sensors.c.value = 3
+
+        test_output_file = "/tmp/ultra_garden_test"
+        with suppress(FileNotFoundError):
+            os.remove(test_output_file)
+
+        now = datetime.now()
+        expected_content = "var chartData = [\n{{  date: new Date(\"{0}\"), aa: 1, bb: 2, cc: 3  }},\n];"\
+            .format(now.strftime('%Y-%m-%dT%H:%M'))
+
         # when
-        sensors.a.value = 2
-        sensors.b.value = 3
-        sensors.c.value = 4
         sensors.write_values(now, test_output_file)
 
-        for record in range(1,5):
-            for i, s in enumerate(sensors.sensors):
-                s.value = record + i
+        # then
+        with open(test_output_file) as f:
+            self.assertEqual(f.read(), expected_content)
+
+    def test_that_it_writes_multi_line_data_to_file(self):
+        # given
+        sensors = Sensors(a=SensorFake("aa"),
+                          b=SensorFake("bb"),
+                          c=SensorFake("cc"))
+
+        test_output_file = "/tmp/ultra_garden_test"
+        with suppress(FileNotFoundError):
+            os.remove(test_output_file)
+
+        now = datetime.now()
+        expected_content = """var chartData = [
+{{  date: new Date("{0}"), aa: 1, bb: 2, cc: 3  }},
+{{  date: new Date("{0}"), aa: 4, bb: 5, cc: 6  }},
+{{  date: new Date("{0}"), aa: 7, bb: 8, cc: 9  }},
+{{  date: new Date("{0}"), aa: 10, bb: 11, cc: 12  }},
+{{  date: new Date("{0}"), aa: 13, bb: 14, cc: 15  }},
+];""".format(now.strftime('%Y-%m-%dT%H:%M'))
+
+        # when
+        for record in range(5):
+            for i, s in enumerate(sensors.sensors, 1):
+                s.value = len(sensors.sensors) * record + i
             sensors.write_values(now, test_output_file)
 
         # then
         with open(test_output_file) as f:
             self.assertEqual(f.read(), expected_content)
 
-        os.remove(test_output_file)
-
     def test_that_it_trim_data_in_file(self):
+        # TODO
         pass
 
 

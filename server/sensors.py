@@ -3,7 +3,7 @@ import os
 
 class Sensors:
     def __init__(self, **sensors):
-        self.sensors = (sensor for sensor in sensors.values())
+        self.sensors = tuple(s for s in sensors.values())
         for name, data in sensors.items():
             setattr(self, name, data)
 
@@ -27,14 +27,14 @@ class Sensors:
 
     def write_values(self, now, file):
         tmp_file = file + "_tmp"
-        last_line = "\n];"
+        last_line = "];"
         record = self.__generate_record(now)
 
         try:
             with open(file) as original, open(tmp_file, "w") as new:
                 for line in original:
                     if line == last_line:
-                        new.write(record)
+                        new.write(record + "\n")
                     new.write(line)
             os.rename(tmp_file, file)
 
