@@ -26,19 +26,21 @@ class Sensors:
         return heading + records + ending
 
     def write_values(self, now, file):
-        tmp_file = file + "_tmp"
-        last_line = "];"
+        heading = "var chartData = ["
         record = self.__generate_record(now)
-
+        ending = "];"
         try:
-            with open(file) as original, open(tmp_file, "w") as new:
-                for line in original:
-                    if line == last_line:
-                        new.write(record + "\n")
-                    new.write(line)
-            os.rename(tmp_file, file)
-
-        # file not found? start new one
+            with open(file, "br+") as f:
+                f.seek(-len(ending), os.SEEK_END)
+                f.write((record + os.linesep + ending).encode("ascii"))
         except IOError:
             with open(file, "w") as f:
-                f.write("var chartData = [\n{}\n];".format(record))
+                f.write(heading + os.linesep + record + os.linesep + ending)
+
+
+if __name__ == '__main__':
+    import unittest
+    # noinspection PyUnresolvedReferences
+    from sensors_test import TestSensors
+
+    unittest.main()

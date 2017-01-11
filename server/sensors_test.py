@@ -18,7 +18,7 @@ class SensorFake:
 
 class TestSensors(unittest.TestCase):
 
-    def test_that_it_reads_data(self):
+    def test_that_it_reads_data_from_sensors(self):
         # given
         sensors = Sensors(balcony_tmp=SensorFake("balcony"),
                           barrel_tmp=SensorFake("barrel"),
@@ -42,7 +42,7 @@ class TestSensors(unittest.TestCase):
         sensors.b.value = 2
         sensors.c.value = 3
 
-        test_output_file = "/tmp/ultra_garden_test"
+        test_output_file = "/tmp/ultra_garden_test_single"
         with suppress(FileNotFoundError):
             os.remove(test_output_file)
 
@@ -63,7 +63,7 @@ class TestSensors(unittest.TestCase):
                           b=SensorFake("bb"),
                           c=SensorFake("cc"))
 
-        test_output_file = "/tmp/ultra_garden_test"
+        test_output_file = "/tmp/ultra_garden_test_multi"
         with suppress(FileNotFoundError):
             os.remove(test_output_file)
 
