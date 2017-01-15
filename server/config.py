@@ -2,14 +2,14 @@ import logging
 
 
 class SensorData:
-    short_file = "/var/www/html/sensors_data_short"
-    full_file = "/var/www/html/sensors_data_full"
+    WEB_FILE = "/var/www/html/sensors_data_short"
+    FULL_FILE = "/var/www/html/sensors_data_full"
 
 
 class GMailAccount:
-    address = None
-    password = None
+    ADDRESS = None
+    PASSWORD = None
+    SMS_GATEWAY = None
 
 
-sms_gateway = None
-log_level = logging.INFO
+LOG_LEVEL = logging.INFO

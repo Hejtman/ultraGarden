@@ -13,8 +13,9 @@ RelaySets = namedtuple('RelaySet', 'fan fog pump delay')
 
 
 class Relays:
+    # FIXME: like sensors: relays order has to match relays order in any _cycle
     def __init__(self, fan, fog, pump: RelayWiring):
-        self.relays = (fan, fog, pump)                                          # relays order has to match relays order in any _cycle
+        self.relays = (fan, fog, pump)
 
         for r in self.relays:
             wiringpi.pinMode(r.pin, wiringpi.GPIO.OUTPUT)
