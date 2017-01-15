@@ -1,6 +1,5 @@
 import logging
-import schedule
-
+import datetime
 
 try:
     import wiringpi
@@ -10,6 +9,8 @@ except ImportError:
 from relays import Relays, RelayWiring
 from sensors import Sensors
 from hw.ds18b20.ds18b20 import ds18b20
+# from utils.communication import send_mail
+# GMailAccount
 
 
 class Garden:
@@ -24,18 +25,18 @@ class Garden:
         self.sensors = Sensors(barrel_temperature=ds18b20("28-011564df1dff", "barrel"),
                                balcony_temperature=ds18b20("28-011564aee4ff", "balcony"))
 
-        self.last_watering_time = None
+        self.last_watering_time = datetime.datetime.now() - datetime.timedelta(days=365)
 
-    def schedule_watering(self):
-        print("schedule watering")
+    def check_watering(self):
+        print("check watering")
         # FIXME: base calculation on sensor data [minutes = 60*24*365 if c < 5 else 24*60/(x-4)**1.5]
-        # FIXME: remember last run, get next run, run watering immediately if needed
         # TODO: create more oxygen when high temperature
         # TODO: no point in making fog when temperature is up to 26C or below 5C ?
-        schedule.clear("WATERING")
-        schedule.every(5).seconds.do(self.watering).tag("WATERING")
+        if datetime.datetime.now() - self.last_watering_time > datetime.timedelta(minutes=20):
+            self.watering()
 
     def watering(self):
         print("watering")
         logging.info("{} watering".format(self.last_watering_time))  # TODO: write temperature
         self.relays.pumping()
+        self.last_watering_time = datetime.datetime.now()

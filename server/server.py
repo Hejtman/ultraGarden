@@ -1,22 +1,15 @@
-import schedule, time, logging
-from datetime import datetime, timedelta
+import time
+import logging
+import schedule
+from datetime import datetime
 
 try:
     import wiringpi
 except ImportError:
     import wiringpi_fake as wiringpi
 
-from config import SensorData, GMailAccount, LOG_LEVEL
+from config import SensorData, LOG_LEVEL
 from garden import Garden
-from utils.communication import send_mail
-
-
-def print_time(a='default'):
-    print("From print_time", time.time(), a)
-
-
-HIGH_PRIORITY = 1
-LOW_PRIORITY = 2
 
 
 # START SERVER
@@ -25,55 +18,27 @@ if __name__ == '__main__':
     logging.basicConfig(level=LOG_LEVEL, filename='/tmp/ultra_garden.log')
 
     garden = Garden()
-    schedule.every(1).seconds.do(garden.watering).tag("WATERING").run()
-    schedule.every(2).seconds.do(garden.schedule_watering)
+    schedule.every(1).minute.do(garden.sensors.refresh_values)
+    schedule.every(10).minutes.do(garden.sensors.write_values, file=SensorData.FULL_FILE)
+    schedule.every(1).hour.do(garden.sensors.write_values, file=SensorData.WEB_FILE)
+    # TODO: schedule trim of WEB_FILE for month_of_records_count = 24*7*4
+    # TODO: schedule sms_check with _(send_mail, GMailAccount.address, GMailAccount.password, sms_gateway, "I am alive")
+    # * job.last_run = datetime(yesterday 12:00)?
+    # TODO: send water level info at 12:00
 
+    schedule.every(1).minute.do(garden.check_watering)
+
+    garden.watering()
+
+    # SERVER LOOP = log all, never fall
     while True:
-        schedule.run_pending()
-        time.sleep(schedule.idle_seconds())
-
-
-    """
-    # FIXME: this stuff should be replaced by scheduler
-    while True:
-        now = datetime.now()
-        record = _(garden.sensors.read_sensors_data)   # FIXME: each garden function should caught all its exceptions
-
-        if now.minute % 10 == 0:
-            _(garden.sensors.write_sensors_data, record, SensorData.full_file)
-
-        garden.check_pumping(now, garden.last_pumping_time, garden.sensors)
-
-        if now.minute == 0:
-            month_of_records_count = 24*7*4
-            _(garden.sensors.write_sensors_data, record, SensorData.short_file, max_records=month_of_records_count)
-
-        if sms_gateway and (now.hour, now.minute) == (12, 00):
-            # TODO: send water level info
-            _(send_mail, GMailAccount.address, GMailAccount.password, sms_gateway, "I am alive")
-
-        _(sleep(60-datetime.now().second))
-    """
-
-
-"""
-import functools
-
-def catch_exceptions(job_func, cancel_on_failure=False):
-    @functools.wraps(job_func)
-    def wrapper(*args, **kwargs):
+        # noinspection PyBroadException
         try:
-            return job_func(*args, **kwargs)
+            schedule.run_pending()
+            time.sleep(schedule.idle_seconds())
+
         except:
-            import traceback
-            print(traceback.format_exc())
-            if cancel_on_failure:
-                return schedule.CancelJob
-    return wrapper
-
-@catch_exceptions(cancel_on_failure=True)
-def bad_task():
-    return 1 / 0
-
-schedule.every(5).minutes.do(bad_task)
-"""
+            logging.exception("Ignoring min exception:")
+            failed_job = sorted(schedule.jobs)[0]
+            failed_job.last_run = datetime.now()
+            failed_job._schedule_next_run()

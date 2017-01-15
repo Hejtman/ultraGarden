@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 
 class Sensors:
@@ -15,8 +16,8 @@ class Sensors:
                 # TODO: log warning here
                 pass
 
-    def __generate_record(self, now):
-        heading = "{  " + "date: new Date(\"{}\")".format(now.strftime('%Y-%m-%dT%H:%M'))
+    def __generate_record(self):
+        heading = "{  " + "date: new Date(\"{}\")".format(datetime.now().strftime('%Y-%m-%dT%H:%M'))
         records = ""
         ending = "  },"
 
@@ -25,9 +26,9 @@ class Sensors:
 
         return heading + records + ending
 
-    def write_values(self, now, file):
+    def write_values(self, file):
         heading = "var chartData = ["
-        record = self.__generate_record(now)
+        record = self.__generate_record()
         ending = "];"
         try:
             with open(file, "br+") as f:
