@@ -1,14 +1,14 @@
-import logging
 import datetime
+import logging
 
 try:
     import wiringpi
 except ImportError:
     import wiringpi_fake as wiringpi
 
-from garden.relays import Relays, RelayWiring
-from garden.sensors import Sensors
-from garden.hw.ds18b20.ds18b20 import ds18b20
+from relays import Relays, RelayWiring
+from sensors import Sensors
+from hw.ds18b20.ds18b20 import ds18b20
 # from utils.communication import send_mail
 # GMailAccount
 

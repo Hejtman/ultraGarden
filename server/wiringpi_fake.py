@@ -1,4 +1,6 @@
-import sys
+"""
+Fake GPIO interface for debugging on non-raspberry pi platforms.
+"""
 
 
 class GPIO(object):
@@ -36,7 +38,7 @@ class GPIO(object):
 
 
 def wiringPiSetup():
-    print(sys._getframe().f_code.co_name)
+    print("wiringPiSetup")
 
 
 def pinMode(pin, mode):

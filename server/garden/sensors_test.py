@@ -3,7 +3,7 @@ import unittest
 from datetime import datetime
 from contextlib import suppress
 
-from garden.sensors import Sensors
+from sensors import Sensors
 
 
 class SensorFake:
@@ -51,7 +51,7 @@ class TestSensors(unittest.TestCase):
             .format(now.strftime('%Y-%m-%dT%H:%M'))
 
         # when
-        sensors.write_values(now, test_output_file)
+        sensors.write_values(test_output_file)
 
         # then
         with open(test_output_file) as f:
@@ -80,7 +80,7 @@ class TestSensors(unittest.TestCase):
         for record in range(5):
             for i, s in enumerate(sensors.sensors, 1):
                 s.value = len(sensors.sensors) * record + i
-            sensors.write_values(now, test_output_file)
+            sensors.write_values(test_output_file)
 
         # then
         with open(test_output_file) as f:

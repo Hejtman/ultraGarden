@@ -6,16 +6,16 @@
 # Default-Start:     S
 # Default-Stop:      0 6
 # Short-Description: Raise garden.
-# Description:       Raise balkony garden.
+# Description:       Raise balcony garden.
 ### END INIT INFO
 
 case "$1" in
 start)
-   python /home/pi/ultraGarden/server/utils/ultraGarden.py &
+   python3 /home/pi/ultraGarden/server/utils/ultraGarden.py &
    ;;  
 
 stop)
-   killall python
+   killall python3
    ;;  
 
 *)

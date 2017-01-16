@@ -1,3 +1,6 @@
+"""
+Configuration storage.
+"""
 import logging
 
 

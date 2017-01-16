@@ -1,3 +1,5 @@
+# FIXME: like sensors_test
+
 from collections import namedtuple
 from itertools import combinations_with_replacement
 
@@ -6,8 +8,8 @@ try:
 except ImportError:
     import wiringpi_fake as wiringpi
 
-from garden.garden import Garden
-from garden.relays import RelayWiring
+from garden import Garden
+from relays import RelayWiring
 
 
 def test_that_it_turns_on_and_off_all_relays():

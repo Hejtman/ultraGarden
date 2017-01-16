@@ -34,6 +34,7 @@ class Gardener:
         # TODO: schedule sms_check with send_mail, GMailAccount.address, GMailAccount.password, sms_gateway,"I am alive"
         # * job.last_run = datetime(yesterday 12:00)?
         # TODO: send water level info at 12:00
+        # TODO: schedule wifi check (utils)?
 
         schedule.every(1).minute.do(self.garden.check_watering).run()
 
@@ -56,10 +57,6 @@ class Gardener:
             except:
                 logging.exception("Ignoring min exception:")
                 Gardener.__recover(failed_job=sorted(schedule.jobs)[0])
-
-                # FIXME:
-                import traceback
-                traceback.print_exc()
 
 
 # START SERVER
