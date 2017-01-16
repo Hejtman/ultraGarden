@@ -12,4 +12,6 @@ class GMailAccount:
     SMS_GATEWAY = None
 
 
-LOG_LEVEL = logging.INFO
+class Log:
+    LEVEL = logging.INFO
+    FILE = "/tmp/ultra_garden.log"
