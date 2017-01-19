@@ -9,8 +9,6 @@ except ImportError:
 from relays import Relays, RelayWiring
 from sensors import Sensors
 from hw.ds18b20.ds18b20 import ds18b20
-# from utils.communication import send_mail
-# GMailAccount
 
 
 class Garden:

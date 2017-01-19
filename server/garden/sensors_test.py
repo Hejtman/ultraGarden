@@ -16,7 +16,7 @@ class SensorFake:
         return self.value
 
 
-class TestSensors(unittest.TestCase):
+class SensorsTest(unittest.TestCase):
 
     def test_that_it_reads_data_from_sensors(self):
         # given

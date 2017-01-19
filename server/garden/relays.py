@@ -13,6 +13,9 @@ RelaySets = namedtuple('RelaySet', 'fan fog pump delay')
 
 
 class Relays:
+    """
+    Duty cycles.
+    """
     # FIXME: like sensors: relays order has to match relays order in any _cycle
     def __init__(self, fan, fog, pump: RelayWiring):
         self.relays = (fan, fog, pump)

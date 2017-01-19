@@ -3,6 +3,9 @@ from datetime import datetime
 
 
 class Sensors:
+    """
+    Collects data from sensors and generate reports.
+    """
     def __init__(self, **sensors):
         self.sensors = tuple(s for s in sensors.values())
         for name, data in sensors.items():
@@ -42,6 +45,6 @@ class Sensors:
 if __name__ == '__main__':
     import unittest
     # noinspection PyUnresolvedReferences
-    from sensors_test import TestSensors
+    from sensors_test import SensorsTest
 
     unittest.main()

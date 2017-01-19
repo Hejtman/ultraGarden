@@ -9,7 +9,9 @@ class SensorData:
     FULL_FILE = "/var/www/html/sensors_data_full"
 
 
-class GMailAccount:
+class GMail:
+    SERVER = None
+    PORT = None
     ADDRESS = None
     PASSWORD = None
     SMS_GATEWAY = None
