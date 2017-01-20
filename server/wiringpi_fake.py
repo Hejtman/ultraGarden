@@ -41,9 +41,13 @@ def wiringPiSetup():
     print("wiringPiSetup")
 
 
+pin_mode = {}
 def pinMode(pin, mode):
+    pin_mode[pin] = mode
     print("pin {} set to {}".format(pin, ["INPUT", "OUTPUT", "PWM_OUTPUT", "GPIO_CLOCK"][mode]))
 
 
+pin_value = {}
 def digitalWrite(pin, value):
+    pin_value[pin] = value
     print("pin {} set to {}".format(pin, value))
