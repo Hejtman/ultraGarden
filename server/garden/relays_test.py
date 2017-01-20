@@ -1,6 +1,5 @@
 # FIXME: like sensors_test
 
-from collections import namedtuple
 from itertools import combinations_with_replacement
 import unittest
 
@@ -25,8 +24,8 @@ class RelaysTest(unittest.TestCase):
         garden.relays.pumping()
 
         # then
-        self.assertEqual(wiringpi.pin_mode, {23: 1, 24: 1, 25: 1})
-        self.assertEqual(wiringpi.pin_value, {23: 1, 24: 1, 25: 0})
+        self.assertEqual(pin_mode, {23: 1, 24: 1, 25: 1})
+        self.assertEqual(pin_value, {23: 1, 24: 1, 25: 0})
 
     def test_that_it_turns_on_and_off_all_relays(self):
         # given
@@ -36,15 +35,16 @@ class RelaysTest(unittest.TestCase):
         garden.relays.relays += (unused_pin,)
         wiringpi.pinMode(unused_pin.pin, wiringpi.GPIO.OUTPUT)
 
-        all_combinations = combinations_with_replacement((wiringpi.GPIO.LOW, wiringpi.GPIO.HIGH), len(garden.relays.relays))
+        relays_count = len(garden.relays.relays)
+        all_combinations = combinations_with_replacement((wiringpi.GPIO.LOW, wiringpi.GPIO.HIGH), relays_count)
         testing_cycle = (RelaySets((a, b, c, d), delay=5) for a, b, c, d in all_combinations)
 
         # when
         garden.relays.cycling(testing_cycle)
 
         # than
-        self.assertEqual(wiringpi.pin_mode, {23: 1, 24: 1, 25: 1, 18: 1})
-        self.assertEqual(wiringpi.pin_value, {23: 1, 24: 1, 25: 1, 18: 1})
+        self.assertEqual(pin_mode, {23: 1, 24: 1, 25: 1, 18: 1})
+        self.assertEqual(pin_value, {23: 1, 24: 1, 25: 1, 18: 1})
 
 
 if __name__ == '__main__':
