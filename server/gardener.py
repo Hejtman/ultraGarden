@@ -1,11 +1,11 @@
 import time
 import logging
-import smtplib
 import schedule
 from datetime import datetime
 
-from config import SensorData, GMail
-from garden.garden import Garden
+from config import SensorData
+from garden import Garden
+from reports.sms import send_sms
 
 
 class Gardener:
@@ -15,9 +15,9 @@ class Gardener:
        - sensors: temperature (TODO: water level, light density, ...)
        - relays: pump, fan, fogger
      * Reports
-       - web server
-       - sensors data log
-       - sms notifications
+       - web server (TODO)
+       - sensors data log (TODO)
+       - sms notifications (TODO: alerts)
     """
     def __init__(self):
         self.garden = Garden()
@@ -49,27 +49,10 @@ class Gardener:
                 # TODO: add water level info
                 now = datetime.now()
                 if (now.hour, now.minute) == (12, 00):
-                    Gardener.send_sms("I am alive")
+                    send_sms("I am alive")
 
                 time.sleep(schedule.idle_seconds())
 
             except:
                 logging.exception("Ignoring min exception:")
                 Gardener.__recover(failed_job=sorted(schedule.jobs)[0])
-
-    @staticmethod
-    def send_sms(message):
-        server = smtplib.SMTP(GMail.SERVER, GMail.PORT)
-        server.starttls()
-        server.login(GMail.ADDRESS, GMail.PASSWORD)
-        msg = "From:{}\nTo:{}\nSubject:Garden: \n\n{}".format(GMail.ADDRESS, GMail.SMS_GATEWAY, message)
-        server.sendmail(GMail.ADDRESS, GMail.SMS_GATEWAY, msg)
-        server.quit()
-
-
-if __name__ == '__main__':
-    import unittest
-    # noinspection PyUnresolvedReferences
-    from gardener_test import GardenerTest
-
-    unittest.main()
