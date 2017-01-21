@@ -1,5 +1,3 @@
-# FIXME: like sensors_test
-
 from itertools import combinations_with_replacement
 import unittest
 
@@ -31,7 +29,7 @@ class RelaysTest(unittest.TestCase):
         # given
         garden = Garden()
 
-        unused_pin = RelayWiring(pin=18, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)
+        unused_pin = RelayWiring(pin=1, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)
         garden.relays.relays += (unused_pin,)
         wiringpi.pinMode(unused_pin.pin, wiringpi.GPIO.OUTPUT)
 

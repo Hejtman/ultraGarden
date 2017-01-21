@@ -15,9 +15,9 @@ class Garden:
     def __init__(self):
         # WIRING
         self.relays = Relays(
-            fog=RelayWiring(pin=23, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW),  # by default on
-            fan=RelayWiring(pin=24, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW),  # by default on
-            pump=RelayWiring(pin=25, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)  # by default off
+            fog=RelayWiring(pin=6, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW),  # by default on
+            fan=RelayWiring(pin=5, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW),  # by default on
+            pump=RelayWiring(pin=4, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)  # by default off
         )
 
         self.sensors = Sensors(barrel_temperature=ds18b20("28-011564df1dff", "barrel"),

@@ -19,6 +19,7 @@ class Sensors:
                 # TODO: log warning here
                 pass
 
+    # FIXME: mv to reports?
     def __generate_record(self):
         heading = "{  " + "date: new Date(\"{}\")".format(datetime.now().strftime('%Y-%m-%dT%H:%M'))
         records = ""
