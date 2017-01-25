@@ -1,14 +1,20 @@
 import datetime
 import logging
+from collections import namedtuple
+from itertools import chain
+from time import sleep
 
 try:
     import wiringpi
 except ImportError:
     import garden.wiringpi_fake as wiringpi
 
-from garden.relays import Relays, RelayWiring, RelaySets
 from garden.sensors import Sensors
 from garden.hw.ds18b20.ds18b20 import ds18b20
+
+
+RelayWiring = namedtuple('RelayWiring', 'pin off on')
+RelaySet = namedtuple('RelaySe', 'set delay')
 
 
 class Garden:
@@ -18,13 +24,13 @@ class Garden:
         fan = RelayWiring(pin=5, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW)   # by default on
         pump = RelayWiring(pin=4, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)  # by default off
 
-        self.relays = Relays(
-            fan=fan, fog=fog, pump=pump,
-            pumping_cycle=(RelaySets(relays=(fan.off, fog.off, pump.off), delay=1),    # stabilize power for pump
-                           RelaySets(relays=(fan.off, fog.off, pump.on), delay=8),     # pumping for a while
-                           RelaySets(relays=(fan.off, fog.on,  pump.off), delay=10)),  # fan off until water level drops
-            default_cycle=(RelaySets(relays=(fan.off, fog.off, pump.off), delay=0),)   # relays config between cycles
-        )
+        self.relays = (fan, fog, pump)
+        self.watering_cycle = (RelaySet(set=(fan.off, fog.off, pump.off), delay=1),   # stabilize power for pump
+                               RelaySet(set=(fan.off, fog.off, pump.on), delay=8),    # pumping for a while
+                               RelaySet(set=(fan.off, fog.on,  pump.off), delay=10))  # fan off until w level drops
+        self.default_cycle = (RelaySet(set=(fan.off, fog.off, pump.off), delay=0),)   # relays config between cycles
+        for r in self.relays:
+            wiringpi.pinMode(r.pin, wiringpi.GPIO.OUTPUT)
 
         self.sensors = Sensors(barrel_temperature=ds18b20("28-011564df1dff", "barrel"),
                                balcony_temperature=ds18b20("28-011564aee4ff", "balcony"))
@@ -39,6 +45,10 @@ class Garden:
             self.watering()
 
     def watering(self):
-        logging.info("{} watering".format(self.last_watering_time))  # TODO: write temperature
-        self.relays.pumping()
         self.last_watering_time = datetime.datetime.now()
+        logging.info("{} watering".format(self.last_watering_time))  # TODO: write temperature, write after how long?
+
+        for relays_set in chain(self.watering_cycle, self.default_cycle):
+            for relay, value in zip(self.relays, relays_set.set):
+                wiringpi.digitalWrite(relay.pin, value)
+            sleep(relays_set.delay)
