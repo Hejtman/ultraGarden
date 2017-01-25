@@ -3,7 +3,7 @@ import logging
 try:
     import wiringpi
 except ImportError:
-    import wiringpi_fake as wiringpi
+    import garden.wiringpi_fake as wiringpi
 
 from gardener import Gardener
 from config import Log

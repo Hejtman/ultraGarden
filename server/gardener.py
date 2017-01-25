@@ -4,7 +4,7 @@ import schedule
 from datetime import datetime
 
 from config import SensorData
-from garden import Garden
+from garden.garden import Garden
 from reports.sms import send_sms
 
 

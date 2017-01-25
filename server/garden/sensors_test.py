@@ -3,7 +3,7 @@ import unittest
 from datetime import datetime
 from contextlib import suppress
 
-from sensors import Sensors
+from garden.sensors import Sensors
 
 
 class SensorFake:
@@ -16,7 +16,7 @@ class SensorFake:
         return self.value
 
 
-class SensorsTest(unittest.TestCase):
+class TestSensors(unittest.TestCase):
 
     def test_that_it_reads_data_from_sensors(self):
         # given

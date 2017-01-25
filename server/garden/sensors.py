@@ -46,6 +46,6 @@ class Sensors:
 if __name__ == '__main__':
     import unittest
     # noinspection PyUnresolvedReferences
-    from sensors_test import SensorsTest
+    from sensors_test import TestSensors
 
     unittest.main()
