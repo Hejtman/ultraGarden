@@ -9,7 +9,6 @@ try:
 except ImportError:
     import garden.wiringpi_fake as wiringpi
 
-from garden.sensors import Sensors
 from garden.hw.ds18b20.ds18b20 import ds18b20
 
 
@@ -20,9 +19,9 @@ RelaySet = namedtuple('RelaySe', 'set delay')
 class Garden:
     def __init__(self):
         # WIRING
-        fog = RelayWiring(pin=6, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW)   # by default on
-        fan = RelayWiring(pin=5, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW)   # by default on
-        pump = RelayWiring(pin=4, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)  # by default off
+        self.fog = fog = RelayWiring(pin=6, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW)    # by default on
+        self.fan = fan = RelayWiring(pin=5, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW)    # by default on
+        self.pump = pump = RelayWiring(pin=4, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)  # by default off
 
         self.relays = (fan, fog, pump)
         self.watering_cycle = (RelaySet(set=(fan.off, fog.off, pump.off), delay=1),   # stabilize power for pump
@@ -32,8 +31,9 @@ class Garden:
         for r in self.relays:
             wiringpi.pinMode(r.pin, wiringpi.GPIO.OUTPUT)
 
-        self.sensors = Sensors(barrel_temperature=ds18b20("28-011564df1dff", "barrel"),
-                               balcony_temperature=ds18b20("28-011564aee4ff", "balcony"))
+        self.barrel_temperature = ds18b20("28-011564df1dff", "barrel")
+        self.balcony_temperature = ds18b20("28-011564aee4ff", "balcony")
+        self.sensors = (self.barrel_temperature, self.balcony_temperature)
 
         self.last_watering_time = datetime.datetime.now() - datetime.timedelta(days=365)
 
@@ -52,3 +52,11 @@ class Garden:
             for relay, value in zip(self.relays, relays_set.set):
                 wiringpi.digitalWrite(relay.pin, value)
             sleep(relays_set.delay)
+
+    def sensors_refresh(self):
+        for s in self.sensors:
+            try:
+                s.read_value()
+            except IOError:
+                # TODO: log warning here
+                pass

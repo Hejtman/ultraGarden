@@ -10,6 +10,16 @@ except ImportError:
 from garden.garden import Garden, RelayWiring, RelaySet
 
 
+class SensorFake:
+    def __init__(self, name):
+        self.name = name
+        self.value = None
+
+    def read_value(self):
+        self.value = 1
+        return self.value
+
+
 class TestGarden(unittest.TestCase):
 
     def test_a_that_it_turns_on_and_off_all_relays(self):
@@ -49,9 +59,19 @@ class TestGarden(unittest.TestCase):
             self.assertEqual(pin_mode, {6: 1, 5: 1, 4: 1})
             self.assertEqual(pin_value, {6: 1, 5: 1, 4: 0})
 
+    def test_that_it_reads_sensors_data(self):
+        # given
+        garden = Garden()
+        garden.sensors = (SensorFake("balcony"), SensorFake("barrel"), SensorFake("tube"))
+
+        # when
+        garden.sensors_refresh()
+
+        # then
+        sensors_values = tuple(s.value for s in garden.sensors)
+        self.assertEqual(sensors_values, (1, 1, 1))
+
 
 if __name__ == '__main__':
     wiringpi.wiringPiSetup()
     unittest.main()
-
-
