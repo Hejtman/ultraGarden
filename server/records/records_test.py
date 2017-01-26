@@ -10,11 +10,11 @@ from garden.garden_test import SensorFake
 class TestReports(unittest.TestCase):
     def test_that_it_writes_single_line_data_to_file(self):
         # given
-        reports = Records((SensorFake("aa"),
+        records = Records((SensorFake("aa"),
                            SensorFake("bb"),
                            SensorFake("cc")))
 
-        for i, s in enumerate(reports.sensors, 1):
+        for i, s in enumerate(records.sensors, 1):
             s.value = i
 
         test_output_file = "/tmp/ultra_garden_test_single"
@@ -26,7 +26,7 @@ class TestReports(unittest.TestCase):
             .format(now.strftime('%Y-%m-%dT%H:%M'))
 
         # when
-        reports.write_values(test_output_file)
+        records.write_values(test_output_file)
 
         # then
         with open(test_output_file) as f:
@@ -34,7 +34,7 @@ class TestReports(unittest.TestCase):
 
     def test_that_it_writes_multi_line_data_to_file(self):
         # given
-        reports = Records((SensorFake("aa"),
+        records = Records((SensorFake("aa"),
                            SensorFake("bb"),
                            SensorFake("cc")))
 
@@ -53,9 +53,9 @@ class TestReports(unittest.TestCase):
 
         # when
         for record in range(5):
-            for i, s in enumerate(reports.sensors, 1):
-                s.value = len(reports.sensors) * record + i
-            reports.write_values(test_output_file)
+            for i, s in enumerate(records.sensors, 1):
+                s.value = len(records.sensors) * record + i
+            records.write_values(test_output_file)
 
         # then
         with open(test_output_file) as f:
