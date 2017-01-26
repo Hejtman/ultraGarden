@@ -1,7 +1,7 @@
 import logging
 
-from gardener import Gardener
 from config import Log
+from gardener import Gardener
 
 
 logging.basicConfig(level=Log.LEVEL, filename=Log.FILE)

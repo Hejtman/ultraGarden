@@ -24,9 +24,10 @@ class TestGarden(unittest.TestCase):
 
     def test_a_that_it_turns_on_and_off_all_relays(self):
         # given
-        pin_mode.clear()
-        pin_value.clear()
         garden = Garden()
+        if "Fake" in wiringpi.__doc__:
+            pin_mode.clear()
+            pin_value.clear()
 
         unused_pin = RelayWiring(pin=1, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)
         garden.relays += (unused_pin,)
@@ -47,9 +48,10 @@ class TestGarden(unittest.TestCase):
 
     def test_that_watering_method_set_relays(self):
         # given
-        pin_mode.clear()
-        pin_value.clear()
         garden = Garden()
+        if "Fake" in wiringpi.__doc__:
+            pin_mode.clear()
+            pin_value.clear()
 
         # when
         garden.watering()
