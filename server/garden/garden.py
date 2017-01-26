@@ -13,12 +13,19 @@ from garden.hw.ds18b20.ds18b20 import ds18b20
 
 
 RelayWiring = namedtuple('RelayWiring', 'pin off on')
-RelaySet = namedtuple('RelaySe', 'set delay')
+RelaySet = namedtuple('RelaySet', 'set delay')
 
 
 class Garden:
+    """
+    Controls HW I/O
+     * sensors: temperature (TODO: water level, light density, ...)
+     * relays: pump, fan, fogger
+    """
     def __init__(self):
         # WIRING
+        wiringpi.wiringPiSetup()
+
         self.fog = fog = RelayWiring(pin=6, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW)    # by default on
         self.fan = fan = RelayWiring(pin=5, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW)    # by default on
         self.pump = pump = RelayWiring(pin=4, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)  # by default off

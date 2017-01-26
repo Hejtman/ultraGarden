@@ -5,28 +5,33 @@ from datetime import datetime
 
 from config import SensorData
 from garden.garden import Garden
-from reports.sms import send_sms
+from records.sms import send_sms
+from records.records import Records
 
 
 class Gardener:
     """
-    Gardener manages garden and reports.
-     * Garden
-       - sensors: temperature (TODO: water level, light density, ...)
-       - relays: pump, fan, fogger
-     * Reports
-       - web server (TODO)
-       - sensors data log (TODO)
-       - sms notifications (TODO: alerts)
+    Gardener manages garden according collected sensor data.
+     * Garden - Controls HW I/O.
+       * sensors: temperature (TODO: water level, light density, ...)
+       * relays: pump, fan, fogger
+     * Records - Collects and store sensors data + current garden state.
+       * web server
+         * light version of sensor data history
+         * current garden state (TODO)
+         * next planned maintenance action (TODO)
+       * full sensors data log
+       * sms notifications (TODO: alerts)
     """
     def __init__(self):
         self.garden = Garden()
+        self.records = Records(sensors=self.garden.sensors)
 
-        schedule.every(1).minute.do(self.garden.sensors.refresh_values)
-        schedule.every(10).minutes.do(self.garden.sensors.write_values, file=SensorData.FULL_FILE)
-        schedule.every(1).hour.do(self.garden.sensors.write_values, file=SensorData.WEB_FILE)
-        # TODO: schedule trim of WEB_FILE for month_of_records_count = 24*7*4
-        # TODO: schedule wifi check (utils)?
+        schedule.every(1).minute.do(self.garden.sensors_refresh)
+        schedule.every(10).minutes.do(self.records.write_values(SensorData.FULL_FILE))
+        schedule.every(1).hour.do(self.records.write_values(SensorData.WEB_FILE))
+        schedule.every(1).week.do(self.records.trim_records(SensorData.WEB_FILE, count=24 * 7 * 4))    # only last month
+        # TODO: schedule wifi check (utils)? or when some data needed?
 
         schedule.every(1).minute.do(self.garden.check_watering).run()
 
