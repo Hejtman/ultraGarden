@@ -31,9 +31,8 @@ class Garden:
         self.pump = pump = RelayWiring(pin=4, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)  # by default off
 
         self.relays = (fan, fog, pump)
-        self.watering_cycle = (RelaySet(set=(fan.off, fog.off, pump.off), delay=1),   # stabilize power for pump
-                               RelaySet(set=(fan.off, fog.off, pump.on), delay=8),    # pumping for a while
-                               RelaySet(set=(fan.off, fog.on,  pump.off), delay=10))  # fan off until w level drops
+        self.watering_cycle = (RelaySet(set=(fan.off, fog.off, pump.on), delay=8),    # begin pumping for a while
+                               RelaySet(set=(fan.off, fog.on,  pump.off), delay=10))  # fan off until water level drops
         self.default_cycle = (RelaySet(set=(fan.off, fog.off, pump.off), delay=0),)   # relays config between cycles
         for r in self.relays:
             wiringpi.pinMode(r.pin, wiringpi.GPIO.OUTPUT)
@@ -46,7 +45,7 @@ class Garden:
 
     def check_watering(self):
         # FIXME: base calculation on sensor data [minutes = 60*24*365 if c < 5 else 24*60/(x-4)**1.5]
-        # TODO: create more oxygen when high temperature
+        # TODO: create more oxygen when high temperature (pump longer?)
         # TODO: no point in making fog when temperature is up to 26C or below 5C ?
         if datetime.datetime.now() - self.last_watering_time > datetime.timedelta(minutes=20):
             self.watering()
@@ -65,5 +64,4 @@ class Garden:
             try:
                 s.read_value()
             except IOError:
-                # TODO: log warning here
-                pass
+                logging.error("Failed to read data from sensor " + s.name)

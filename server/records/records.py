@@ -1,18 +1,17 @@
 import os
 import shutil
 from datetime import datetime
-# from itertools import is lice
 
 
 class Records:
     """
-    Collects and store sensors data + current garden state.
-      * web server
-        * light version of sensor data history
-        * current garden state (TODO)
-        * next planned maintenance action (TODO)
-      * full sensors data log
-      * sms notifications (TODO: alerts)
+     * Collects and store sensors data + current garden state.
+       * sensors data log + current garden state
+       * web server
+         * light version of sensor data history
+         * current garden state (TODO)
+         * next planned maintenance action (TODO)
+       * sms notifications (TODO: alerts)
     """
     def __init__(self, sensors):
         self.sensors = sensors
@@ -43,6 +42,5 @@ class Records:
     def trim_records(file, count):
         with open(file, "r") as original, open(file + ".tmp", "w") as trimmed:
             trimmed.write(original.readline())                      # first line
-            # FIXME: is lice
             trimmed.writelines(original.readlines()[-count-1:])     # last line + count records above
         shutil.move(file + ".tmp", file)

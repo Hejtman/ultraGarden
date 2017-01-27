@@ -11,16 +11,16 @@ from records.records import Records
 
 class Gardener:
     """
-    Gardener manages garden according collected sensor data.
+    Gardener manages garden according schedule and collected sensor data.
      * Garden - Controls HW I/O.
        * sensors: temperature (TODO: water level, light density, ...)
        * relays: pump, fan, fogger
      * Records - Collects and store sensors data + current garden state.
+       * sensors data log + current garden state
        * web server
          * light version of sensor data history
          * current garden state (TODO)
          * next planned maintenance action (TODO)
-       * full sensors data log
        * sms notifications (TODO: alerts)
     """
     def __init__(self):

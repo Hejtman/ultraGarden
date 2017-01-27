@@ -31,20 +31,20 @@ if __name__ == '__main__':
     try:
         temp.read_value()
     except:
-        print("Failto read: {} - probably not connected".format(temp.w1id))
+        print("Failed to read: {} - probably not connected".format(temp.w1id))
     else:
         print("Temperature {}: {}".format(temp.name, temp.value))
 
     # valid data expected
     temp.w1id = ""
     temp.DEVICE_DIR = "." 
-    temp.DEVICE_FILE = "ds18b20_test_succ"
+    temp.DEVICE_FILE = "ds18b20_test_success"
     temp.read_value()
     result = "OK" if temp.value == 22.625 else "FAIL"
     print("Temperature {}: {} - {}".format(temp.name, temp.value, result))
 
     # invalid crc - exception expected
-    temp.DEVICE_FILE = "ds18b20_test_FAIL"
+    temp.DEVICE_FILE = "ds18b20_test_fail"
     try:
         temp.read_value()
     except IOError:
