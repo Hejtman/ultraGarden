@@ -21,28 +21,29 @@ class SensorFake:
 
 
 class TestGarden(unittest.TestCase):
+    def __init__(self):
+        self.garden = Garden()
 
     def test_a_that_it_turns_on_and_off_all_relays(self):
         # given
-        garden = Garden()
-        if "Fake" in wiringpi.__doc__:
+        if wiringpi.__doc__ and "Fake" in wiringpi.__doc__:
             pin_mode.clear()
             pin_value.clear()
 
         unused_pin = RelayWiring(pin=1, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)
-        garden.relays += (unused_pin,)
+        self.garden.relays += (unused_pin,)
         wiringpi.pinMode(unused_pin.pin, wiringpi.GPIO.OUTPUT)
 
-        relays_count = len(garden.relays)
+        relays_count = len(self.garden.relays)
         all_combinations = combinations_with_replacement((wiringpi.GPIO.LOW, wiringpi.GPIO.HIGH), relays_count)
-        garden.watering_cycle = (RelaySet((a, b, c, d), delay=3) for a, b, c, d in all_combinations)
-        garden.default_cycle = (RelaySet((1, 1, 1, 1), delay=0),)
+        self.garden.watering_cycle = (RelaySet((a, b, c, d), delay=3) for a, b, c, d in all_combinations)
+        self.garden.default_cycle = (RelaySet((1, 1, 1, 1), delay=0),)
 
         # when
-        garden.watering()
+        self.garden.watering()
 
         # than
-        if "Fake" in wiringpi.__doc__:
+        if wiringpi.__doc__ and "Fake" in wiringpi.__doc__:
             self.assertEqual(pin_mode, {6: 1, 5: 1, 4: 1, 1: 1})
             self.assertEqual(pin_value, {6: 1, 5: 1, 4: 1, 1: 1})
 
@@ -75,5 +76,4 @@ class TestGarden(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    wiringpi.wiringPiSetup()
     unittest.main()

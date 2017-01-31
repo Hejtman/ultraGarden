@@ -28,9 +28,9 @@ class Gardener:
         self.records = Records(sensors=self.garden.sensors)
 
         schedule.every(1).minute.do(self.garden.sensors_refresh)
-        schedule.every(10).minutes.do(self.records.write_values(SensorData.FULL_FILE))
-        schedule.every(1).hour.do(self.records.write_values(SensorData.WEB_FILE))
-        schedule.every(1).week.do(self.records.trim_records(SensorData.WEB_FILE, count=24 * 7 * 4))    # only last month
+        schedule.every(10).minutes.do(self.records.write_values, file=SensorData.FULL_FILE)
+        schedule.every(1).hour.do(self.records.write_values, file=SensorData.WEB_FILE)
+        schedule.every(1).week.do(self.records.trim_records, file=SensorData.WEB_FILE, count=24 * 7 * 4)  # one month
         # TODO: schedule wifi check (utils)? or when some data needed?
 
         schedule.every(1).minute.do(self.garden.check_watering).run()

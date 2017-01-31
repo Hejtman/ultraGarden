@@ -11,14 +11,15 @@ Raspberry Pi collects information (light density, humidity, temperature, watter 
   
   
 ### Usage:
+TODO: add install.py
 Raspberry Pi terminal:
 ```bash
-$ git clone https://github.com/Hejtman/ultraGarden
-$ cd ultraGarden/server
-# python smartGarden.py
-
+sudo pip3 install wiringpi2 flask 
+git clone https://github.com/Hejtman/ultraGarden
+cd ultraGarden/server
+sudo python3 server.py
 ```
-  
+
 ### Contribution:
 This software/hardware is made by [Hejtman][3] for fun.
 Contributing is warmly welcomed. There is no point in doing everything from scratch nor all alone.
