@@ -5,8 +5,9 @@ from datetime import datetime
 
 from config import SensorData
 from garden.garden import Garden
-from records.sms import send_sms
 from records.records import Records
+from utils.sms import send_sms
+from web.web_server import WebServer
 
 
 class Gardener:
@@ -17,23 +18,25 @@ class Gardener:
        * relays: pump, fan, fogger
      * Records - Collects and store sensors data + current garden state.
        * sensors data log + current garden state
-       * web server
-         * light version of sensor data history
-         * current garden state (TODO)
-         * next planned maintenance action (TODO)
-       * sms notifications (TODO: alerts)
+     * Web server
+       * light version of sensor data history
+       * current garden state (TODO)
+       * next planned maintenance action (TODO)
+     * sms notifications (TODO: alerts)
     """
     def __init__(self):
         self.garden = Garden()
         self.records = Records(sensors=self.garden.sensors)
+        self.web_server = WebServer()
 
         schedule.every(1).minute.do(self.garden.sensors_refresh)
+        schedule.every(1).minute.do(self.garden.check_watering)
         schedule.every(10).minutes.do(self.records.write_values, file=SensorData.FULL_FILE)
         schedule.every(1).hour.do(self.records.write_values, file=SensorData.WEB_FILE)
         schedule.every(1).week.do(self.records.trim_records, file=SensorData.WEB_FILE, count=24 * 7 * 4)  # one month
-        # TODO: schedule wifi check (utils)? or when some data needed?
 
-        schedule.every(1).minute.do(self.garden.check_watering).run()
+        # TODO: schedule wifi check (utils)? or when some data needed?
+        self.web_server.run()
 
     @staticmethod
     def __recover(failed_job):
