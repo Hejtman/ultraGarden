@@ -51,3 +51,6 @@ pin_value = {}
 def digitalWrite(pin, value):
     pin_value[pin] = value
     print("pin {} set to {}".format(pin, value))
+
+def digitalRead(pin):
+    return pin_value[pin]
