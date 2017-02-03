@@ -5,6 +5,8 @@ from gardener import Gardener
 
 
 logging.basicConfig(level=Log.LEVEL, filename=Log.FILE)
+logging.info("UltraGarden started.")
 
-# START SERVER MAIN LOOP
 Gardener().working_loop()
+
+logging.info("UltraGarden stopped.")

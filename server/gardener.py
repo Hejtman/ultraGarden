@@ -1,13 +1,12 @@
-import time
 import logging
-import schedule
-from datetime import datetime
+import threading
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from config import SensorData
 from garden.garden import Garden
 from records.records import Records
 from utils.sms import send_sms
-from web.web_server import WebServer
+from web.web_server import web_server
 
 
 class Gardener:
@@ -16,51 +15,40 @@ class Gardener:
      * Garden - Controls HW I/O.
        * sensors: temperature (TODO: water level, light density, ...)
        * relays: pump, fan, fogger
-     * Records - Collects and store sensors data + current garden state.
-       * sensors data log + current garden state
-     * Web server
-       * light version of sensor data history
+     * Records - Via scheduler collects and store sensors data + current garden state.
+
+     * Web server shows
        * current garden state (TODO)
+       * light version of sensor data history
        * next planned maintenance action (TODO)
-     * sms notifications (TODO: alerts)
+       * buttons for manipulation with garden
     """
     def __init__(self):
         self.garden = Garden()
         self.records = Records(sensors=self.garden.sensors)
-        self.web_server = WebServer()
-
-        schedule.every(1).minute.do(self.garden.sensors_refresh)
-        schedule.every(1).minute.do(self.garden.check_watering)
-        schedule.every(10).minutes.do(self.records.write_values, file=SensorData.FULL_FILE)
-        schedule.every(1).hour.do(self.records.write_values, file=SensorData.WEB_FILE)
-        schedule.every(1).week.do(self.records.trim_records, file=SensorData.WEB_FILE, count=24 * 7 * 4)  # one month
 
         # TODO: schedule wifi check (utils)? or when some data needed?
-        self.web_server.run()
 
-    @staticmethod
-    def __recover(failed_job):
-        failed_job.last_run = datetime.now()
-        failed_job._schedule_next_run()
+    def working_loop(self):
+        # shared cross threads
+        threading.garden = self.garden
 
-    @staticmethod
-    def working_loop():
-        """
-        Server main working loop. Logs all, never falls.
-        """
-        while True:
-            # noinspection PyBroadException
-            try:
-                schedule.run_pending()
+        scheduler = BackgroundScheduler()
+        # FIXME: ERROR HANDLING in scheduled jobs: logging.exception("Ignoring exception from scheduled job:")
+        scheduler.add_job(self.garden.sensors_refresh, 'cron', minute='*')
+        scheduler.add_job(self.garden.schedule_watering, 'date', run_date=None, kwargs={'scheduler': scheduler})
+        scheduler.add_job(self.garden.schedule_watering, 'cron', minute='*', kwargs={'scheduler': scheduler})
+        scheduler.add_job(self.records.write_values, 'cron', minute='*/10', kwargs={'file': SensorData.FULL_FILE})
+        scheduler.add_job(self.records.write_values, 'cron', hour='*', kwargs={'file': SensorData.WEB_FILE})
+        # TODO: add water level info
+        scheduler.add_job(send_sms, trigger='cron', hour='*/12', kwargs={'message': 'I am alive'})
+        scheduler.add_job(self.records.trim_records, 'cron', week='*', kwargs={'file': SensorData.WEB_FILE,
+                                                                               'count': 24*7*4})  # keep only last month
+        logging.info('Starting scheduler.')
+        scheduler.start()
 
-                # FIXME: use other scheduler? This depends on timing and can be missed
-                # TODO: add water level info
-                now = datetime.now()
-                if (now.hour, now.minute) == (12, 00):
-                    send_sms("I am alive")
+        # web server needs main thread for its signal handling
+        logging.info('Starting web server.')
+        web_server.run(host='0.0.0.0', port=5000, debug=False)
 
-                time.sleep(schedule.idle_seconds())
-
-            except:
-                logging.exception("Ignoring min exception:")
-                Gardener.__recover(failed_job=sorted(schedule.jobs)[0])
+        scheduler.shutdown()
