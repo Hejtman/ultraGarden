@@ -6,6 +6,7 @@ from config import SensorData
 from garden.garden import Garden
 from records.records import Records
 from utils.sms import send_sms
+from utils.weather import Weather
 from web.web_server import web_server
 
 
@@ -26,6 +27,10 @@ class Gardener:
     def __init__(self):
         self.garden = Garden()
         self.records = Records(sensors=self.garden.sensors)
+        self.weather = Weather()
+
+        # TODO: weather integrate with records
+        # TODO: refresh weather
 
         # TODO: schedule wifi check (utils)? or when some data needed?
 
