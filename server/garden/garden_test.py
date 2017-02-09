@@ -22,6 +22,7 @@ class SensorFake:
 
 class TestGarden(unittest.TestCase):
     def __init__(self):
+        unittest.TestCase.__init__(self)
         self.garden = Garden()
 
     def test_a_that_it_turns_on_and_off_all_relays(self):

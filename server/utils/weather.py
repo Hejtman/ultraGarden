@@ -2,13 +2,16 @@ import requests
 
 
 class Weather:
+    # datetime.fromtimestamp(['dt']).strftime('%Y-%m-%d %H:%M:%S')
     def __init__(self, params):
         self.params = "&".join("{}={}".format(key, value) for key, value in params.items())
 
     def get_weather(self):
+        # self.value['main']['temp_min', 'temp', 'temp_max', 'humidity']
         return requests.get("http://api.openweathermap.org/data/2.5/weather?" + self.params).json()
 
     def get_forecast(self):
+        # [?]['main']['temp_min', 'temp', 'temp_max', 'humidity','dt']
         return requests.get("http://api.openweathermap.org/data/2.5/forecast?" + self.params).json()['list']
 
 
@@ -46,9 +49,3 @@ if __name__ == '__main__':
 
     assert(len(weather.get_forecast()) > 30)
     assert(len(weather.get_forecast()) > 30)
-
-
-
-# ['main']['temp_min', 'temp', 'temp_max', 'humidity']
-# [?]['main']['temp_min', 'temp', 'temp_max', 'humidity','dt']
-# datetime.fromtimestamp(['dt']).strftime('%Y-%m-%d %H:%M:%S')

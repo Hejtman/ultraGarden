@@ -43,14 +43,6 @@ class Garden:
 
         self.last_watering_time = datetime.datetime.now() - datetime.timedelta(days=365)
 
-    def schedule_watering(self, scheduler):
-        # FIXME: base calculation on sensor data [minutes = 60*24*365 if c < 5 else 24*60/(x-4)**1.5]
-        # TODO: create more oxygen when high temperature (pump longer?)
-        # TODO: no point in making fog when temperature is up to 26C or below 5C ?
-        if datetime.datetime.now() - self.last_watering_time > datetime.timedelta(minutes=20):
-            self.watering()
-        # scheduler.add_job(watering, 'date', time, id='watering', replace_existing=True)
-
     def watering(self):
         self.last_watering_time = datetime.datetime.now()
         logging.info("{} watering".format(self.last_watering_time))  # TODO: write temperature, write after how long?
