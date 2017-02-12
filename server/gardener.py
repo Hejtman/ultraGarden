@@ -1,13 +1,12 @@
 import logging
 import threading
-from datetime import datetime, timedelta
+from datetime import timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from config import SensorData, OpenWeatherMapConf
+from config import SensorData
 from garden.garden import Garden
 from records.records import Records
 from utils.sms import send_sms
-from utils.weather import Weather
 from web.web_server import web_server
 
 
@@ -28,24 +27,24 @@ class Gardener:
     def __init__(self):
         self.garden = Garden()
         self.records = Records(sensors=self.garden.sensors)
-        self.weather = Weather(OpenWeatherMapConf)
         self.scheduler = BackgroundScheduler()
-        # TODO: weather integrate with records
-        # TODO: refresh weather
-
         # TODO: schedule wifi check (utils)? or when some data needed?
 
     def schedule_watering(self):
-        # FIXME: base calculation on sensor data [minutes = 60*24*365 if c < 5 else 24*60/(x-4)**1.5]
         # TODO: create more oxygen when high temperature (pump longer?)
-        # TODO: no point in making fog when temperature is up to 26C or below 5C ?
-        if datetime.now() - self.garden.last_watering_time > timedelta(minutes=20):
-            self.garden.watering()
-        # self.scheduler.add_job(watering, 'date', time, id='watering', replace_existing=True)
+        if self.garden.last_watering:
+            temperature = self.garden.brno_temperature.value
+            if temperature and temperature > 4:
+                threading.next_watering = self.garden.last_watering + timedelta(minutes=24*60/(temperature-4)**1.5)
+                self.scheduler.add_job(self.garden.watering, 'date', threading.next_watering, id='WATERING',
+                                       replace_existing=True, misfire_grace_time=timedelta(minutes=1).total_seconds())
+        else:
+            self.scheduler.add_job(self.garden.watering, 'date', None, id='WATERING', replace_existing=True)
 
     def working_loop(self):
         # shared cross threads
         threading.garden = self.garden
+        threading.next_watering = None
 
         # FIXME: ERROR HANDLING in scheduled jobs: logging.exception("Ignoring exception from scheduled job:")
         self.scheduler.add_job(self.garden.sensors_refresh, 'cron', minute='*')
@@ -65,3 +64,5 @@ class Gardener:
         web_server.run(host='0.0.0.0', port=5000, debug=False)
 
         self.scheduler.shutdown()
+
+# TODO: no point in making fog when temperature is up to 26C or below 5C ?

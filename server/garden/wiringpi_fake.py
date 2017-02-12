@@ -37,20 +37,23 @@ class GPIO(object):
     MODE = 0
 
 
+pin_mode = ["INPUT"]*40
+pin_value = [0]*40
+
+
 def wiringPiSetup():
     print("wiringPiSetup")
 
 
-pin_mode = {}
 def pinMode(pin, mode):
     pin_mode[pin] = mode
     print("pin {} set to {}".format(pin, ["INPUT", "OUTPUT", "PWM_OUTPUT", "GPIO_CLOCK"][mode]))
 
 
-pin_value = {}
 def digitalWrite(pin, value):
     pin_value[pin] = value
     print("pin {} set to {}".format(pin, value))
+
 
 def digitalRead(pin):
     return pin_value[pin]

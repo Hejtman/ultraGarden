@@ -9,6 +9,8 @@ try:
 except ImportError:
     import garden.wiringpi_fake as wiringpi
 
+from config import OpenWeatherMapConf
+from utils.weather import WeatherSensor
 from garden.hw.ds18b20.ds18b20 import ds18b20
 
 
@@ -37,15 +39,20 @@ class Garden:
         for r in self.relays:
             wiringpi.pinMode(r.pin, wiringpi.GPIO.OUTPUT)
 
-        self.barrel_temperature = ds18b20("28-011564df1dff", "barrel")
-        self.balcony_temperature = ds18b20("28-011564aee4ff", "balcony")
-        self.sensors = (self.barrel_temperature, self.balcony_temperature)
+        self.barrel_temperature = ds18b20('28-011564df1dff', 'barrel')
+        self.balcony_temperature = ds18b20('28-011564aee4ff', 'balcony')
+        self.brno_temperature = WeatherSensor('temp', 'Brno', OpenWeatherMapConf)
+        self.brno_humidity = WeatherSensor('humidity', 'Brno_humidity', OpenWeatherMapConf)
+        self.sensors = (self.barrel_temperature,
+                        self.balcony_temperature,
+                        self.brno_temperature,
+                        self.brno_humidity)
 
-        self.last_watering_time = datetime.datetime.now() - datetime.timedelta(days=365)
+        self.last_watering = None
 
     def watering(self):
-        self.last_watering_time = datetime.datetime.now()
-        logging.info("{} watering".format(self.last_watering_time))  # TODO: write temperature, write after how long?
+        self.last_watering = datetime.datetime.now()
+        logging.info("{} watering".format(self.last_watering))  # TODO: write temperature, write after how long?
 
         for relays_set in chain(self.watering_cycle, self.default_cycle):
             for relay, value in zip(self.relays, relays_set.set):

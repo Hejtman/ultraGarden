@@ -16,11 +16,11 @@ class Weather:
 
 
 class WeatherSensor(Weather):
-    def __init__(self, name, key, args):
+    def __init__(self, key, name, args):
         Weather.__init__(self, args)
         self.name = name
         self.key = key
-        self.value = None
+        self.value = "-"
 
     def read_value(self):
         w = self.get_weather()
@@ -39,11 +39,11 @@ if __name__ == '__main__':
     assert(weather.get_weather()['name'] == 'Brno')
     assert(weather.get_weather()['name'] == 'Brno')
 
-    temperature = WeatherSensor('Brno temperature', 'temp', PARAMS)
+    temperature = WeatherSensor('temp', 'Brno temperature', PARAMS)
     temperature.read_value()
     assert(temperature.value > -100)
 
-    humidity = WeatherSensor('Brno humidity', 'humidity', PARAMS)
+    humidity = WeatherSensor('humidity', 'Brno humidity', PARAMS)
     humidity.read_value()
     assert(humidity.value > 0)
 
