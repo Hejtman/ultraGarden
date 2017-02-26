@@ -10,7 +10,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 </head>
-<body>
+<body class="flat-green-background">
 	<div>
    	<ul id="menu" class="center">
       	<li><a href="../mediaCenter/index.htm"> MediaCenter </a></li>
@@ -20,54 +20,69 @@
    	</ul>
 	</div>
 	<div class="center">
-		<a href="balcony_left.jpg"><img src="balcony_left.jpg" alt="Balcon left part" style="width:49%"></a>
-		<a href="balcony_right.jpg"><img src="balcony_right.jpg" alt="Balcon right part" style="width:49%"></a>
+		<a href="balcony_left.jpg"><img src="balcony_left.jpg" alt="Balcon left part" style="width:49%" class="img-rounded"></a>
+		<a href="balcony_right.jpg"><img src="balcony_right.jpg" alt="Balcon right part" style="width:49%" class="img-rounded"></a>
+	</div>
+		Two weeks self-sustaining aero/hydroponics system for extreme sunbeam. Ultra sound made nutrient fog circling in pipes trough plants roots.
+		Two liters of liquid water are pumped every quarter hour for fully grown plants with roots reaching bottom of the pipe.
+		<p>
+   			Raspberry Pi collects information (light density, humidity, temperature, watter level) and manages fogging, watering, airing/cooling cycles for optimal plants irrigation.
+		</p>
+	<div class="flat-row">
+		<p>
+			<a href="https://github.com/Hejtman/ultraGarden">Source code</a>
+		</p>
 	</div>
 
+	<div class="flat-row">
+	<div class="flat-inside">
+		<h2 class="center">Watering</h2>
+		Weakly consumption:
+		<ul>
+			<li>20l tap watter</li>
+			<li>10ml hydrogen peroxide - mildew prevention, root aeration</li>
+			<li>5ml Nitric acid - pH reduction 7 >> 6, root aeration</li>
+		</ul>
+	</div>
+	</div>
 
-	<h2>Function</h2>
-   Two weeks self-sustaining aero/hydroponics system for extreme sunbeam. Ultra sound made nutrient fog circling in pipes trough plants roots.
-   Two liters of liquid water are pumped every quarter hour for fully grown plants with roots reaching bottom of the pipe.
-	<p>
-   	Raspberry Pi collects information (light density, humidity, temperature, watter level) and manages fogging, watering, airing/cooling cycles for optimal plants irrigation.
-	</p>
-	<p>
-		<a href="https://github.com/Hejtman/ultraGarden">Source code</a>
-	</p>
-
-	<h2>Sensor data - one week</h2>
-   <div>
-      <iframe width="100%"  height="630px" src="graph.htm" frameBorder="0"></iframe>
-  </div>
-
-	<h2>Watering</h2>
-	Weakly consumption:
-	<ul>
-		<li>20l tap watter</li>
-		<li>10ml hydrogen peroxide - mildew prevention, root aeration</li>
-		<li>5ml Nitric acid - pH reduction 7 >> 6, root aeration</li>
-		<li>2 banana peelings as fertilizer
-	</ul>
+	<div class="flat-row">
+	<div class="flat-inside">
+		<h2 class="center">Fertiliser</h2>
+		Mashed kitchen greens waste treated by earthworms (Eisenia Fetida) into vermicompost tea.
+	</div>
+	</div>
 	
-	<h2>Log</h2>
-	<table>
-	  <tr><td>2016</td><td>raspberry Pi2, 4x relay, 3x temperature sensor, IP-68 fan, condensation goes directly to barrel, white HT pipes, aluminum groundsheet</td></tr>
-	  <tr><td>2015</td><td>proof of concept, experiments</td></tr>
-	  <tr><td>2014</td><td>idea, component preparations</td></tr>
-	</table>
+	<div class="flat-row">
+	<div class="flat-inside">
+		<h2 class="center">Log</h2>
+		<table>
+		  <tr><td>2017</td><td>raspberry Pi Zero, more robust wiring, web remote controll, solved electronics box water condensation</td></tr>
+		  <tr><td>2016</td><td>raspberry Pi2, 4x relay, 3x temperature sensor, IP-68 fan, condensation goes directly to barrel, white HT pipes, aluminum groundsheet</td></tr>
+		  <tr><td>2015</td><td>proof of concept, experiments</td></tr>
+		  <tr><td>2014</td><td>idea, component preparations</td></tr>
+		</table>
+	</div>
+	</div>
 
-	<h2>Plan</h2>
-	<pre><code>
-TODO: more robust wiring
-TODO: transformer's heat can warmup watter
-TODO: ultrasound distant sensor for watter level measurements
-TODO: servo motors for opening/closing pipes valve 
-TODO: set upper part pump pipe up to pumped water level so it won't sack water back to barrel once it is off
-TODO: solve water condensation in outside electronics box
-TODO: photos &amp; statistics (water consumption, grow speed comparison with earth growing, ...)
-TODO: remote controll
-	</code></pre>
-
+	<div class="flat-row">
+	<div class="flat-inside">
+		<h2 class="center">Ideas</h2>
+TODO: transformer's heat can warmup watter<br>
+TODO: ultrasound distant sensor for watter level measurements<br>
+TODO: servo motors for opening/closing pipes valve<br>
+TODO: set upper part pump pipe up to pumped water level so it won't sack water back to barrel once it is off<br>
+TODO: photos &amp; statistics (water consumption, grow speed comparison with earth growing, ...)<br>
+	</div>
+	</div>
+	
+	<div class="flat-row">
+	<div class="flat-inside">
+		<h2 class="center">Remote</h2>
+		<iframe width="100%" src="192.168.1.10/graph.htm" frameBorder="0"></iframe>
+	</div>
+	</div>
+	
 	<div class="center">
 		<a href="http://www.hitwebcounter.com" target="_blank">
 			<img src="http://hitwebcounter.com/counter/counter.php?page=5981436&amp;style=0009&amp;nbdigits=5&amp;type=ip&amp;initCount=0" title="number of visits track" Alt="number of visits track">

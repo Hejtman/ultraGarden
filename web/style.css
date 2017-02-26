@@ -124,3 +124,27 @@ li.L1,li.L3,li.L5,li.L7,li.L9 { }
   pre .atn, code .atn { color: #404; }
   pre .atv, code .atv { color: #060; }
 }
+
+.flat-green-background {
+  color: #e7e9ec;
+  background-color: #2ECC71;
+  font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+}
+.flat-row {
+  float: none;
+  clear: both;
+  padding-left: 25%;
+  padding-right: 25%;
+  margin-bottom: 40px;
+  position: relative;
+}
+.flat-row .flat-inside {
+  padding: 8px;
+  border-radius: 8px; 
+  background-color: #27AE60;
+}
+
+.img-rounded {
+  border-radius: 8px; 
+}
+
