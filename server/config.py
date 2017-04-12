@@ -20,3 +20,10 @@ class GMail:
 class Log:
     LEVEL = logging.INFO
     FILE = "/tmp/ultra_garden.log"
+
+
+OpenWeatherMapConf = {
+    'APPID': 'aa432246c65701ad7ab5c55d83e717b5',
+    'q': 'Brno,cz',
+    'units': 'metric'
+}

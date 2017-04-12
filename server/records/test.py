@@ -3,8 +3,8 @@ import unittest
 from datetime import datetime
 from contextlib import suppress
 
-from records.records import Records
-from garden.garden_test import SensorFake
+from records import Records
+from garden.test import SensorFake
 
 
 class TestReports(unittest.TestCase):

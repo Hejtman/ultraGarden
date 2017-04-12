@@ -4,8 +4,8 @@ from datetime import timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from config import SensorData
-from garden.garden import Garden
-from records.records import Records
+from garden import Garden
+from records import Records
 from utils.sms import send_sms
 from web.web_server import web_server
 

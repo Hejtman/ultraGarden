@@ -11,7 +11,7 @@ except ImportError:
 
 from config import OpenWeatherMapConf
 from utils.weather import WeatherSensor
-from garden.hw.ds18b20.ds18b20 import ds18b20
+from garden.hw.ds18b20 import ds18b20
 
 
 RelayWiring = namedtuple('RelayWiring', 'pin off on')
@@ -28,9 +28,9 @@ class Garden:
         # WIRING
         wiringpi.wiringPiSetup()
 
-        self.fog = fog = RelayWiring(pin=6, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW)    # by default on
-        self.fan = fan = RelayWiring(pin=5, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW)    # by default on
-        self.pump = pump = RelayWiring(pin=4, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)  # by default off
+        self.fog = fog = RelayWiring(pin=28, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW)    # by default on
+        self.fan = fan = RelayWiring(pin=27, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW)    # by default on
+        self.pump = pump = RelayWiring(pin=29, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)  # by default off
 
         self.relays = (fan, fog, pump)
         self.watering_cycle = (RelaySet(set=(fan.off, fog.off, pump.on), delay=8),    # begin pumping for a while

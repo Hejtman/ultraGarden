@@ -38,13 +38,13 @@ if __name__ == '__main__':
     # valid data expected
     temp.w1id = ""
     temp.DEVICE_DIR = "." 
-    temp.DEVICE_FILE = "ds18b20_test_success"
+    temp.DEVICE_FILE = "test_success"
     temp.read_value()
     result = "OK" if temp.value == 22.625 else "FAIL"
     print("Temperature {}: {} - {}".format(temp.name, temp.value, result))
 
     # invalid crc - exception expected
-    temp.DEVICE_FILE = "ds18b20_test_fail"
+    temp.DEVICE_FILE = "test_fail"
     try:
         temp.read_value()
     except IOError:
