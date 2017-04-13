@@ -1,0 +1,33 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          ultragarden
+# Required-Start:    $local_fs $remote_fs $network $syslog
+# Required-Stop:     $local_fs $remote_fs $network $syslo
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: server for automated garden
+# Description:
+# Raspberry Pi collects information (light density, humidity, temperature, watter level) and manages fogging, watering, airing/cooling cycles for optimal plants irrigation.
+### END INIT INFO
+
+SERVER_PATH=""
+
+case "$1" in
+  start)
+    python3 $SERVER_PATH &
+  ;;    
+
+  stop)
+    killall python3
+  ;;
+
+  restart)
+    killall python3
+  ;;
+
+  *)
+    echo "Usage: $0 {start|stop|restart}" >&2
+    exit 3
+    ;;
+esac
+
