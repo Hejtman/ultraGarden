@@ -30,16 +30,17 @@ class Gardener:
         self.scheduler = BackgroundScheduler()
         # TODO: schedule wifi check (utils)? or when some data needed?
 
+    # FIXME: don't run watering and fogging in simultanesly
     def schedule_fogging(self):
         if self.garden.last_fogging:
             temperature = self.garden.brno_temperature.value
             if temperature and temperature > 4:
 		# FIXME: different equation
                 threading.next_fogging = self.garden.last_fogging + timedelta(minutes=24*60/(temperature-4)**1.5)
-                self.scheduler.add_job(self.garden.fogging, 'date', threading.next_fogging, id='FOGGING',
+                self.scheduler.add_job(self.garden.fogging, trigger='date', next_run_time=threading.next_fogging, id='FOGGING',
                                        replace_existing=True, misfire_grace_time=100)
         else:
-            self.scheduler.add_job(self.garden.fogging, 'date', None, id='FOGGING', replace_existing=True)
+            self.scheduler.add_job(self.garden.fogging, trigger='date', id='FOGGING', replace_existing=True)
  
     def schedule_watering(self):
         # TODO: create more oxygen when high temperature (pump longer?)
@@ -47,10 +48,10 @@ class Gardener:
             temperature = self.garden.brno_temperature.value
             if temperature and temperature > 4:
                 threading.next_watering = self.garden.last_watering + timedelta(minutes=24*60/(temperature-4)**1.5)
-                self.scheduler.add_job(self.garden.watering, 'date', threading.next_watering, id='WATERING',
+                self.scheduler.add_job(self.garden.watering, trigger='date', next_run_time=threading.next_watering, id='WATERING',
                                        replace_existing=True, misfire_grace_time=100)
         else:
-            self.scheduler.add_job(self.garden.watering, 'date', None, id='WATERING', replace_existing=True)
+            self.scheduler.add_job(self.garden.watering, trigger='date', id='WATERING', replace_existing=True)
 
     def working_loop(self):
         # shared cross threads
