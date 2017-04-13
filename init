@@ -23,6 +23,7 @@ case "$1" in
 
   restart)
     killall python3
+    python3 $SERVER_PATH &
   ;;
 
   *)
