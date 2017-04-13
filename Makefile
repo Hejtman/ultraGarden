@@ -18,8 +18,9 @@ uninstall:
 	rm $(INIT_FILE)
 
 test:
-	sudo PYTHONPATH="./server" python3 server/garden/test.py
-	sudo PYTHONPATH="./server" python3 server/records/test.py
+	@sudo PYTHONPATH="./server" python3 server/garden/test.py
+	@sudo PYTHONPATH="./server" python3 server/records/test.py
+	@sudo PYTHONPATH="./server/utils" python3 server/utils/weather.py
 
 
 .PHONY: install_requirements install uninstall test
