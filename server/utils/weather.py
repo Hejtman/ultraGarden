@@ -20,7 +20,7 @@ class WeatherSensor(Weather):
         Weather.__init__(self, args)
         self.name = name
         self.key = key
-        self.value = "-"
+        self.value = None
 
     def read_value(self):
         w = self.get_weather()

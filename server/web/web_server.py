@@ -1,5 +1,6 @@
 import threading
 from datetime import datetime
+from contextlib import suppress
 from utils.format import td_format
 
 try:
@@ -24,9 +25,20 @@ def show():
         data[sensor.name] = str(sensor.value)
 
     now = datetime.now()
-    last_watering = threading.garden.last_watering
-    next_watering = threading.next_watering
-    data['last_watering'] = "-" if last_watering is None else td_format(now - last_watering) + " ago"
-    data['next_watering'] = "-" if next_watering is None else "in " + td_format(next_watering - now)
+
+    with suppress(AttributeError):
+        last_fogging = threading.garden.last_fogging
+        next_fogging = threading.next_fogging
+        data['last_fogging'] = "-" if last_fogging is None else td_format(now - last_fogging) + " ago"
+        data['next_fogging'] = "-" if next_fogging is None else "in " + td_format(next_fogging - now)
+
+    with suppress(AttributeError):
+        last_watering = threading.garden.last_watering
+        next_watering = threading.next_watering
+        data['last_watering'] = "-" if last_watering is None else td_format(now - last_watering) + " ago"
+        data['next_watering'] = "-" if next_watering is None else "in " + td_format(next_watering - now)
+
+    with suppress(AttributeError):
+        data['status'] = threading.status
 
     return render_template('index.html', **data)

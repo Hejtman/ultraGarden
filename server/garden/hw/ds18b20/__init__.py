@@ -14,7 +14,7 @@ class ds18b20:
     def __init__(self, w1id, name):
         self.w1id = w1id
         self.name = name
-        self.value = 0
+        self.value = 0.0
 
     def read_value(self):
         with open("{}/{}/{}".format(self.DEVICE_DIR, self.w1id, self.DEVICE_FILE), 'r') as device:
