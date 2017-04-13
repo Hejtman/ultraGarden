@@ -18,8 +18,6 @@ sudo pip3 install wiringpi2 flask apscheduler
 git clone https://github.com/Hejtman/ultraGarden
 cd ultraGarden/server
 sudo python3 server.py
-
-sudo PYTHONPATH="." python3 garden/test.py
 ```
 
 ### Contribution:
