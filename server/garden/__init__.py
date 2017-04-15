@@ -67,7 +67,7 @@ class Garden:
             for relay, value in zip(self.relays, relays_set.set):
                 wiringpi.digitalWrite(relay.pin, value)
             sleep(relays_set.delay)
-        threading.status = "waiting"
+        threading.status = "idling"
 
 
     def watering(self):
@@ -79,13 +79,13 @@ class Garden:
             for relay, value in zip(self.relays, relays_set.set):
                 wiringpi.digitalWrite(relay.pin, value)
             sleep(relays_set.delay)
-        threading.status = "waiting"
+        threading.status = "idling"
 
     def sensors_refresh(self):
-        threading.status = "refresing"
+        threading.status = "refreshing"
         for s in self.sensors:
             try:
                 s.read_value()
             except IOError:
                 logging.error("Failed to read data from sensor " + s.name)
-        threading.status = "waiting"
+        threading.status = "idling"

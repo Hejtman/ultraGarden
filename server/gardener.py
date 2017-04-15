@@ -27,7 +27,7 @@ class Gardener:
     def __init__(self):
         self.garden = Garden()
         self.records = Records(sensors=self.garden.sensors)
-        self.scheduler = BackgroundScheduler()
+        self.scheduler = BackgroundScheduler({'apscheduler.executors.default': {'class': 'apscheduler.executors.pool:ThreadPoolExecutor', 'max_workers': '1'}})
         # TODO: schedule wifi check (utils)? or when some data needed?
 
     # FIXME: don't run watering and fogging in simultanesly
@@ -36,7 +36,7 @@ class Gardener:
             temperature = self.garden.brno_temperature.value
             if temperature and temperature > 4:
 		# FIXME: different equation
-                threading.next_fogging = self.garden.last_fogging + timedelta(minutes=24*60/(temperature-4)**1.5)
+                threading.next_fogging = self.garden.last_fogging + timedelta(minutes=24*60/(temperature-4)**2)
                 self.scheduler.add_job(self.garden.fogging, trigger='date', next_run_time=threading.next_fogging, id='FOGGING',
                                        replace_existing=True, misfire_grace_time=100)
         else:
@@ -74,6 +74,7 @@ class Gardener:
 
         # web server needs main thread for its signal handling
         logging.info('Starting web server.')
+        # FIXME: config
         web_server.run(host='0.0.0.0', port=5000, debug=False)
 
         self.scheduler.shutdown()
