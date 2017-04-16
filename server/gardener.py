@@ -67,7 +67,7 @@ class Gardener:
         self.scheduler.add_job(self.schedule_watering, 'cron', minute='*')
 
         # sensors maintenance
-        self.scheduler.add_job(self.garden.sensors_refresh, 'cron', minute='*', **cron_params)
+        self.scheduler.add_job(self.garden.sensors_refresh, minute='*', **cron_params)
         self.scheduler.add_job(self.records.write_values, minute='*/10',
                                kwargs={'file': config.SensorData.FULL_FILE}, **cron_params)
         self.scheduler.add_job(self.records.write_values, hour='*',

@@ -5,7 +5,6 @@ try:
     import wiringpi
 except ImportError:
     import garden.wiringpi_fake as wiringpi
-    from garden.wiringpi_fake import pin_mode, pin_value
 
 from garden import Garden, RelayWiring, RelaySet
 
@@ -23,14 +22,39 @@ garden = Garden()
 
 
 class TestGarden(unittest.TestCase):
-    def test_a_that_it_turns_on_and_off_all_relays(self):
-        # given
+    def setUp(self):
         if wiringpi.__doc__ and "Fake" in wiringpi.__doc__:
-            pin_mode.clear()
-            pin_value.clear()
+            wiringpi.pin_mode = [wiringpi.GPIO.INPUT] * 40
+            wiringpi.pin_value = [0] * 40
+            wiringpi.pin_mode_history = []
+            wiringpi.pin_value_history = []
 
+    def test_a_that_fogging_method_set_relays(self):
+        # when
+        garden.fogging()
+
+        # than
+        if wiringpi.__doc__ and "Fake" in wiringpi.__doc__:
+            self.assertEqual(wiringpi.pin_value_history, ['27:1', '28:0', '29:0',   # fun off, fog on, pump off
+                                                          '27:0', '28:0', '29:0',   # fun on, fog on, pump off
+                                                          '27:0', '28:1', '29:0',   # fun on, fog off, pump off
+                                                          '27:1', '28:1', '29:0'])  # default
+
+    def test_b_that_watering_method_set_relays(self):
+        # when
+        garden.watering()
+
+        # than
+        if wiringpi.__doc__ and "Fake" in wiringpi.__doc__:
+            self.assertEqual(wiringpi.pin_value_history, ['27:1', '28:1', '29:1',   # fun off, fog off, pump on
+                                                          '27:1', '28:1', '29:0',   # fun off, fog off, pump off
+                                                          '27:1', '28:1', '29:0'])  # again with default
+
+    # Overwrites garden duty cycles! Only as last relay test.
+    def test_z_that_it_turns_on_all_relays(self):
+        # given
         unused_pin = RelayWiring(pin=26, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)
-        garden.relays += (unused_pin,)
+        garden.relays = (unused_pin,) + garden.relays
         wiringpi.pinMode(unused_pin.pin, wiringpi.GPIO.OUTPUT)
 
         relays_count = len(garden.relays)
@@ -43,22 +67,12 @@ class TestGarden(unittest.TestCase):
 
         # than
         if wiringpi.__doc__ and "Fake" in wiringpi.__doc__:
-            self.assertEqual(pin_mode, {6: 1, 5: 1, 4: 1, 1: 1})
-            self.assertEqual(pin_value, {6: 1, 5: 1, 4: 1, 1: 1})
-
-    def test_that_watering_method_set_relays(self):
-        # given
-        if wiringpi.__doc__ and "Fake" in wiringpi.__doc__:
-            pin_mode.clear()
-            pin_value.clear()
-
-        # when
-        garden.watering()
-
-        # than
-        if wiringpi.__doc__ and "Fake" in wiringpi.__doc__:
-            self.assertEqual(pin_mode, {6: 1, 5: 1, 4: 1})
-            self.assertEqual(pin_value, {6: 1, 5: 1, 4: 0})
+            self.assertEqual(wiringpi.pin_value_history, ["26:0", "27:0", "28:0", "29:0",
+                                                          "26:0", "27:0", "28:0", "29:1",
+                                                          "26:0", "27:0", "28:1", "29:1",
+                                                          "26:0", "27:1", "28:1", "29:1",
+                                                          "26:1", "27:1", "28:1", "29:1",
+                                                          "26:1", "27:1", "28:1", "29:1"])
 
     def test_that_it_reads_sensors_data(self):
         # given
