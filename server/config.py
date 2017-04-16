@@ -35,4 +35,3 @@ WebServer = {
     'port': 5000,
     'debug': False
 }
-

@@ -9,6 +9,7 @@ from records import Records
 from utils.sms import send_sms
 from web.web_server import web_server
 
+
 class Gardener:
     """
     Gardener manages garden according schedule and collected sensor data.
@@ -26,7 +27,11 @@ class Gardener:
     def __init__(self):
         self.garden = Garden()
         self.records = Records(sensors=self.garden.sensors)
-        self.scheduler = BackgroundScheduler({'apscheduler.executors.default': {'class': 'apscheduler.executors.pool:ThreadPoolExecutor', 'max_workers': '1'}})
+        self.scheduler = BackgroundScheduler(
+            {'apscheduler.executors.default':
+                {'class': 'apscheduler.executors.pool:ThreadPoolExecutor', 'max_workers': '1'}
+             }
+        )
         # TODO: schedule wifi check (utils)? or when some data needed?
         # TODO: schedule daily reboot
 
@@ -52,20 +57,26 @@ class Gardener:
         threading.next_watering = None
 
         # default schedule
-        self.scheduler.add_job(self.garden.watering, trigger='date', misfire_grace_time=100)
-        self.scheduler.add_job(self.garden.watering, trigger='cron', minute='*/20', id='WATERING', misfire_grace_time=100)
-        self.scheduler.add_job(self.garden.fogging, trigger='cron', minute='*/10', id='FOGGING', misfire_grace_time=100)
-        self.scheduler.add_job(self.garden.sensors_refresh, 'cron', minute='*', misfire_grace_time=100)
-        self.scheduler.add_job(self.records.write_values, 'cron', minute='*/10', kwargs={'file': config.SensorData.FULL_FILE})
-        self.scheduler.add_job(self.records.write_values, 'cron', hour='*', kwargs={'file': config.SensorData.WEB_FILE})
-        # TODO: add water level info
-        self.scheduler.add_job(send_sms, trigger='cron', hour='*/12', kwargs={'message': 'I am alive'})
-        self.scheduler.add_job(self.records.trim_records, 'cron', week='*',
-                               kwargs={'file': config.SensorData.WEB_FILE, 'count': 24*7*4})  # keep only last month
+        cron_params = {'trigger': 'cron', 'misfire_grace_time': 100}
+        self.scheduler.add_job(self.garden.watering, trigger='date')
+        self.scheduler.add_job(self.garden.watering, minute='*/20', id='WATERING', **cron_params)
+        self.scheduler.add_job(self.garden.fogging, minute='*/10', id='FOGGING', **cron_params)
 
         # weather dependent modification
         self.scheduler.add_job(self.schedule_fogging, 'cron', minute='*')
         self.scheduler.add_job(self.schedule_watering, 'cron', minute='*')
+
+        # sensors maintenance
+        self.scheduler.add_job(self.garden.sensors_refresh, 'cron', minute='*', **cron_params)
+        self.scheduler.add_job(self.records.write_values, minute='*/10',
+                               kwargs={'file': config.SensorData.FULL_FILE}, **cron_params)
+        self.scheduler.add_job(self.records.write_values, hour='*',
+                               kwargs={'file': config.SensorData.WEB_FILE}, **cron_params)
+        self.scheduler.add_job(self.records.trim_records, week='*',  # show on web only latest 30 days
+                               kwargs={'file': config.SensorData.WEB_FILE, 'count': 24*7*4}, **cron_params)
+
+        # TODO: add water level info
+        self.scheduler.add_job(send_sms, hour='*/12', kwargs={'message': 'I am alive'}, **cron_params)
 
         logging.info('Starting scheduler.')
         self.scheduler.start()
@@ -75,4 +86,3 @@ class Gardener:
         web_server.run(**config.WebServer)
 
         self.scheduler.shutdown()
-

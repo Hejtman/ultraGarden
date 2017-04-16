@@ -27,6 +27,7 @@ class Records:
         return heading + records + ending
 
     def write_values(self, file):
+        # FIXME: write only valid values and write only record with at least one valid value
         heading = "var chartData = ["
         record = self.__generate_record()
         ending = "];"
