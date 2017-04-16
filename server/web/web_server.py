@@ -28,14 +28,18 @@ def show():
 
     with suppress(AttributeError):
         last_fogging = threading.garden.last_fogging
-        next_fogging = threading.next_fogging
         data['last_fogging'] = "-" if last_fogging is None else td_format(now - last_fogging) + " ago"
+
+    with suppress(AttributeError):
+        next_fogging = threading.next_fogging
         data['next_fogging'] = "-" if next_fogging is None else "in " + td_format(next_fogging - now)
 
     with suppress(AttributeError):
         last_watering = threading.garden.last_watering
-        next_watering = threading.next_watering
         data['last_watering'] = "-" if last_watering is None else td_format(now - last_watering) + " ago"
+
+    with suppress(AttributeError):
+        next_watering = threading.next_watering
         data['next_watering'] = "-" if next_watering is None else "in " + td_format(next_watering - now)
 
     with suppress(AttributeError):

@@ -3,18 +3,12 @@
 <head>
     <link rel="stylesheet" href='/static/style.css' />
     <meta charset="UTF-8">
-    <title>Hello from template</title>
+    <title>Ultra garden dashboard</title>
 </head>
 <body>
-<h1>status: {{status}}</h1>
-<h1>fog: {{fog}}</h1>
-<h1>fan: {{fan}}</h1>
-<h1>pump: {{pump}}</h1>
-<h1>Brno temperature: {{Brno}}°C</h1>
-<h1>Brno humidity: {{Brno_humidity}}%</h1>
-<h1>Last fogging: {{last_fogging}}</h1>
-<h1>Next fogging: {{next_fogging}}</h1>
-<h1>Last watering: {{last_watering}}</h1>
-<h1>Next watering: {{next_watering}}</h1>
+<h3>status: {{status}} (fog:{{fog}}, fan:{{fan}}, pump:{{pump}})</h3>
+<h3>Fogging: {{last_fogging}} ({{next_fogging}})</h3>
+<h3>Watering: {{last_watering}} ({{next_watering}})</h3>
+<h3>Brno: {{Brno}}°C ({{Brno_humidity}}%)</h3>
 </body>
 </html>

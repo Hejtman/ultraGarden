@@ -10,7 +10,7 @@ try:
 except ImportError:
     import garden.wiringpi_fake as wiringpi
 
-from config import OpenWeatherMapConf
+import config
 from utils.weather import WeatherSensor
 from garden.hw.ds18b20 import ds18b20
 
@@ -45,9 +45,8 @@ class Garden:
 
         #self.barrel_temperature = ds18b20('28-011564df1dff', 'barrel')
         #self.balcony_temperature = ds18b20('28-011564aee4ff', 'balcony')
-        # FIXME: brno > city (name move to config)
-        self.brno_temperature = WeatherSensor('temp', 'Brno', OpenWeatherMapConf)
-        self.brno_humidity = WeatherSensor('humidity', 'Brno_humidity', OpenWeatherMapConf)
+        self.brno_temperature = WeatherSensor('temp', config.City, config.OpenWeatherMap)
+        self.brno_humidity = WeatherSensor('humidity', config.City + '_humidity', config.OpenWeatherMap)
         self.sensors = (
 #                        self.barrel_temperature,
 #                        self.balcony_temperature,
