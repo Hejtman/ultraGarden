@@ -4,9 +4,11 @@ from datetime import timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 
 import config
+import utils.sms
+import utils.system
+import utils.network
 from garden import Garden
 from records import Records
-from utils.sms import send_sms
 from web.web_server import web_server
 
 
@@ -27,13 +29,11 @@ class Gardener:
     def __init__(self):
         self.garden = Garden()
         self.records = Records(sensors=self.garden.sensors)
-        self.scheduler = BackgroundScheduler(
-            {'apscheduler.executors.default':
+        self.scheduler = BackgroundScheduler({
+            'apscheduler.executors.default':
                 {'class': 'apscheduler.executors.pool:ThreadPoolExecutor', 'max_workers': '1'}
-             }
+            }
         )
-        # TODO: schedule wifi check (utils)? or when some data needed?
-        # TODO: schedule daily reboot
 
     def schedule_fogging(self):
         # TODO: no point in making fog when temperature is up to 26C or below 5C ?
@@ -51,9 +51,16 @@ class Gardener:
             self.scheduler.add_job(self.garden.watering, trigger='date', next_run_time=threading.next_watering, 
                                    id='WATERING', replace_existing=True, misfire_grace_time=100)
 
+    def send_sms_report(self):
+        message = 'I am alive.'
+        for sensor in self.garden.sensors:
+            message += " {}:{}".format(sensor.name, str(sensor.value))
+        utils.sms.send_sms(message)
+
     def working_loop(self):
         # shared cross threads
         threading.garden = self.garden
+        threading.next_fogging = None
         threading.next_watering = None
 
         # default schedule
@@ -74,9 +81,12 @@ class Gardener:
                                kwargs={'file': config.SensorData.WEB_FILE}, **cron_params)
         self.scheduler.add_job(self.records.trim_records, week='*',  # show on web only latest 30 days
                                kwargs={'file': config.SensorData.WEB_FILE, 'count': 24*7*4}, **cron_params)
+        self.scheduler.add_job(self.send_sms_report, hour='*/12', **cron_params)
 
-        # TODO: add water level info
-        self.scheduler.add_job(send_sms, hour='*/12', kwargs={'message': 'I am alive'}, **cron_params)
+        # network maintenance
+        self.scheduler.add_job(utils.network.check_and_fix, hour='*',
+                               kwargs={'address': config.RouterAddress, 'network': 'wlan0'}, **cron_params)
+        self.scheduler.add_job(utils.system.reboot, hour='*/24', **cron_params)
 
         logging.info('Starting scheduler.')
         self.scheduler.start()
