@@ -36,12 +36,12 @@ class Gardener:
         )
 
     def schedule_fogging(self):
-        # TODO: no point in making fog when temperature is up to 26C or below 5C ?
         temperature = self.garden.brno_temperature.value
-        if self.garden.last_fogging and temperature and temperature > 4:
+        if self.garden.last_fogging and temperature and 4 < temperature < 27:
             threading.next_fogging = self.garden.last_fogging + timedelta(minutes=24*60/(temperature-4)**2)
             self.scheduler.add_job(self.garden.fogging, trigger='date', next_run_time=threading.next_fogging,
                                    id='FOGGING', replace_existing=True, misfire_grace_time=100)
+        # TODO: remove cron occurrence when is not (temperature and 4 < temperature < 27)
  
     def schedule_watering(self):
         # TODO: create more oxygen when high temperature (pump longer?)

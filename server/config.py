@@ -27,8 +27,9 @@ OpenWeatherMap = {
     'q': 'Brno,cz',
     'units': 'metric'
 }
-City = "Brno"
 
+RouterAddress = '192.168.10.1'
+City = "Brno"
 
 WebServer = {
     'host': '0.0.0.0',
