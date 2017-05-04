@@ -1,6 +1,6 @@
 import logging
 import threading
-from datetime import timedelta
+from datetime import timedelta, datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 
 import config
@@ -37,18 +37,21 @@ class Gardener:
 
     def schedule_fogging(self):
         temperature = self.garden.brno_temperature.value
-        if self.garden.last_fogging and temperature and 4 < temperature < 27:
-            threading.next_fogging = self.garden.last_fogging + timedelta(minutes=24*60/(temperature-4)**2)
+        if temperature:
+            threading.fogging_interval = timedelta(minutes=24*60/(temperature-4)**2) if 4 < temperature < 27 \
+                else timedelta(weeks=99)
+            threading.next_fogging = max(datetime.now(), self.garden.last_fogging + threading.fogging_interval)
             self.scheduler.add_job(self.garden.fogging, trigger='date', next_run_time=threading.next_fogging,
                                    id='FOGGING', replace_existing=True, misfire_grace_time=100)
-        # TODO: remove cron occurrence when is not (temperature and 4 < temperature < 27)
- 
+
     def schedule_watering(self):
         # TODO: create more oxygen when high temperature (pump longer?)
         temperature = self.garden.brno_temperature.value
-        if self.garden.last_watering and temperature and temperature > 4:
-            threading.next_watering = self.garden.last_watering + timedelta(minutes=24*60/(temperature-4)**1.5)
-            self.scheduler.add_job(self.garden.watering, trigger='date', next_run_time=threading.next_watering, 
+        if temperature:
+            threading.watering_interval = timedelta(minutes=24*60/(temperature-4)**1.5) if 4 < temperature < 27 \
+                else timedelta(weeks=99)
+            threading.next_watering = max(datetime.now(), self.garden.last_watering + threading.watering_interval)
+            self.scheduler.add_job(self.garden.watering, trigger='date', next_run_time=threading.next_watering,
                                    id='WATERING', replace_existing=True, misfire_grace_time=100)
 
     def send_sms_report(self):
