@@ -23,7 +23,7 @@ def show():
         'pump': "ON" if wiringpi.digitalRead(garden.pump.pin) == garden.pump.on else "OFF",
 
         'status': garden.status,
-        'last_change': now - garden.last_change,
+        'last_change': td_format(now - garden.last_change),
         
         'last_fogging': td_format(now - garden.last_fogging) + " ago" if garden.last_fogging else "-",
         'next_fogging': "in " + td_format(garden.next_fogging - now) if garden.next_fogging else "-",

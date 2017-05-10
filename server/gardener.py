@@ -41,7 +41,7 @@ class Gardener:
     def schedule_fogging(self):
         temperature = self.garden.brno_temperature.value
         if temperature:
-            interval_minutes = 24 * 60 / (temperature - 4) ** 2 if 4 < temperature < 27 else YEAR_MINUTES
+            interval_minutes = int(24 * 60 / (temperature - 4) ** 2) if 4 < temperature < 27 else YEAR_MINUTES
             self.garden.interval_fogging = timedelta(minutes=interval_minutes)
             self.garden.next_fogging = max(datetime.now(), self.garden.last_fogging + self.garden.interval_fogging)
             self.scheduler.add_job(self.garden.fogging, start_date=str(self.garden.next_fogging),
@@ -51,7 +51,7 @@ class Gardener:
     def schedule_watering(self):
         temperature = self.garden.brno_temperature.value
         if temperature:
-            interval_minutes = 24 * 60 / (temperature - 4) ** 1.5 if 4 < temperature < 27 else YEAR_MINUTES
+            interval_minutes = int(24 * 60 / (temperature - 4) ** 1.5) if 4 < temperature < 27 else YEAR_MINUTES
             self.garden.interval_watering = timedelta(minutes=interval_minutes)
             self.garden.next_watering = max(datetime.now(), self.garden.last_watering + self.garden.interval_watering)
             self.scheduler.add_job(self.garden.watering, start_date=str(self.garden.next_watering),

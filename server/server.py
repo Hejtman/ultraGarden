@@ -1,10 +1,12 @@
 import logging
+from logging import handlers
 
 from config import Log
 from gardener import Gardener
 
 
-logging.basicConfig(level=Log.LEVEL, filename=Log.FILE)
+file_handler = logging.handlers.WatchedFileHandler(filename=Log.FILE)
+logging.basicConfig(level=Log.LEVEL, handlers=(file_handler,))
 logging.info("UltraGarden started.")
 
 Gardener().working_loop()

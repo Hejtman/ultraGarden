@@ -19,7 +19,7 @@ class GMail:
 
 class Log:
     LEVEL = logging.INFO
-    FILE = "/tmp/ultra_garden.log"
+    FILE = "/var/log/ultra_garden.log"
 
 
 OpenWeatherMap = {
