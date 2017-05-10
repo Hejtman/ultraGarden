@@ -73,7 +73,7 @@ class Garden:
                 wiringpi.digitalWrite(relay.pin, value)
             sleep(relays_set.delay)
         self.status = "idling"
-        last_change = datetime.datetime.now()
+        self.last_change = datetime.datetime.now()
 
     def watering(self):
         # FIXME: decorator?
@@ -85,12 +85,12 @@ class Garden:
                 wiringpi.digitalWrite(relay.pin, value)
             sleep(relays_set.delay)
         self.status = "idling"
-        last_change = datetime.datetime.now()
+        self.last_change = datetime.datetime.now()
 
     def sensors_refresh(self):
         # FIXME: decorator?
         self.status = "refreshing"
-        last_change = datetime.datetime.now()
+        self.last_change = datetime.datetime.now()
 
         for s in self.sensors:
             try:
@@ -99,4 +99,4 @@ class Garden:
                 logging.error("Failed to read data from sensor " + s.name)
 
         self.status = "idling"
-        last_change = datetime.datetime.now()
+        self.last_change = datetime.datetime.now()
