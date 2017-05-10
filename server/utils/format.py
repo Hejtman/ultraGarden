@@ -1,5 +1,8 @@
-def td_format(td_object):
-    seconds = int(td_object.total_seconds())
+def td_format(delta_time):
+    if delta_time is None:
+        return "-"
+
+    seconds = int(delta_time.total_seconds())
     periods = [
         ('year', 60 * 60 * 24 * 365),
         ('month', 60 * 60 * 24 * 30),

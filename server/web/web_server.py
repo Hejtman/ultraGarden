@@ -1,6 +1,5 @@
 import threading
 from datetime import datetime
-from contextlib import suppress
 from utils.format import td_format
 
 try:
@@ -16,33 +15,25 @@ web_server = Flask(__name__)
 
 @web_server.route('/')
 def show():
+    now = datetime.now()
+    garden = threading.garden
     data = {
-        'fog': "ON" if wiringpi.digitalRead(threading.garden.fog.pin) == threading.garden.fog.on else "OFF",
-        'fan': "ON" if wiringpi.digitalRead(threading.garden.fan.pin) == threading.garden.fan.on else "OFF",
-        'pump': "ON" if wiringpi.digitalRead(threading.garden.pump.pin) == threading.garden.pump.on else "OFF"
+        'fog': "ON" if wiringpi.digitalRead(garden.fog.pin) == garden.fog.on else "OFF",
+        'fan': "ON" if wiringpi.digitalRead(garden.fan.pin) == garden.fan.on else "OFF",
+        'pump': "ON" if wiringpi.digitalRead(garden.pump.pin) == garden.pump.on else "OFF",
+
+        'status': garden.status,
+        'last_change': now - garden.last_change,
+        
+        'last_fogging': td_format(now - garden.last_fogging) + " ago" if garden.last_fogging else "-",
+        'next_fogging': "in " + td_format(garden.next_fogging - now) if garden.next_fogging else "-",
+        'interval_fogging': td_format(garden.interval_fogging) if garden.interval_fogging else "-",
+
+        'last_watering': td_format(now - garden.last_watering) + " ago" if garden.last_watering else "-",
+        'next_watering': "in " + td_format(garden.next_watering - now) if garden.next_watering else "-",
+        'interval_watering': td_format(garden.interval_watering) if garden.interval_watering else "-",
     }
     for sensor in threading.garden.sensors:
         data[sensor.name] = str(sensor.value)
-
-    now = datetime.now()
-
-    with suppress(AttributeError):
-        last_fogging = threading.garden.last_fogging
-        data['last_fogging'] = "-" if last_fogging is None else td_format(now - last_fogging) + " ago"
-
-    with suppress(AttributeError):
-        next_fogging = threading.next_fogging
-        data['next_fogging'] = "-" if next_fogging is None else "in " + td_format(next_fogging - now)
-
-    with suppress(AttributeError):
-        last_watering = threading.garden.last_watering
-        data['last_watering'] = "-" if last_watering is None else td_format(now - last_watering) + " ago"
-
-    with suppress(AttributeError):
-        next_watering = threading.next_watering
-        data['next_watering'] = "-" if next_watering is None else "in " + td_format(next_watering - now)
-
-    with suppress(AttributeError):
-        data['status'] = threading.status
 
     return render_template('index.html', **data)

@@ -1,6 +1,5 @@
 import logging
 import datetime
-import threading
 from collections import namedtuple
 from itertools import chain
 from time import sleep
@@ -53,36 +52,51 @@ class Garden:
                         self.brno_temperature,
                         self.brno_humidity)
 
+        self.status = "idling"
+        self.last_change = None
+
         self.last_fogging = None
+        self.next_fogging = None
+        self.interval_fogging = None
+
         self.last_watering = None
+        self.next_watering = None
+        self.interval_watering = None
 
     def fogging(self):
-        threading.status = "fogging"
-        self.last_fogging = datetime.datetime.now()
-        logging.info("{} fogging".format(self.last_fogging))  # TODO: write temperature, write after how long?
+        # FIXME: decorator?
+        self.status = "fogging"
+        self.last_fogging = self.last_change = datetime.datetime.now()
 
         for relays_set in chain(self.fogging_cycle, self.default_cycle):
             for relay, value in zip(self.relays, relays_set.set):
                 wiringpi.digitalWrite(relay.pin, value)
             sleep(relays_set.delay)
-        threading.status = "idling"
+        self.status = "idling"
+        last_change = datetime.datetime.now()
 
     def watering(self):
-        threading.status = "watering"
-        self.last_watering = datetime.datetime.now()
-        logging.info("{} watering".format(self.last_watering))  # TODO: write temperature, write after how long?
+        # FIXME: decorator?
+        self.status = "watering"
+        self.last_watering = self.last_change = datetime.datetime.now()
 
         for relays_set in chain(self.watering_cycle, self.default_cycle):
             for relay, value in zip(self.relays, relays_set.set):
                 wiringpi.digitalWrite(relay.pin, value)
             sleep(relays_set.delay)
-        threading.status = "idling"
+        self.status = "idling"
+        last_change = datetime.datetime.now()
 
     def sensors_refresh(self):
-        threading.status = "refreshing"
+        # FIXME: decorator?
+        self.status = "refreshing"
+        last_change = datetime.datetime.now()
+
         for s in self.sensors:
             try:
                 s.read_value()
             except IOError:
                 logging.error("Failed to read data from sensor " + s.name)
-        threading.status = "idling"
+
+        self.status = "idling"
+        last_change = datetime.datetime.now()
