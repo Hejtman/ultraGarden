@@ -54,7 +54,7 @@ class Gardener:
             return
 
         self.garden.fogging_period = fogging_period
-        self.garden.next_fogging = max((self.__get_asap_schedule(), self.garden.last_fogging + fogging_period))
+        self.garden.next_fogging = max((self.__get_asap_schedule(), self.garden.get_last_fogging() + fogging_period))
 
         self.scheduler.add_job(self.garden.fogging, start_date=str(self.garden.next_fogging),
                                trigger='cron', minute="*/{}".format(period_minutes),
@@ -71,7 +71,7 @@ class Gardener:
             return
 
         self.garden.watering_period = watering_period
-        self.garden.next_watering = max((self.__get_asap_schedule(), self.garden.last_watering + watering_period))
+        self.garden.next_watering = max((self.__get_asap_schedule(), self.garden.get_last_watering() + watering_period))
 
         self.scheduler.add_job(self.garden.watering, start_date=str(self.garden.next_watering),
                                trigger='cron', minute="*/{}".format(period_minutes),

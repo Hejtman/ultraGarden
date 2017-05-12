@@ -25,11 +25,11 @@ def show():
         'status': garden.status,
         'last_change': td_format_short(now - garden.last_change),
         
-        'last_fogging': td_format_short(now - garden.last_fogging) + " ago",
+        'last_fogging': td_format_short(now - garden.get_last_fogging()) + " ago",
         'next_fogging': "in " + td_format_short(garden.next_fogging - now),
         'fogging_period': td_format(garden.fogging_period),
 
-        'last_watering': td_format_short(now - garden.last_watering) + " ago",
+        'last_watering': td_format_short(now - garden.get_last_watering()) + " ago",
         'next_watering': "in " + td_format_short(garden.next_watering - now),
         'watering_period': td_format(garden.watering_period),
     }
