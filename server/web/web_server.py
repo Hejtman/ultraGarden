@@ -1,6 +1,6 @@
 import threading
 from datetime import datetime
-from utils.format import td_format
+from utils.format import td_format, td_format_short
 
 try:
     import wiringpi
@@ -23,15 +23,15 @@ def show():
         'pump': "ON" if wiringpi.digitalRead(garden.pump.pin) == garden.pump.on else "OFF",
 
         'status': garden.status,
-        'last_change': td_format(now - garden.last_change),
+        'last_change': td_format_short(now - garden.last_change),
         
-        'last_fogging': td_format(now - garden.last_fogging) + " ago" if garden.last_fogging else "-",
-        'next_fogging': "in " + td_format(garden.next_fogging - now) if garden.next_fogging else "-",
-        'interval_fogging': td_format(garden.interval_fogging) if garden.interval_fogging else "-",
+        'last_fogging': td_format_short(now - garden.last_fogging) + " ago",
+        'next_fogging': "in " + td_format_short(garden.next_fogging - now),
+        'fogging_period': td_format(garden.fogging_period),
 
-        'last_watering': td_format(now - garden.last_watering) + " ago" if garden.last_watering else "-",
-        'next_watering': "in " + td_format(garden.next_watering - now) if garden.next_watering else "-",
-        'interval_watering': td_format(garden.interval_watering) if garden.interval_watering else "-",
+        'last_watering': td_format_short(now - garden.last_watering) + " ago",
+        'next_watering': "in " + td_format_short(garden.next_watering - now),
+        'watering_period': td_format(garden.watering_period),
     }
     for sensor in threading.garden.sensors:
         data[sensor.name] = str(sensor.value)

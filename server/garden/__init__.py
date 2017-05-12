@@ -1,5 +1,5 @@
 import logging
-import datetime
+from datetime import datetime, timedelta
 from collections import namedtuple
 from itertools import chain
 from time import sleep
@@ -16,6 +16,9 @@ from garden.hw.ds18b20 import ds18b20
 
 RelayWiring = namedtuple('RelayWiring', 'pin off on')
 RelaySet = namedtuple('RelaySet', 'set delay')
+
+OLDEST_DATE = datetime(1, 1, 1)
+ZERO_PERIOD = timedelta(minutes=0)
 
 
 class Garden:
@@ -53,44 +56,48 @@ class Garden:
                         self.brno_humidity)
 
         self.status = "idling"
-        self.last_change = None
+        self.last_change = OLDEST_DATE
 
-        self.last_fogging = None
-        self.next_fogging = None
-        self.interval_fogging = None
+        self.last_fogging = OLDEST_DATE
+        self.next_fogging = OLDEST_DATE
+        self.fogging_period = ZERO_PERIOD
 
-        self.last_watering = None
-        self.next_watering = None
-        self.interval_watering = None
+        self.last_watering = OLDEST_DATE
+        self.next_watering = OLDEST_DATE
+        self.watering_period = ZERO_PERIOD
 
     def fogging(self):
+        print(str(datetime.now()) + " fogging")
         # FIXME: decorator?
+        # TODO: DEBUG LOGS
         self.status = "fogging"
-        self.last_fogging = self.last_change = datetime.datetime.now()
+        self.last_fogging = self.last_change = datetime.now()
+        self.next_fogging = datetime.now() + self.fogging_period
 
         for relays_set in chain(self.fogging_cycle, self.default_cycle):
             for relay, value in zip(self.relays, relays_set.set):
                 wiringpi.digitalWrite(relay.pin, value)
             sleep(relays_set.delay)
         self.status = "idling"
-        self.last_change = datetime.datetime.now()
+        self.last_change = datetime.now()
 
     def watering(self):
         # FIXME: decorator?
         self.status = "watering"
-        self.last_watering = self.last_change = datetime.datetime.now()
+        self.last_watering = self.last_change = datetime.now()
+        self.next_watering = datetime.now() + self.watering_period
 
         for relays_set in chain(self.watering_cycle, self.default_cycle):
             for relay, value in zip(self.relays, relays_set.set):
                 wiringpi.digitalWrite(relay.pin, value)
             sleep(relays_set.delay)
         self.status = "idling"
-        self.last_change = datetime.datetime.now()
+        self.last_change = datetime.now()
 
     def sensors_refresh(self):
         # FIXME: decorator?
         self.status = "refreshing"
-        self.last_change = datetime.datetime.now()
+        self.last_change = datetime.now()
 
         for s in self.sensors:
             try:
@@ -99,4 +106,4 @@ class Garden:
                 logging.error("Failed to read data from sensor " + s.name)
 
         self.status = "idling"
-        self.last_change = datetime.datetime.now()
+        self.last_change = datetime.now()

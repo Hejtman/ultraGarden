@@ -12,7 +12,12 @@ from records import Records
 from web.web_server import web_server
 
 
-YEAR_MINUTES = 60*24*365
+# One year in minutes = greatest task period
+INFINITE_MINUTES = 60*24*365
+
+# Seconds after which will be missed tasks forgotten.
+# Smaller than shortest task period so it won't buffer in scheduler.
+MISFIRE_GRACE_TIME = 4*60
 
 
 class Gardener:
@@ -40,23 +45,37 @@ class Gardener:
 
     def schedule_fogging(self):
         temperature = self.garden.brno_temperature.value
-        if temperature:
-            interval_minutes = int(24 * 60 / (temperature - 4) ** 2) if 4 < temperature < 27 else YEAR_MINUTES
-            self.garden.interval_fogging = timedelta(minutes=interval_minutes)
-            self.garden.next_fogging = max(datetime.now(), self.garden.last_fogging + self.garden.interval_fogging)
-            self.scheduler.add_job(self.garden.fogging, start_date=str(self.garden.next_fogging),
-                                   trigger='cron', minute="*/{}".format(interval_minutes),
-                                   id='FOGGING', replace_existing=True, misfire_grace_time=100)
+        if not temperature:
+            return
+
+        period_minutes = int(24 * 60 / (temperature - 4) ** 2) if 4 < temperature < 27 else INFINITE_MINUTES
+        fogging_period = timedelta(minutes=period_minutes)
+        if fogging_period == self.garden.fogging_period:
+            return
+
+        self.garden.fogging_period = fogging_period
+        self.garden.next_fogging = max((self.__get_asap_schedule(), self.garden.last_fogging + fogging_period))
+
+        self.scheduler.add_job(self.garden.fogging, start_date=str(self.garden.next_fogging),
+                               trigger='cron', minute="*/{}".format(period_minutes),
+                               id='FOGGING', replace_existing=True, misfire_grace_time=MISFIRE_GRACE_TIME)
 
     def schedule_watering(self):
         temperature = self.garden.brno_temperature.value
-        if temperature:
-            interval_minutes = int(24 * 60 / (temperature - 4) ** 1.5) if 4 < temperature < 27 else YEAR_MINUTES
-            self.garden.interval_watering = timedelta(minutes=interval_minutes)
-            self.garden.next_watering = max(datetime.now(), self.garden.last_watering + self.garden.interval_watering)
-            self.scheduler.add_job(self.garden.watering, start_date=str(self.garden.next_watering),
-                                   trigger='cron', minute="*/{}".format(interval_minutes),
-                                   id='WATERING', replace_existing=True, misfire_grace_time=100)
+        if not temperature:
+            return
+
+        period_minutes = int(24 * 60 / (temperature - 4) ** 1.5) if 4 < temperature < 27 else INFINITE_MINUTES
+        watering_period = timedelta(minutes=period_minutes)
+        if watering_period == self.garden.watering_period:
+            return
+
+        self.garden.watering_period = watering_period
+        self.garden.next_watering = max((self.__get_asap_schedule(), self.garden.last_watering + watering_period))
+
+        self.scheduler.add_job(self.garden.watering, start_date=str(self.garden.next_watering),
+                               trigger='cron', minute="*/{}".format(period_minutes),
+                               id='WATERING', replace_existing=True, misfire_grace_time=MISFIRE_GRACE_TIME)
 
     def send_sms_report(self):
         message = 'I am alive.'
@@ -69,10 +88,10 @@ class Gardener:
         threading.garden = self.garden
 
         # default schedule
-        cron_params = {'trigger': 'cron', 'misfire_grace_time': 120}
+        cron_params = {'trigger': 'cron', 'misfire_grace_time': MISFIRE_GRACE_TIME}
         self.scheduler.add_job(self.garden.watering, trigger='date')
         self.scheduler.add_job(self.garden.watering, minute='*/20', id='WATERING', **cron_params)
-        self.scheduler.add_job(self.garden.fogging, minute='*/10', id='FOGGING', **cron_params)
+        self.scheduler.add_job(self.garden.fogging, minute='*/5', id='FOGGING', **cron_params)
 
         # sensors maintenance
         self.scheduler.add_job(self.garden.sensors_refresh, minute='*/10', **cron_params)
@@ -82,7 +101,7 @@ class Gardener:
                                kwargs={'file': config.SensorData.WEB_FILE}, **cron_params)
         self.scheduler.add_job(self.records.trim_records, week='*',  # show on web only latest 30 days
                                kwargs={'file': config.SensorData.WEB_FILE, 'count': 24*7*4}, **cron_params)
-        self.scheduler.add_job(self.send_sms_report, hour='0', **cron_params)
+        self.scheduler.add_job(self.send_sms_report, hour='12', **cron_params)
 
         # sensors/weather dependent modification
         self.scheduler.add_job(self.schedule_fogging, minute='*/10', **cron_params)
@@ -92,7 +111,7 @@ class Gardener:
         # network maintenance
         self.scheduler.add_job(utils.network.check_and_fix, hour='*',
                                kwargs={'address': config.RouterAddress, 'network': 'wlan0'}, **cron_params)
-        self.scheduler.add_job(utils.system.reboot, hour='12', **cron_params)
+        self.scheduler.add_job(utils.system.reboot, hour='0', **cron_params)
 
         logging.info('Starting scheduler.')
         self.scheduler.start()
@@ -102,3 +121,7 @@ class Gardener:
         web_server.run(**config.WebServer)
 
         self.scheduler.shutdown()
+
+    @staticmethod
+    def __get_asap_schedule():
+        return datetime.now() + timedelta(seconds=2)
