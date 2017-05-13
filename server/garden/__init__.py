@@ -58,18 +58,20 @@ class Garden:
         self.status = "idling"
         self.last_change = OLDEST_DATE
 
+        self.__fogging_count = 0
         self.__last_fogging = OLDEST_DATE
         self.next_fogging = OLDEST_DATE
         self.fogging_period = ZERO_PERIOD
 
+        self.__watering_count = 0
         self.__last_watering = OLDEST_DATE
         self.next_watering = OLDEST_DATE
         self.watering_period = ZERO_PERIOD
 
     def fogging(self):
-        print(str(datetime.now()) + " fogging")
         # FIXME: decorator?
         # TODO: DEBUG LOGS
+        self.__fogging_count += 1
         self.status = "fogging"
         self.__last_fogging = self.last_change = datetime.now()
         self.next_fogging = datetime.now() + self.fogging_period
@@ -83,6 +85,7 @@ class Garden:
 
     def watering(self):
         # FIXME: decorator?
+        self.__watering_count += 1
         self.status = "watering"
         self.__last_watering = self.last_change = datetime.now()
         self.next_watering = datetime.now() + self.watering_period
@@ -108,8 +111,15 @@ class Garden:
         self.status = "idling"
         self.last_change = datetime.now()
 
+    # encapsulation
     def get_last_fogging(self):
         return self.__last_fogging
 
     def get_last_watering(self):
         return self.__last_watering
+
+    def get_fogging_count(self):
+        return self.__fogging_count
+
+    def get_watering_count(self):
+        return self.__watering_count

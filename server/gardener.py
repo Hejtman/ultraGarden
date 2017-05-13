@@ -81,6 +81,10 @@ class Gardener:
         message = 'I am alive.'
         for sensor in self.garden.sensors:
             message += " {}:{}".format(sensor.name, str(sensor.value))
+        message += " f:{}/{} w:{}/{}".format(int(self.garden.fogging_period.total_seconds()/60),
+                                             self.garden.get_fogging_count(),
+                                             int(self.garden.watering_period.total_seconds()/60),
+                                             self.garden.get_watering_count())
         utils.sms.send_sms(message)
 
     def working_loop(self):

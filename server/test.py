@@ -14,6 +14,8 @@ def plot_fogging_function(begin, end, step):
     plt.xlabel('temperature (°C)')
     plt.ylabel('fogging interval (minutes)')
     plt.table(cellText=table, cellLoc='center', loc='bottom', bbox=[0.45, 0.45, 0.3, 0.4])
+    plt.ylim(ymax=60)
+    plt.ylim(ymin=0)
     plt.show()
 
 
@@ -27,8 +29,11 @@ def plot_watering_function(begin, end, step):
     plt.xlabel('temperature (°C)')
     plt.ylabel('watering interval (minutes)')
     plt.table(cellText=table, cellLoc='center', loc='bottom', bbox=[0.45, 0.45, 0.3, 0.4])
+    plt.ylim(ymax=60)
+    plt.ylim(ymin=0)
     plt.show()
 
 
-plot_watering_function(begin=0, end=30, step=0.1)
-plot_fogging_function(begin=0, end=30, step=0.1)
+plot_fogging_function(begin=0, end=30, step=0.01)
+plot_watering_function(begin=0, end=30, step=0.01)
+
