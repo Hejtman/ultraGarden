@@ -43,3 +43,23 @@ def td_format_short(delta_time):
             string += str(period_value) + separator
 
     return string
+
+
+def td_format_shortest(delta_time):
+    if delta_time is None:
+        return "-"
+
+    seconds = int(delta_time.total_seconds())
+
+    periods = [
+        ('d', 60 * 60 * 24),
+        ('h', 60 * 60),
+        ('m', 60),
+        ('s', 1)
+    ]
+
+    for unit, period_seconds in periods:
+        if seconds >= period_seconds:
+            return str(divmod(seconds, period_seconds)[0]) + unit
+
+    return "0s"
