@@ -34,6 +34,8 @@ def show():
         'last_watering': td_format_short(now - garden.get_last_watering()) + " ago",
         'next_watering': "in " + td_format_short(garden.next_watering - now),
         'watering_period': td_format(garden.watering_period),
+
+        'up_time': td_format_short(now - garden.get_start_time())
     }
     for sensor in threading.garden.sensors:
         data[sensor.name] = str(sensor.value)

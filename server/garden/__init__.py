@@ -68,6 +68,8 @@ class Garden:
         self.next_watering = OLDEST_DATE
         self.watering_period = ZERO_PERIOD
 
+        self.__start_time = datetime.now()
+
     def fogging(self):
         # FIXME: decorator?
         # TODO: DEBUG LOGS
@@ -123,3 +125,6 @@ class Garden:
 
     def get_watering_count(self):
         return self.__watering_count
+
+    def get_start_time(self):
+        return self.__start_time
