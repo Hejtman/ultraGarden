@@ -46,7 +46,7 @@ def td_format_short(delta_time):
 
 
 def td_format_shortest(delta_time):
-    if delta_time is None:
+    if not delta_time or delta_time.total_seconds() < 0:
         return "-"
 
     seconds = int(delta_time.total_seconds())
