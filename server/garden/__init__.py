@@ -60,12 +60,10 @@ class Garden:
 
         self.__fogging_count = 0
         self.__last_fogging = OLDEST_DATE
-        self.next_fogging = OLDEST_DATE
         self.fogging_period = ZERO_PERIOD
 
         self.__watering_count = 0
         self.__last_watering = OLDEST_DATE
-        self.next_watering = OLDEST_DATE
         self.watering_period = ZERO_PERIOD
 
         self.__start_time = datetime.now()
@@ -76,7 +74,6 @@ class Garden:
         self.__fogging_count += 1
         self.status = "fogging"
         self.__last_fogging = self.last_change = datetime.now()
-        self.next_fogging = datetime.now() + self.fogging_period
 
         for relays_set in chain(self.fogging_cycle, self.default_cycle):
             for relay, value in zip(self.relays, relays_set.set):
@@ -90,7 +87,6 @@ class Garden:
         self.__watering_count += 1
         self.status = "watering"
         self.__last_watering = self.last_change = datetime.now()
-        self.next_watering = datetime.now() + self.watering_period
 
         for relays_set in chain(self.watering_cycle, self.default_cycle):
             for relay, value in zip(self.relays, relays_set.set):

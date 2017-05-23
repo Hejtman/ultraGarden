@@ -17,22 +17,30 @@ web_server = Flask(__name__)
 def show():
     now = datetime.now()
     garden = threading.garden
+    fogging = threading.scheduler.get_job('FOGGING')
+    watering = threading.scheduler.get_job('WATERING')
+
+    print(str(now))
+    print(str(fogging.next_run_time))
+
+
     data = {
         'fog': "ON" if wiringpi.digitalRead(garden.fog.pin) == garden.fog.on else "OFF",
         'fan': "ON" if wiringpi.digitalRead(garden.fan.pin) == garden.fan.on else "OFF",
         'pump': "ON" if wiringpi.digitalRead(garden.pump.pin) == garden.pump.on else "OFF",
 
+        # FIXME: better top of the log info level
         'status': garden.status,
         'last_change': td_format_shortest(now - garden.last_change),
 
         'fogging_count': garden.get_fogging_count(),
         'last_fogging': td_format_shortest(now - garden.get_last_fogging()) + " ago",
-        'next_fogging': "in " + td_format_shortest(garden.next_fogging - now),
+        'next_fogging': "in " + td_format_shortest(fogging.next_run_time.replace(tzinfo=None) - now),
         'fogging_period': td_format(garden.fogging_period),
 
         'watering_count': garden.get_watering_count(),
         'last_watering': td_format_shortest(now - garden.get_last_watering()) + " ago",
-        'next_watering': "in " + td_format_shortest(garden.next_watering - now),
+        'next_watering': "in " + td_format_shortest(watering.next_run_time.replace(tzinfo=None) - now),
         'watering_period': td_format(garden.watering_period),
 
         'up_time': td_format_shortest(now - garden.get_start_time())

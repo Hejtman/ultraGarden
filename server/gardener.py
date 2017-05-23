@@ -23,7 +23,7 @@ MISFIRE_GRACE_TIME = 4*60
 class Gardener:
     """
     Gardener manages garden according schedule and collected sensor data.
-     * Garden - Controls HW I/O.
+     * Garden - Controls HW I/O - simple stateless servant for single thread use.
        * sensors: temperature (TODO: water level, light density, ...)
        * relays: pump, fan, fogger
      * Records - Via scheduler collects and store sensors data + current garden state.
@@ -54,9 +54,8 @@ class Gardener:
             return
 
         self.garden.fogging_period = fogging_period
-        self.garden.next_fogging = max((self.get_asap_schedule(), self.garden.get_last_fogging() + fogging_period))
-
-        self.scheduler.add_job(self.garden.fogging, start_date=str(self.garden.next_fogging),
+        next_fogging = max((self.get_asap_schedule(), self.garden.get_last_fogging() + fogging_period))
+        self.scheduler.add_job(self.garden.fogging, start_date=str(next_fogging),
                                trigger='cron', minute="*/{}".format(period_minutes),
                                id='FOGGING', replace_existing=True, misfire_grace_time=MISFIRE_GRACE_TIME)
 
@@ -71,9 +70,8 @@ class Gardener:
             return
 
         self.garden.watering_period = watering_period
-        self.garden.next_watering = max((self.get_asap_schedule(), self.garden.get_last_watering() + watering_period))
-
-        self.scheduler.add_job(self.garden.watering, start_date=str(self.garden.next_watering),
+        next_watering = max((self.get_asap_schedule(), self.garden.get_last_watering() + watering_period))
+        self.scheduler.add_job(self.garden.watering, start_date=str(next_watering),
                                trigger='cron', minute="*/{}".format(period_minutes),
                                id='WATERING', replace_existing=True, misfire_grace_time=MISFIRE_GRACE_TIME)
 
@@ -90,6 +88,7 @@ class Gardener:
     def working_loop(self):
         # shared cross threads
         threading.garden = self.garden
+        threading.scheduler = self.scheduler
 
         # default schedule
         cron_params = {'trigger': 'cron', 'misfire_grace_time': MISFIRE_GRACE_TIME}
