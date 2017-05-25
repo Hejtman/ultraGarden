@@ -47,13 +47,13 @@ class Garden:
 
         # self.barrel_temperature = ds18b20('28-011564df1dff', 'barrel')
         # self.balcony_temperature = ds18b20('28-011564aee4ff', 'balcony')
-        self.brno_temperature = WeatherSensor('temp', config.City, config.OpenWeatherMap)
-        self.brno_humidity = WeatherSensor('humidity', config.City + '_humidity', config.OpenWeatherMap)
+        self.city_temperature = WeatherSensor('temp', config.City, config.OpenWeatherMap)
+        self.city_humidity = WeatherSensor('humidity', config.City + '_humidity', config.OpenWeatherMap)
         self.sensors = (
                         # self.barrel_temperature,
                         # self.balcony_temperature,
-                        self.brno_temperature,
-                        self.brno_humidity)
+                        self.city_temperature,
+                        self.city_humidity)
 
         self.status = "idling"
         self.last_change = OLDEST_DATE

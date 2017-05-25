@@ -45,21 +45,18 @@ class Gardener:
         )
 
     def reschedule_job(self, job_id):
-        temperature = self.garden.brno_temperature.value
-        assert temperature
-
-        period_minutes = self.compute_period(job_id, temperature)
+        period_minutes = self.compute_period(job_id, self.garden.city_temperature.value)
         last_job_run = self.garden.get_last_job_run(job_id)
         next_job_run = max((self.get_asap_schedule(), last_job_run + timedelta(minutes=period_minutes)))
         self.scheduler.reschedule_job(job_id, trigger='cron',
                                       minute="*/{}".format(period_minutes), start_date=str(next_job_run))
 
     def sensors_refresh(self):
-        old_temperature = self.garden.brno_temperature.value
+        old_temperature = self.garden.city_temperature.value
         self.garden.sensors_refresh()
-        new_temperature = self.garden.brno_temperature.value
+        new_temperature = self.garden.city_temperature.value
 
-        if old_temperature != new_temperature:
+        if old_temperature != new_temperature and new_temperature:
             self.reschedule_job('FOGGING')
             self.reschedule_job('WATERING')
 
@@ -84,7 +81,7 @@ class Gardener:
         self.scheduler.add_job(self.garden.fogging, minute='*/3', id='FOGGING', **cron_params)
 
         # sensors maintenance
-        self.scheduler.add_job(self.garden.sensors_refresh, minute='*/10', **cron_params)
+        self.scheduler.add_job(self.sensors_refresh, minute='*/10', **cron_params)
         self.scheduler.add_job(self.records.write_values, minute='*/10',
                                kwargs={'file': config.SensorData.FULL_FILE}, **cron_params)
         self.scheduler.add_job(self.records.write_values, hour='*',
@@ -123,6 +120,8 @@ class Gardener:
 
     @staticmethod
     def compute_period(job_id, temperature):
+        assert temperature
+
         if job_id == 'FOGGING':
             return int(4 * 60 / (temperature - 4) ** 1.5) if 4 < temperature < 27 else INFINITE_MINUTES
         elif job_id == 'WATERING':
