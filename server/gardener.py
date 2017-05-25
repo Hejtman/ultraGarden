@@ -1,3 +1,4 @@
+import re
 import logging
 import threading
 from datetime import timedelta, datetime
@@ -43,52 +44,38 @@ class Gardener:
             }
         )
 
-    def schedule_fogging(self):
+    def reschedule_job(self, job_id):
         temperature = self.garden.brno_temperature.value
-        if not temperature:
-            return
+        assert temperature
 
-        period_minutes = self.compute_fogging_period(temperature)
-        fogging_period = timedelta(minutes=period_minutes)
-        if fogging_period == self.garden.fogging_period:
-            return
+        period_minutes = self.compute_period(job_id, temperature)
+        last_job_run = self.garden.get_last_job_run(job_id)
+        next_job_run = max((self.get_asap_schedule(), last_job_run + timedelta(minutes=period_minutes)))
+        self.scheduler.reschedule_job(job_id, trigger='cron',
+                                      minute="*/{}".format(period_minutes), start_date=str(next_job_run))
 
-        self.garden.fogging_period = fogging_period
-        next_fogging = max((self.get_asap_schedule(), self.garden.get_last_fogging() + fogging_period))
-        self.scheduler.add_job(self.garden.fogging, start_date=str(next_fogging),
-                               trigger='cron', minute="*/{}".format(period_minutes),
-                               id='FOGGING', replace_existing=True, misfire_grace_time=MISFIRE_GRACE_TIME)
+    def sensors_refresh(self):
+        old_temperature = self.garden.brno_temperature.value
+        self.garden.sensors_refresh()
+        new_temperature = self.garden.brno_temperature.value
 
-    def schedule_watering(self):
-        temperature = self.garden.brno_temperature.value
-        if not temperature:
-            return
-
-        period_minutes = self.compute_watering_period(temperature)
-        watering_period = timedelta(minutes=period_minutes)
-        if watering_period == self.garden.watering_period:
-            return
-
-        self.garden.watering_period = watering_period
-        next_watering = max((self.get_asap_schedule(), self.garden.get_last_watering() + watering_period))
-        self.scheduler.add_job(self.garden.watering, start_date=str(next_watering),
-                               trigger='cron', minute="*/{}".format(period_minutes),
-                               id='WATERING', replace_existing=True, misfire_grace_time=MISFIRE_GRACE_TIME)
+        if old_temperature != new_temperature:
+            self.reschedule_job('FOGGING')
+            self.reschedule_job('WATERING')
 
     def send_sms_report(self):
         message = 'I am alive.'
         for sensor in self.garden.sensors:
             message += " {}:{}".format(sensor.name, str(sensor.value))
-        message += " f:{}/{} w:{}/{}".format(int(self.garden.fogging_period.total_seconds()/60),
-                                             self.garden.get_fogging_count(),
-                                             int(self.garden.watering_period.total_seconds()/60),
-                                             self.garden.get_watering_count())
+        message += " f:{}/{} w:{}/{}".format(self.get_job_period("FOGGING"),
+                                             self.garden.get_job_run_count("FOGGING"),
+                                             self.get_job_period("WATERING"),
+                                             self.garden.get_job_run_count("WATERING"))
         utils.sms.send_sms(message)
 
     def working_loop(self):
         # shared cross threads
-        threading.garden = self.garden
-        threading.scheduler = self.scheduler
+        threading.gardener = self
 
         # default schedule
         cron_params = {'trigger': 'cron', 'misfire_grace_time': MISFIRE_GRACE_TIME}
@@ -106,9 +93,6 @@ class Gardener:
                                kwargs={'file': config.SensorData.WEB_FILE, 'count': 24*7*4}, **cron_params)
         self.scheduler.add_job(self.send_sms_report, hour='12', **cron_params)
 
-        # sensors/weather dependent modification
-        self.scheduler.add_job(self.schedule_fogging, minute='*/10', **cron_params)
-        self.scheduler.add_job(self.schedule_watering, minute='*/10', **cron_params)
         # TODO: create more oxygen when high temperature via extra long pumping cycle?
 
         # network maintenance
@@ -125,14 +109,21 @@ class Gardener:
 
         self.scheduler.shutdown()
 
+    def get_job_period(self, job_id):
+        trigger = self.scheduler.get_job(job_id).trigger
+        period = re.search(r"cron\[minute='\*/(\d+)'\]", str(trigger))
+        return int(period.group(1)) if period else 0
+
+    def get_job_next_run_time(self, job_id):
+        return self.scheduler.get_job(job_id).next_run_time
+
     @staticmethod
     def get_asap_schedule():
         return datetime.now() + timedelta(seconds=2)
 
     @staticmethod
-    def compute_fogging_period(temperature):
-        return int(4 * 60 / (temperature - 4) ** 1.5) if 4 < temperature < 27 else INFINITE_MINUTES
-
-    @staticmethod
-    def compute_watering_period(temperature):
-        return int(24 * 60 / (temperature - 4) ** 2) if 4 < temperature < 27 else INFINITE_MINUTES
+    def compute_period(job_id, temperature):
+        if job_id == 'FOGGING':
+            return int(4 * 60 / (temperature - 4) ** 1.5) if 4 < temperature < 27 else INFINITE_MINUTES
+        elif job_id == 'WATERING':
+            return int(24 * 60 / (temperature - 4) ** 2) if 4 < temperature < 27 else INFINITE_MINUTES

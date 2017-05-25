@@ -1,6 +1,6 @@
 import threading
 from datetime import datetime
-from utils.format import td_format, td_format_shortest
+from utils.format import td_format_shortest
 
 try:
     import wiringpi
@@ -16,13 +16,7 @@ web_server = Flask(__name__)
 @web_server.route('/')
 def show():
     now = datetime.now()
-    garden = threading.garden
-    fogging = threading.scheduler.get_job('FOGGING')
-    watering = threading.scheduler.get_job('WATERING')
-
-    print(str(now))
-    print(str(fogging.next_run_time))
-
+    garden = threading.gardener.garden
 
     data = {
         'fog': "ON" if wiringpi.digitalRead(garden.fog.pin) == garden.fog.on else "OFF",
@@ -32,20 +26,19 @@ def show():
         # FIXME: better top of the log info level
         'status': garden.status,
         'last_change': td_format_shortest(now - garden.last_change),
-
-        'fogging_count': garden.get_fogging_count(),
-        'last_fogging': td_format_shortest(now - garden.get_last_fogging()) + " ago",
-        'next_fogging': "in " + td_format_shortest(fogging.next_run_time.replace(tzinfo=None) - now),
-        'fogging_period': td_format(garden.fogging_period),
-
-        'watering_count': garden.get_watering_count(),
-        'last_watering': td_format_shortest(now - garden.get_last_watering()) + " ago",
-        'next_watering': "in " + td_format_shortest(watering.next_run_time.replace(tzinfo=None) - now),
-        'watering_period': td_format(garden.watering_period),
-
         'up_time': td_format_shortest(now - garden.get_start_time())
     }
-    for sensor in threading.garden.sensors:
+
+    for job_id in ["FOGGING", "WATERING"]:
+        next_job_run_time = threading.gardener.get_job_next_run_time(job_id).replace(tzinfo=None)
+        data.update({
+            job_id.lower() + '_period': str(threading.gardener.get_job_period(job_id)) + "m",
+            job_id.lower() + '_count': garden.get_job_run_count(job_id),
+            'last_' + job_id.lower(): td_format_shortest(now - garden.get_last_job_run(job_id)) + " ago",
+            'next_' + job_id.lower(): "in " + td_format_shortest(next_job_run_time - now)
+        })
+
+    for sensor in threading.gardener.garden.sensors:
         data[sensor.name] = str(sensor.value)
 
     return render_template('index.html', **data)

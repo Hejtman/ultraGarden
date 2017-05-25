@@ -58,22 +58,23 @@ class Garden:
         self.status = "idling"
         self.last_change = OLDEST_DATE
 
-        self.__fogging_count = 0
-        self.__last_fogging = OLDEST_DATE
-        self.fogging_period = ZERO_PERIOD
-
-        self.__watering_count = 0
-        self.__last_watering = OLDEST_DATE
-        self.watering_period = ZERO_PERIOD
+        self.__last_job_run = {
+            "FOGGING": OLDEST_DATE,
+            "WATERING": OLDEST_DATE,
+        }
+        self.__job_run_count = {
+            "FOGGING": 0,
+            "WATERING": 0,
+        }
 
         self.__start_time = datetime.now()
 
     def fogging(self):
         # FIXME: decorator?
         # TODO: DEBUG LOGS
-        self.__fogging_count += 1
+        self.__job_run_count["FOGGING"] += 1
         self.status = "fogging"
-        self.__last_fogging = self.last_change = datetime.now()
+        self.__last_job_run["FOGGING"] = self.last_change = datetime.now()
 
         for relays_set in chain(self.fogging_cycle, self.default_cycle):
             for relay, value in zip(self.relays, relays_set.set):
@@ -84,9 +85,9 @@ class Garden:
 
     def watering(self):
         # FIXME: decorator?
-        self.__watering_count += 1
+        self.__job_run_count["WATERING"] += 1
         self.status = "watering"
-        self.__last_watering = self.last_change = datetime.now()
+        self.__last_job_run["WATERING"] = self.last_change = datetime.now()
 
         for relays_set in chain(self.watering_cycle, self.default_cycle):
             for relay, value in zip(self.relays, relays_set.set):
@@ -110,17 +111,11 @@ class Garden:
         self.last_change = datetime.now()
 
     # encapsulation
-    def get_last_fogging(self):
-        return self.__last_fogging
+    def get_last_job_run(self, job_id):
+        return self.__last_job_run[job_id]
 
-    def get_last_watering(self):
-        return self.__last_watering
-
-    def get_fogging_count(self):
-        return self.__fogging_count
-
-    def get_watering_count(self):
-        return self.__watering_count
+    def get_job_run_count(self, job_id):
+        return self.__job_run_count[job_id]
 
     def get_start_time(self):
         return self.__start_time
