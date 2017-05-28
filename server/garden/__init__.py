@@ -1,6 +1,5 @@
 import logging
-import datetime
-import threading
+from datetime import datetime, timedelta
 from collections import namedtuple
 from itertools import chain
 from time import sleep
@@ -17,6 +16,9 @@ from garden.hw.ds18b20 import ds18b20
 
 RelayWiring = namedtuple('RelayWiring', 'pin off on')
 RelaySet = namedtuple('RelaySet', 'set delay')
+
+OLDEST_DATE = datetime(1, 1, 1)
+ZERO_PERIOD = timedelta(minutes=0)
 
 
 class Garden:
@@ -36,8 +38,8 @@ class Garden:
         self.relays = (fan, fog, pump)
         self.default_cycle = (RelaySet(set=(fan.off, fog.off, pump.off), delay=0),)   # relays config between cycles
         self.fogging_cycle = (RelaySet(set=(fan.off, fog.on,  pump.off), delay=5),    # create some fog
-                              RelaySet(set=(fan.on,  fog.on,  pump.off), delay=40),   # deliver fog
-                              RelaySet(set=(fan.on,  fog.off, pump.off), delay=15))   # recycle fog
+                              RelaySet(set=(fan.on,  fog.on,  pump.off), delay=50),   # deliver fog
+                              RelaySet(set=(fan.on,  fog.off, pump.off), delay=5))    # recycle fog
         self.watering_cycle = (RelaySet(set=(fan.off, fog.off, pump.on), delay=8),    # begin pumping for a while
                                RelaySet(set=(fan.off, fog.off, pump.off), delay=10))  # fan off until water level drops
         for r in self.relays:
@@ -45,44 +47,75 @@ class Garden:
 
         # self.barrel_temperature = ds18b20('28-011564df1dff', 'barrel')
         # self.balcony_temperature = ds18b20('28-011564aee4ff', 'balcony')
-        self.brno_temperature = WeatherSensor('temp', config.City, config.OpenWeatherMap)
-        self.brno_humidity = WeatherSensor('humidity', config.City + '_humidity', config.OpenWeatherMap)
+        self.city_temperature = WeatherSensor('temp', config.City, config.OpenWeatherMap)
+        self.city_humidity = WeatherSensor('humidity', config.City + '_humidity', config.OpenWeatherMap)
         self.sensors = (
                         # self.barrel_temperature,
                         # self.balcony_temperature,
-                        self.brno_temperature,
-                        self.brno_humidity)
+                        self.city_temperature,
+                        self.city_humidity)
 
-        self.last_fogging = None
-        self.last_watering = None
+        self.status = "idling"
+        self.last_change = OLDEST_DATE
+
+        self.__last_job_run = {
+            "FOGGING": OLDEST_DATE,
+            "WATERING": OLDEST_DATE,
+        }
+        self.__job_run_count = {
+            "FOGGING": 0,
+            "WATERING": 0,
+        }
+
+        self.__start_time = datetime.now()
 
     def fogging(self):
-        threading.status = "fogging"
-        self.last_fogging = datetime.datetime.now()
-        logging.info("{} fogging".format(self.last_fogging))  # TODO: write temperature, write after how long?
+        # FIXME: decorator?
+        # TODO: DEBUG LOGS
+        self.__job_run_count["FOGGING"] += 1
+        self.status = "fogging"
+        self.__last_job_run["FOGGING"] = self.last_change = datetime.now()
 
         for relays_set in chain(self.fogging_cycle, self.default_cycle):
             for relay, value in zip(self.relays, relays_set.set):
                 wiringpi.digitalWrite(relay.pin, value)
             sleep(relays_set.delay)
-        threading.status = "idling"
+        self.status = "idling"
+        self.last_change = datetime.now()
 
     def watering(self):
-        threading.status = "watering"
-        self.last_watering = datetime.datetime.now()
-        logging.info("{} watering".format(self.last_watering))  # TODO: write temperature, write after how long?
+        # FIXME: decorator?
+        self.__job_run_count["WATERING"] += 1
+        self.status = "watering"
+        self.__last_job_run["WATERING"] = self.last_change = datetime.now()
 
         for relays_set in chain(self.watering_cycle, self.default_cycle):
             for relay, value in zip(self.relays, relays_set.set):
                 wiringpi.digitalWrite(relay.pin, value)
             sleep(relays_set.delay)
-        threading.status = "idling"
+        self.status = "idling"
+        self.last_change = datetime.now()
 
     def sensors_refresh(self):
-        threading.status = "refreshing"
+        # FIXME: decorator?
+        self.status = "refreshing"
+        self.last_change = datetime.now()
+
         for s in self.sensors:
             try:
                 s.read_value()
             except IOError:
                 logging.error("Failed to read data from sensor " + s.name)
-        threading.status = "idling"
+
+        self.status = "idling"
+        self.last_change = datetime.now()
+
+    # encapsulation
+    def get_last_job_run(self, job_id):
+        return self.__last_job_run[job_id]
+
+    def get_job_run_count(self, job_id):
+        return self.__job_run_count[job_id]
+
+    def get_start_time(self):
+        return self.__start_time
