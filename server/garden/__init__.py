@@ -37,10 +37,9 @@ class Garden:
 
         self.relays = (fan, fog, pump)
         self.default_cycle = (RelaySet(set=(fan.off, fog.off, pump.off), delay=0),)   # relays config between cycles
-        self.fogging_cycle = (RelaySet(set=(fan.off, fog.on,  pump.off), delay=5),    # create some fog
-                              RelaySet(set=(fan.on,  fog.on,  pump.off), delay=50),   # deliver fog
-                              RelaySet(set=(fan.on,  fog.off, pump.off), delay=5))    # recycle fog
-        self.watering_cycle = (RelaySet(set=(fan.off, fog.off, pump.on), delay=8),    # begin pumping for a while
+        self.fogging_cycle = (RelaySet(set=(fan.off, fog.on,  pump.off), delay=2),    # create some fog
+                              RelaySet(set=(fan.on,  fog.on,  pump.off), delay=58))   # deliver fog
+        self.watering_cycle = (RelaySet(set=(fan.off, fog.off, pump.on), delay=12),   # pump for a while
                                RelaySet(set=(fan.off, fog.off, pump.off), delay=10))  # fan off until water level drops
         for r in self.relays:
             wiringpi.pinMode(r.pin, wiringpi.GPIO.OUTPUT)
