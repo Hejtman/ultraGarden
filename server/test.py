@@ -6,8 +6,8 @@ from gardener import Gardener
 
 def plot_fogging_function(begin, end, step):
     x = list(np.arange(begin, end, step))
-    y = list(Gardener.compute_fogging_period(xx) for xx in x)
-    table = list((str(xx), str(Gardener.compute_fogging_period(xx))) for xx in list(range(0, 35, 5)))
+    y = list(Gardener.compute_period('FOGGING', xx) for xx in x)
+    table = list((str(xx), str(Gardener.compute_period('FOGGING', xx))) for xx in list(range(0, 35, 5)))
 
     plt.plot(x, y)
     plt.title('Fogging interval depends on current temperature')
@@ -21,8 +21,8 @@ def plot_fogging_function(begin, end, step):
 
 def plot_watering_function(begin, end, step):
     x = list(np.arange(begin, end, step))
-    y = list(Gardener.compute_watering_period(xx) for xx in x)
-    table = list((str(xx), str(Gardener.compute_watering_period(xx))) for xx in list(range(0, 35, 5)))
+    y = list(Gardener.compute_period('WATERING', xx) for xx in x)
+    table = list((str(xx), str(Gardener.compute_period('WATERING',xx))) for xx in list(range(0, 35, 5)))
 
     plt.plot(x, y)
     plt.title('Watering interval depends on current temperature')

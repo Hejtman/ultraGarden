@@ -120,9 +120,8 @@ class Gardener:
 
     @staticmethod
     def compute_period(job_id, temperature):
-        assert temperature
 
         if job_id == 'FOGGING':
             return int(4 * 60 / (temperature - 4) ** 1.5) if 4 < temperature < 27 else INFINITE_MINUTES
         elif job_id == 'WATERING':
-            return int(24 * 60 / (temperature - 4) ** 2) if 4 < temperature < 27 else INFINITE_MINUTES
+            return int(4 * 24 * 60 / (temperature - 4) ** 2) if 4 < temperature < 27 else INFINITE_MINUTES
