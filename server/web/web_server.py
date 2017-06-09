@@ -7,7 +7,7 @@ try:
 except ImportError:
     import garden.wiringpi_fake as wiringpi
 
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
 
 
 web_server = Flask(__name__)
@@ -15,9 +15,8 @@ web_server = Flask(__name__)
 
 @web_server.route('/')
 def show():
-    now = datetime.now()
     garden = threading.gardener.garden
-
+    now = datetime.now()
     data = {
         'fog': "ON" if wiringpi.digitalRead(garden.fog.pin) == garden.fog.on else "OFF",
         'fan': "ON" if wiringpi.digitalRead(garden.fan.pin) == garden.fan.on else "OFF",
@@ -42,3 +41,17 @@ def show():
         data[sensor.name] = str(sensor.value)
 
     return render_template('index.html', **data)
+
+
+@web_server.route('/fogging', methods=['POST'])
+def fogging():
+    threading.gardener.garden.fogging()
+    # FIXME: threading.gardener.start_job("FOGGING")
+    return redirect("/")
+
+
+@web_server.route('/watering', methods=['POST'])
+def watering():
+    threading.gardener.garden.watering()
+    # FIXME: threading.gardener.start_job("WATERING")
+    return redirect("/")

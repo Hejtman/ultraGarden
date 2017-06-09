@@ -15,7 +15,7 @@ from garden.hw.ds18b20 import ds18b20
 
 
 RelayWiring = namedtuple('RelayWiring', 'pin off on')
-RelaySet = namedtuple('RelaySet', 'set delay')
+RelaySet = namedtuple('RelaySet', 'value delay')
 
 OLDEST_DATE = datetime(1, 1, 1)
 ZERO_PERIOD = timedelta(minutes=0)
@@ -31,16 +31,16 @@ class Garden:
         # WIRING
         wiringpi.wiringPiSetup()
 
-        self.fog = fog = RelayWiring(pin=28, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW)    # by default on
         self.fan = fan = RelayWiring(pin=27, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW)    # by default on
+        self.fog = fog = RelayWiring(pin=28, off=wiringpi.GPIO.HIGH, on=wiringpi.GPIO.LOW)    # by default on
         self.pump = pump = RelayWiring(pin=29, off=wiringpi.GPIO.LOW, on=wiringpi.GPIO.HIGH)  # by default off
 
         self.relays = (fan, fog, pump)
-        self.default_cycle = (RelaySet(set=(fan.off, fog.off, pump.off), delay=0),)   # relays config between cycles
-        self.fogging_cycle = (RelaySet(set=(fan.off, fog.on,  pump.off), delay=2),    # create some fog
-                              RelaySet(set=(fan.on,  fog.on,  pump.off), delay=58))   # deliver fog
-        self.watering_cycle = (RelaySet(set=(fan.off, fog.off, pump.on), delay=12),   # pump for a while
-                               RelaySet(set=(fan.off, fog.off, pump.off), delay=10))  # fan off until water level drops
+        self.default_cycle = (RelaySet(value=(fan.off, fog.off, pump.off), delay=0),)   # relays config between cycles
+        self.fogging_cycle = (RelaySet(value=(fan.off, fog.on,  pump.off), delay=2),    # create some fog
+                              RelaySet(value=(fan.on,  fog.on,  pump.off), delay=58))   # deliver fog
+        self.watering_cycle = (RelaySet(value=(fan.off, fog.off, pump.on), delay=20),   # pump for a while
+                               RelaySet(value=(fan.off, fog.off, pump.off), delay=10))  # fan off until water l. drops
         for r in self.relays:
             wiringpi.pinMode(r.pin, wiringpi.GPIO.OUTPUT)
 
@@ -76,7 +76,7 @@ class Garden:
         self.__last_job_run["FOGGING"] = self.last_change = datetime.now()
 
         for relays_set in chain(self.fogging_cycle, self.default_cycle):
-            for relay, value in zip(self.relays, relays_set.set):
+            for relay, value in zip(self.relays, relays_set.value):
                 wiringpi.digitalWrite(relay.pin, value)
             sleep(relays_set.delay)
         self.status = "idling"
@@ -89,7 +89,7 @@ class Garden:
         self.__last_job_run["WATERING"] = self.last_change = datetime.now()
 
         for relays_set in chain(self.watering_cycle, self.default_cycle):
-            for relay, value in zip(self.relays, relays_set.set):
+            for relay, value in zip(self.relays, relays_set.value):
                 wiringpi.digitalWrite(relay.pin, value)
             sleep(relays_set.delay)
         self.status = "idling"

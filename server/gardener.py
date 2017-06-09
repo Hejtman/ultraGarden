@@ -114,6 +114,10 @@ class Gardener:
     def get_job_next_run_time(self, job_id):
         return self.scheduler.get_job(job_id).next_run_time
 
+    def start_job(self, job_id):
+        # FIXME
+        job = self.scheduler.get_job(job_id)
+
     @staticmethod
     def get_asap_schedule():
         return datetime.now() + timedelta(seconds=2)
@@ -125,3 +129,5 @@ class Gardener:
             return int(4 * 60 / (temperature - 4) ** 1.5) if 4 < temperature < 27 else INFINITE_MINUTES
         elif job_id == 'WATERING':
             return int(24 * 60 / (temperature - 4) ** 2) if 4 < temperature < 27 else INFINITE_MINUTES
+        else:
+            assert 0
